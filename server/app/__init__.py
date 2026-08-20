@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, jsonify
 from dotenv import load_dotenv
 
 from app.extensions import db, migrate, ma, cors, jwt
@@ -23,6 +23,10 @@ def create_app():
     ma.init_app(app)
     cors.init_app(app)
     jwt.init_app(app)
+
+    @app.route("/")
+    def home():
+        return jsonify({"message": "Welcome to the BACKEND API!"})
 
     # Register blueprints/routes here as they're built
     # from app.routes.main_routes import main_bp
