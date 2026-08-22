@@ -3,6 +3,7 @@ from flask import Flask, jsonify
 from dotenv import load_dotenv
 
 from app.extensions import db, migrate, ma, cors, jwt
+import app.models
 
 load_dotenv()
 
