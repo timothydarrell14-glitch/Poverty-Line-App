@@ -32,6 +32,26 @@ class UserRegisterSchema(ma.SQLAlchemyAutoSchema):
 		)
 
 
+class UserUpdateSchema(ma.SQLAlchemyAutoSchema):
+	class Meta:
+		model = User
+		load_instance = False
+		partial = True
+		fields = (
+			"first_name",
+			"last_name",
+			"email",
+			"phone",
+			"date_of_birth",
+			"gender",
+			"education_level",
+			"employment_status",
+			"skills",
+			"location",
+		)
+
+
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 user_register_schema = UserRegisterSchema()
+user_update_schema = UserUpdateSchema()
