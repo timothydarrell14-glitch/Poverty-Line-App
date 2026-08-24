@@ -1,0 +1,8 @@
+export const Herosection = ({ onExploreImpact, onReadStory }) => (
+  <section className="hero-section"><div className="hero-card">
+    <h1 className="font-heading">Dignity Through <span className="teal">Efficiency</span></h1>
+    <p>We bridge the gap between resources and those who need them most. A streamlined, community-built approach to strengthening access to clean water, education, and sustainable livelihoods.</p>
+    <div className="button-row"><button className="pill-button" onClick={onExploreImpact}>Discover Our Impact <span className="material-symbols-outlined">arrow_forward</span></button><button className="outline-button" onClick={onReadStory}>Read Our Story</button></div>
+  </div></section>
+);
+export default Herosection;
