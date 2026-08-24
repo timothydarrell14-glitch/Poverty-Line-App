@@ -2,7 +2,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    opacity: 1;
+    opacity: 40%;
 }
 
 .auth-links {
