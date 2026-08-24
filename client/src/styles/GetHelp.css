@@ -1,0 +1,378 @@
+.get-help-page-wrapper {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+  color: #1a2e26;
+  font-family: inherit;
+}
+
+.teal-text {
+  color: #0f6258;
+}
+
+.hero-grid-container {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  align-items: center;
+  gap: 2.5rem;
+  margin-bottom: 3.5rem;
+}
+
+.hero-text-block h1 {
+  font-size: 2.85rem;
+  line-height: 1.15;
+  font-weight: 800;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+.hero-text-block p {
+  color: #4a5568;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin-bottom: 1.75rem;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.primary-dark-btn {
+  background-color: #275240;
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.primary-dark-btn:hover {
+  background-color: #1e3f31;
+}
+
+.primary-dark-btn.btn-small {
+  padding: 0.5rem 1.15rem;
+  font-size: 0.875rem;
+}
+
+.outline-btn {
+  background: transparent;
+  color: #275240;
+  border: 1.5px solid #275240;
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.outline-btn:hover {
+  background-color: #f0f7f4;
+}
+
+.hero-img-rounded {
+  width: 100%;
+  height: 330px;
+  object-fit: cover;
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+}
+
+/* General Container Card */
+.help-section-card {
+  background: #ffffff;
+  border: 1px solid #e5e9ec;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.card-header-flex,
+.section-intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.section-intro {
+  flex-direction: column;
+}
+
+.card-header-flex h2,
+.section-intro h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+  color: #1a2e26;
+}
+
+.card-header-flex p,
+.section-intro p {
+  color: #5b6770;
+  font-size: 0.95rem;
+}
+
+/* Grids */
+.two-col-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.support-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.topics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+/* Card Items */
+.preview-inner-card,
+.support-box {
+  background: #fdfdfd;
+  border: 1px solid #eef1f4;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.support-box {
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1.25rem;
+}
+
+.icon-circle {
+  width: 48px;
+  height: 48px;
+  background: #dff2e7;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.support-box h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
+}
+
+.support-link {
+  color: #0d6e6e;
+  font-weight: 700;
+  text-decoration: underline;
+  margin-bottom: 0.35rem;
+}
+
+.sub-caption {
+  font-size: 0.8rem;
+  color: #718096;
+}
+
+.pill-btn-green {
+  background: #275240;
+  color: #fff;
+  border: none;
+  padding: 0.45rem 1.2rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  transition: background-color 0.2s;
+}
+
+.pill-btn-green:hover {
+  background: #1e3f31;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  background: #52c41a;
+  border-radius: 50%;
+}
+
+.status-pill {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.status-pill.immediate {
+  background: #dff2e7;
+  color: #1e7e34;
+}
+
+.status-pill.part-time {
+  background: #f0f2f5;
+  color: #4a5568;
+}
+
+.category-tag {
+  background: #f4f6f8;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  color: #2d5a43;
+}
+
+.card-title-badge,
+.card-footer-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-body-text {
+  color: #52606d;
+  font-size: 0.9rem;
+  margin: 0.75rem 0;
+  flex-grow: 1;
+  line-height: 1.45;
+}
+
+.link-arrow-btn,
+.text-link {
+  background: none;
+  border: none;
+  color: #0d6e6e;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.link-arrow-btn:hover,
+.text-link:hover {
+  text-decoration: underline;
+}
+
+.search-input-box input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #cbd5e0;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+/* Modals */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-window {
+  background: white;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  width: 90%;
+  max-width: 420px;
+}
+
+.input-group {
+  margin-bottom: 1rem;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 0.4rem;
+  box-sizing: border-box;
+}
+
+.modal-btn-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.submit-btn {
+  background: #275240;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: #e2e8f0;
+  color: #2d3748;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+}
+
+.success-banner {
+  background: #dff2e7;
+  color: #1e7e34;
+  padding: 1rem;
+  border-radius: 0.4rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.chat-dialog {
+  background: #f7fafc;
+  border: 1px solid #edf2f7;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  margin: 1rem 0;
+}
+
+.chat-bubble {
+  background: #e2e8f0;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .hero-grid-container {
+    grid-template-columns: 1fr;
+  }
+  .support-cards-grid,
+  .topics-grid {
+    grid-template-columns: 1fr;
+  }
+}
