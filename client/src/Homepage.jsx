@@ -5,16 +5,12 @@ import EcosystemSection from './components/EcosystemSection';
 import ProgressSection from './components/ProgressSection';
 import Footer from './components/Footer';
 import ContactScreen from './components/ContactScreen';
+import GetHelpPage from './pages/GetHelpPage';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('home');
 
   const tabContent = {
-    'get-help': {
-      title: 'Find the support you need.',
-      description: 'Explore practical resources and community programs built to help people move forward with dignity.',
-      icon: 'help_outline',
-    },
     donors: {
       title: 'Make every contribution count.',
       description: 'Support transparent, sustainable initiatives that direct resources where they create lasting impact.',
@@ -26,6 +22,10 @@ export default function HomePage() {
       icon: 'corporate_fare',
     },
   };
+
+  if (activeTab === 'get-help') {
+    return <GetHelpPage />;
+  }
 
   return (
     <div className="site-shell">
