@@ -1,4 +1,5 @@
 import { Routes, Route, Link } from "react-router-dom";
+import HomePage from "./Homepage";
 import GetHelpPage from "./pages/GetHelpPage";
 import "./App.css";
 
@@ -27,11 +28,8 @@ function App() {
   return (
     <main>
       <Routes>
-        {/* Default entrypoint and Get Help page */}
-        <Route path="/" element={<GetHelpPage />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/get-help" element={<GetHelpPage />} />
-
-        {/* Placeholders for upcoming teammate routes */}
         <Route path="/jobs" element={<JobsPlaceholder />} />
         <Route path="/community" element={<CommunityPlaceholder />} />
       </Routes>
