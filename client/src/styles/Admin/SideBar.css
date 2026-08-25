@@ -13,7 +13,7 @@
   flex-direction: column;
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
   justify-content: space-between;
-  min-height: 100vh;
+  min-height: 0;
   padding: 18px 18px 16px;
   text-align: left;
 }
@@ -23,20 +23,15 @@
   flex-direction: column;
 }
 
-.admin-sidebar__brand {
-  color: #006878;
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: 0;
-  line-height: 1.2;
-  text-decoration: none;
-}
-
 .admin-sidebar__identity {
   align-items: center;
+  background: #dce6ea;
+  border: 1px solid #c6d4d9;
+  border-radius: 6px;
   display: flex;
   gap: 10px;
-  margin: 11px 0 24px;
+  margin: 0 0 24px;
+  padding: 10px;
 }
 
 .admin-sidebar__avatar {
@@ -194,11 +189,5 @@
     align-items: center;
     flex-direction: row;
     justify-content: space-between;
-  }
-
-  .admin-sidebar__content::after {
-    color: var(--sidebar-muted);
-    content: "Admin Console";
-    font-size: 11px;
   }
 }

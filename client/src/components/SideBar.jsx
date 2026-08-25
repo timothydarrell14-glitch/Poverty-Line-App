@@ -26,14 +26,6 @@ function SideBar({ activeItem = "Dashboard" }) {
   return (
     <aside className="admin-sidebar" aria-label="Admin navigation">
       <div className="admin-sidebar__content">
-        <a
-          className="admin-sidebar__brand"
-          href="#dashboard"
-          aria-label="Poverty Line dashboard"
-        >
-          Poverty Line
-        </a>
-
         <div className="admin-sidebar__identity">
           <img
             className="admin-sidebar__avatar"
@@ -41,8 +33,8 @@ function SideBar({ activeItem = "Dashboard" }) {
             alt="Admin user"
           />
           <div>
-            <p className="admin-sidebar__name">Timotheus B.</p>
-            <p className="admin-sidebar__role">Admin Console</p>
+            <p className="admin-sidebar__name">Timothy N. Darrell</p>
+            <p className="admin-sidebar__role">Admin</p>
           </div>
         </div>
 
