@@ -4,7 +4,7 @@ from marshmallow import ValidationError
 
 from app.extensions import db
 from app.models.jobs import Job
-from app.schemas.job_schema import job_schema, jobs_schema, job_create_schema
+from app.schemas.job_schema import job_schema, jobs_schema, job_create_schema, job_update_schema
 
 jobs_bp = Blueprint("jobs", __name__, url_prefix="/jobs")
 
@@ -73,3 +73,29 @@ def list_jobs():
 def get_job(job_id):
 	job = Job.query.get_or_404(job_id)
 	return jsonify(job_schema.dump(job)), 200
+
+
+@jobs_bp.route("/<int:job_id>", methods=["PATCH"])
+@jwt_required()
+def update_job(job_id):
+	job = Job.query.get_or_404(job_id)
+
+	try:
+		data = job_update_schema.load(request.get_json())
+	except ValidationError as err:
+		return jsonify(err.messages), 422
+
+	for key, value in data.items():
+		setattr(job, key, value)
+
+	db.session.commit()
+	return jsonify(job_schema.dump(job)), 200
+
+
+@jobs_bp.route("/<int:job_id>", methods=["DELETE"])
+@jwt_required()
+def delete_job(job_id):
+	job = Job.query.get_or_404(job_id)
+	db.session.delete(job)
+	db.session.commit()
+	return "", 204
