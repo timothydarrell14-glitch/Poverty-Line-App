@@ -1,31 +1,61 @@
-import os
 from flask import Flask
-from dotenv import load_dotenv
 
-from app.extensions import db, migrate, ma, cors, jwt
-
-load_dotenv()
+from app.extensions import db, ma, jwt
 
 
-def create_app():
-    """Application factory function to instantiate the Flask app."""
+def create_app(config=None):
     app = Flask(__name__)
 
-    # Configure app settings
-    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-key")
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///app.db")
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY", "dev-jwt-secret")
+    # ========================================================
+    # DEFAULT CONFIGURATION
+    # ========================================================
 
-    # Initialize extensions with the app
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///poverty_line.db"
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["JWT_SECRET_KEY"] = (
+        "change-this-secret-key-in-production"
+    )
+
+    # ========================================================
+    # TESTING CONFIGURATION
+    # ========================================================
+
+    if config == "testing":
+        app.config.update({
+            "TESTING": True,
+            "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
+            "SQLALCHEMY_TRACK_MODIFICATIONS": False,
+            "JWT_SECRET_KEY": (
+                "test-secret-key-that-is-long-enough-for-testing"
+            ),
+        })
+
+    elif isinstance(config, dict):
+        app.config.update(config)
+
+    elif config is not None:
+        app.config.from_object(config)
+
+    # ========================================================
+    # INITIALIZE EXTENSIONS
+    # ========================================================
+
     db.init_app(app)
-    migrate.init_app(app, db)
     ma.init_app(app)
-    cors.init_app(app)
     jwt.init_app(app)
 
-    # Register blueprints/routes here as they're built
-    # from app.routes.main_routes import main_bp
-    # app.register_blueprint(main_bp)
+    # ========================================================
+    # REGISTER ROUTES
+    # ========================================================
+
+    from app.routes.auth_routes import auth_bp
+    from app.routes.organization_routes import organization_bp
+
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(organization_bp)
+
+    # ========================================================
+    # RETURN APP
+    # ========================================================
 
     return app
