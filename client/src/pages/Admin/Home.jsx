@@ -21,34 +21,44 @@ function Home() {
       </header>
       <main>
         <SideBar />
-        {/* Profile background image + button + name */}
         <div>
-          <img src="#"></img>
-          <ProfileCard name="Name of Admin" role="Admin" imageUrl="https://via.placeholder.com/40" />
-          <button>Update Profile</button>
-        </div>
-        {/* post card */}
-        <div>
+          {/* Profile background image + button + name */}
           <div>
-          <h2>Share a Post</h2>
-          <ProfilePicture />
-          <input type="text" placeholder="Share something" />
-          <button>Share</button>
+            <img src="#"></img>
+            <ProfileCard
+              name="Name of Admin"
+              role="Admin"
+              imageUrl="https://via.placeholder.com/40"
+            />
+            <button>Edit Profile</button>
           </div>
+          {/* brief summary of activities (Donations, Partnerships + active Programs) */}
           <div>
-            <FcGallery size={20} />
-            <span>Add Photo/Video</span>
+            <div>
+              <h2>Number of Projects</h2>
+              <span>Projects</span>
+              <h2>Number of Users</h2>
+              <span>Users</span>
+              <h2>Number of Donations</h2>
+              <span>Donations</span>
+            </div>
+            {/* quick actions */}
+            <div>
+              <h2>Quick Actions</h2>
+            </div>
+            {/* recent activities */}
+            <div>
+              <h2>Recent Activities</h2>
+              <div>
+                <FcGallery size={20} />
+                <span>Activity 1</span>
+              </div>
+              <div>
+                <FcGallery size={20} />
+                <span>Activity 2</span>
+              </div>
+            </div>
           </div>
-
-        </div>
-        {/* brief summary of activities // recent chats */}
-        <div>
-          <h2>Number of Projects</h2>
-          <span>Projects</span>
-          <h2>Number of Users</h2>
-          <span>Users</span>
-          <h2>Number of Donations</h2>
-          <span>Donations</span>
         </div>
       </main>
     </div>
