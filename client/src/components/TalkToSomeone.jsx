@@ -1,4 +1,3 @@
-// client/src/components/TalkToSomeone.jsx
 import React, { useState } from "react";
 
 const TalkToSomeone = () => {
@@ -33,7 +32,7 @@ const TalkToSomeone = () => {
           topic: "Housing & Shelter Vouchers",
           timeSlot: "Within 15 minutes (Immediate Queue)",
         });
-      }, 2000);
+      }, 2500);
     }
   };
 
@@ -50,7 +49,11 @@ const TalkToSomeone = () => {
       <div className="support-cards-grid">
         {/* Helpline */}
         <div className="support-box">
-          <div className="icon-circle">📞</div>
+          <div className="icon-circle">
+            <svg className="support-icon" viewBox="0 0 24 24" fill="none" stroke="#0f6258" strokeWidth="2">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+          </div>
           <h3>Call our Helpline</h3>
           <a href="tel:18005550199" className="support-link">
             1-800-555-0199
@@ -62,7 +65,11 @@ const TalkToSomeone = () => {
 
         {/* Live Chat */}
         <div className="support-box">
-          <div className="icon-circle">💬</div>
+          <div className="icon-circle">
+            <svg className="support-icon" viewBox="0 0 24 24" fill="none" stroke="#0f6258" strokeWidth="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
           <h3>Live Chat</h3>
           <button
             className="pill-btn-green"
@@ -74,7 +81,13 @@ const TalkToSomeone = () => {
 
         {/* Callback */}
         <div className="support-box">
-          <div className="icon-circle">📲</div>
+          <div className="icon-circle">
+            <svg className="support-icon" viewBox="0 0 24 24" fill="none" stroke="#0f6258" strokeWidth="2">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+          </div>
           <h3>Request a Callback</h3>
           <span className="sub-caption">We'll call you within 15 mins</span>
           <button
@@ -86,7 +99,7 @@ const TalkToSomeone = () => {
         </div>
       </div>
 
-      {/* Exact Request a Confidential Callback Modal */}
+      {/* Request a Confidential Callback Modal */}
       {activeModal === "callback" && (
         <div className="modal-backdrop" onClick={() => setActiveModal(null)}>
           <div
@@ -205,7 +218,7 @@ const TalkToSomeone = () => {
       {/* Live Chat Modal */}
       {activeModal === "chat" && (
         <div className="modal-backdrop" onClick={() => setActiveModal(null)}>
-          <div className="modal-window" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-window chat-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header-row">
               <h3>Support Assistant</h3>
               <button

@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from app.extensions import db, migrate, ma, cors, jwt
 import app.models
 
+from app.routes.callbacks import callback_bp
 load_dotenv()
 
 
@@ -32,5 +33,6 @@ def create_app():
     # Register blueprints/routes here as they're built
     # from app.routes.main_routes import main_bp
     # app.register_blueprint(main_bp)
+    app.register_blueprint(callback_bp)
 
     return app
