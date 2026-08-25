@@ -1,0 +1,9 @@
+import { useState, useEffect } from 'react';
+export const Navbar = ({ activeTab, setActiveTab, onOpenDonate, onOpenLogin }) => {
+ const [isScrolled,setIsScrolled]=useState(false); const [open,setOpen]=useState(false);
+ useEffect(()=>{const handle=()=>setIsScrolled(window.scrollY>12);window.addEventListener('scroll',handle);return()=>window.removeEventListener('scroll',handle)},[]);
+ const items=[['home','Home'],['get-help','Get Help'],['donors','Donors'],['organisations','Organisations'],['contact','Contact Us']];
+ const select=(tab)=>{setActiveTab(tab);setOpen(false);window.scrollTo({top:0,behavior:'smooth'})};
+ return <><nav className={`site-nav ${isScrolled?'scrolled':''}`}><div className="nav-inner"><button className="brand font-heading" onClick={()=>select('home')}><span className="material-symbols-outlined material-symbols-fill">volunteer_activism</span>Poverty Line</button><div className="nav-links">{items.map(([id,label])=><button key={id} className={`nav-link ${activeTab===id?'active':''}`} onClick={()=>select(id)}>{label}</button>)}</div><div className="nav-actions"><button className="login-button" onClick={onOpenLogin}>Login</button><button className="pill-button nav-donate" onClick={onOpenDonate}><span className="material-symbols-outlined">favorite</span>Donate Now</button></div><button className="menu-button" onClick={()=>setOpen(!open)} aria-label="Toggle navigation"><span className="material-symbols-outlined">{open?'close':'menu'}</span></button></div></nav><div className={`mobile-menu ${open?'open':''}`}>{items.map(([id,label])=><button key={id} className={`nav-link ${activeTab===id?'active':''}`} onClick={()=>select(id)}>{label}</button>)}<div className="nav-actions"><button className="pill-button" onClick={()=>{setOpen(false);onOpenDonate()}}>Donate Now</button><button className="login-button" onClick={()=>{setOpen(false);onOpenLogin()}}>Login</button></div></div></>;
+};
+export default Navbar;
