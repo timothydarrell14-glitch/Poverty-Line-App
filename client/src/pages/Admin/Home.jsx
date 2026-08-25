@@ -2,7 +2,6 @@ import { IoIosSearch } from "react-icons/io";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import SideBar from "../../components/SideBar";
 import ProfileCard from "../../components/ProfileCard";
-import ProfilePicture from "../../components/ProfilePicture";
 import { FcGallery } from "react-icons/fc";
 
 function Home() {
