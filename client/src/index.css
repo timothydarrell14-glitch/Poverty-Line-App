@@ -79,7 +79,7 @@ button:focus-visible {
 
 .site-shell {
   min-height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
   background: #f7f9ff;
 }
 
