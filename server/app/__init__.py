@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 from app.extensions import db, migrate, ma, cors, jwt
 import app.models
 
+from app.routes.callbacks import callback_bp
+
 load_dotenv()
 
 
@@ -29,7 +31,9 @@ def create_app():
     def home():
         return jsonify({"message": "Welcome to the BACKEND API!"})
 
+    # Register blueprints
     from app.controllers.users_controller import users_bp
     app.register_blueprint(users_bp)
+    app.register_blueprint(callback_bp)
 
     return app
