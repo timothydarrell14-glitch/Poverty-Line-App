@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const TalkToSomeone = () => {
   const [activeModal, setActiveModal] = useState(null); // 'callback' | 'chat' | null
@@ -20,7 +20,7 @@ const TalkToSomeone = () => {
         body: JSON.stringify(formData),
       });
     } catch (err) {
-      console.warn("Backend unavailable, proceeding with local fallback.");
+      console.warn("Backend unavailable, proceeding with local fallback.", err);
     } finally {
       setSubmitted(true);
       setTimeout(() => {
