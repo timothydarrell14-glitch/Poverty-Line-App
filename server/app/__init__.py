@@ -29,8 +29,7 @@ def create_app():
     def home():
         return jsonify({"message": "Welcome to the BACKEND API!"})
 
-    # Register blueprints/routes here as they're built
-    # from app.routes.main_routes import main_bp
-    # app.register_blueprint(main_bp)
+    from app.controllers.users_controller import users_bp
+    app.register_blueprint(users_bp)
 
     return app
