@@ -1,9 +1,9 @@
 import './App.css'
-import NavBar from './components/NavBar.jsx'
+import AdminPage from './pages/Admin/AdminPage';
 
 function App() {
   return (
-    <NavBar/>
+    <AdminPage />
   )
 }
 
