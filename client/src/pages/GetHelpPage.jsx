@@ -1,4 +1,3 @@
-import React from "react";
 import Navbar from "../components/Navbar";
 import HeroHelp from "../components/HeroHelp";
 import JobPreview from "../components/JobPreview";
