@@ -1,0 +1,204 @@
+.admin-sidebar {
+  --sidebar-ink: #10282d;
+  --sidebar-muted: #4f6066;
+  --sidebar-border: #ccd5da;
+  --sidebar-teal: #006c78;
+  --sidebar-panel: #f2f5f8;
+  background: #f4f7f9;
+  border-right: 1px solid var(--sidebar-border);
+  box-sizing: border-box;
+  color: var(--sidebar-ink);
+  display: flex;
+  flex: 0 0 192px;
+  flex-direction: column;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  justify-content: space-between;
+  min-height: 100vh;
+  padding: 18px 18px 16px;
+  text-align: left;
+}
+
+.admin-sidebar__content {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-sidebar__brand {
+  color: #006878;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.admin-sidebar__identity {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  margin: 11px 0 24px;
+}
+
+.admin-sidebar__avatar {
+  border: 1px solid #d0d9dc;
+  border-radius: 50%;
+  height: 29px;
+  object-fit: cover;
+  width: 29px;
+}
+
+.admin-sidebar__name,
+.admin-sidebar__role {
+  margin: 0;
+}
+
+.admin-sidebar__name {
+  color: var(--sidebar-ink);
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.admin-sidebar__role {
+  color: #202c30;
+  font-size: 10px;
+  line-height: 1.25;
+}
+
+.admin-sidebar__new-program {
+  align-items: center;
+  background: var(--sidebar-teal);
+  border: 0;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  font-size: 11px;
+  gap: 8px;
+  justify-content: center;
+  letter-spacing: 0;
+  min-height: 36px;
+  padding: 8px 12px;
+}
+
+.admin-sidebar__new-program svg {
+  height: 16px;
+  width: 16px;
+}
+
+.admin-sidebar__nav {
+  margin-top: 25px;
+}
+
+.admin-sidebar__nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-sidebar__nav li + li {
+  margin-top: 7px;
+}
+
+.admin-sidebar__link {
+  align-items: center;
+  border-radius: 5px;
+  color: var(--sidebar-ink);
+  display: flex;
+  font-size: 11px;
+  gap: 11px;
+  line-height: 1;
+  min-height: 31px;
+  padding: 4px 10px;
+  text-decoration: none;
+}
+
+.admin-sidebar__link svg {
+  flex: 0 0 auto;
+  height: 16px;
+  width: 16px;
+}
+
+.admin-sidebar__link:hover {
+  background: #e5edf0;
+}
+
+.admin-sidebar__link--active {
+  background: #dbe4e8;
+  box-shadow: inset -3px 0 0 var(--sidebar-teal);
+  color: #006578;
+}
+
+.admin-sidebar__active-arrow {
+  margin-left: auto;
+  opacity: 0;
+}
+
+.admin-sidebar__footer {
+  border-top: 1px solid var(--sidebar-border);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 14px;
+}
+
+.admin-sidebar__footer-action {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--sidebar-ink);
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  font-size: 11px;
+  gap: 12px;
+  padding: 0;
+  text-align: left;
+  text-decoration: none;
+}
+
+.admin-sidebar__footer-action svg {
+  height: 15px;
+  width: 15px;
+}
+
+.admin-sidebar__footer-action--logout {
+  color: #c41212;
+}
+
+.admin-sidebar__help {
+  align-self: flex-start;
+  background: transparent;
+  border: 0;
+  color: var(--sidebar-muted);
+  cursor: pointer;
+  display: none;
+  padding: 0;
+}
+
+@media (max-width: 760px) {
+  .admin-sidebar {
+    flex-basis: auto;
+    min-height: auto;
+    padding: 14px 16px;
+  }
+
+  .admin-sidebar__identity,
+  .admin-sidebar__new-program,
+  .admin-sidebar__footer,
+  .admin-sidebar__nav {
+    display: none;
+  }
+
+  .admin-sidebar__content {
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .admin-sidebar__content::after {
+    color: var(--sidebar-muted);
+    content: "Admin Console";
+    font-size: 11px;
+  }
+}
