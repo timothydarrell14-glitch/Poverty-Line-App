@@ -1,8 +1,8 @@
-import AdminHome from "./AdminHome";
+import Home from "./Home";
 
 function AdminPage() {
     return (
-        <AdminHome />
+        <Home />
     );
 }
 
