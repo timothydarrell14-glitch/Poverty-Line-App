@@ -53,3 +53,48 @@ def login():
 
 	access_token = create_access_token(identity=str(user.user_id))
 	return jsonify({"access_token": access_token, "user": user_schema.dump(user)}), 200
+
+
+
+@users_bp.route("", methods=["GET"])
+def list_users():
+	page = request.args.get("page", 1, type=int)
+	per_page = request.args.get("per_page", 20, type=int)
+	search = request.args.get("search")
+	location = request.args.get("location")
+	education_level = request.args.get("education_level")
+	poverty_classification = request.args.get("poverty_classification")
+
+	query = User.query
+
+	if search:
+		like = f"%{search}%"
+		query = query.filter(
+			(User.first_name.ilike(like))
+			| (User.last_name.ilike(like))
+			| (User.email.ilike(like))
+		)
+	if location:
+		query = query.filter(User.location.ilike(f"%{location}%"))
+	if education_level:
+		query = query.filter_by(education_level=education_level)
+	if poverty_classification:
+		query = query.filter_by(poverty_classification=poverty_classification)
+
+	pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+
+	return jsonify(
+		{
+			"users": users_schema.dump(pagination.items),
+			"total": pagination.total,
+			"page": pagination.page,
+			"per_page": pagination.per_page,
+			"pages": pagination.pages,
+		}
+	), 200
+
+
+@users_bp.route("/<int:user_id>", methods=["GET"])
+def get_user(user_id):
+	user = User.query.get_or_404(user_id)
+	return jsonify(user_schema.dump(user)), 200
