@@ -1,4 +1,4 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import HomePage from "./Homepage";
 import GetHelpPage from "./pages/GetHelpPage";
 import "./App.css";
@@ -26,14 +26,16 @@ const CommunityPlaceholder = () => (
 
 function App() {
   return (
-    <main>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/get-help" element={<GetHelpPage />} />
-        <Route path="/jobs" element={<JobsPlaceholder />} />
-        <Route path="/community" element={<CommunityPlaceholder />} />
-      </Routes>
-    </main>
+    <Router>
+      <main>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/get-help" element={<GetHelpPage />} />
+          <Route path="/jobs" element={<JobsPlaceholder />} />
+          <Route path="/community" element={<CommunityPlaceholder />} />
+        </Routes>
+      </main>
+    </Router>
   );
 }
 
