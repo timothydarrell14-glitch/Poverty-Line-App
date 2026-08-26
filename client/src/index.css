@@ -16,3 +16,33 @@ body {
 #root {
   width: 100%;
 }
+
+.tooltip {
+  position: relative;
+}
+
+.tooltip::after {
+  background: #17242a;
+  border-radius: 4px;
+  color: #fff;
+  content: attr(data-tooltip);
+  font: 12px/1.2 "Trebuchet MS", "Segoe UI", sans-serif;
+  left: 50%;
+  opacity: 0;
+  padding: 6px 8px;
+  pointer-events: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  transform: translate(-50%, -4px);
+  transition: opacity 150ms ease, transform 150ms ease;
+  visibility: hidden;
+  white-space: nowrap;
+  z-index: 20;
+}
+
+.tooltip:hover::after,
+.tooltip:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  visibility: visible;
+}

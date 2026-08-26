@@ -1,6 +1,9 @@
+import { useState } from "react";
 import {
   FiBox,
   FiChevronRight,
+  FiChevronsLeft,
+  FiChevronsRight,
   FiGrid,
   FiMessageSquare,
   FiPlus,
@@ -21,9 +24,28 @@ const navigationItems = [
 ];
 
 function SideBar() {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
   return (
-    <aside className="admin-sidebar" aria-label="Admin navigation">
+    <aside
+      className={`admin-sidebar${isCollapsed ? " admin-sidebar--collapsed" : ""}`}
+      aria-label="Admin navigation"
+    >
       <div className="admin-sidebar__content">
+        <button
+          className="admin-sidebar__collapse-button tooltip"
+          type="button"
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-expanded={!isCollapsed}
+          data-tooltip={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          onClick={() => setIsCollapsed((collapsed) => !collapsed)}
+        >
+          {isCollapsed ? (
+            <FiChevronsRight aria-hidden="true" />
+          ) : (
+            <FiChevronsLeft aria-hidden="true" />
+          )}
+        </button>
         <div className="admin-sidebar__identity">
           <img
             className="admin-sidebar__avatar"
@@ -47,8 +69,9 @@ function SideBar() {
               <li key={label}>
                 <NavLink
                   className={({ isActive }) =>
-                    `admin-sidebar__link${isActive ? " admin-sidebar__link--active" : ""}`
+                    `admin-sidebar__link tooltip${isActive ? " admin-sidebar__link--active" : ""}`
                   }
+                  data-tooltip={label}
                   end={to === "/admin"}
                   to={to}
                 >

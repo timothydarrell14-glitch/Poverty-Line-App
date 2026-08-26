@@ -5,15 +5,18 @@
   --sidebar-teal: #006c78;
   --sidebar-panel: #f2f5f8;
   background: #f4f7f9;
-  border-right: 1px solid var(--sidebar-border);
+  border: 1px solid var(--sidebar-border);
+  border-radius: 14px;
   box-sizing: border-box;
   color: var(--sidebar-ink);
   display: flex;
+  align-self: flex-start;
   flex: 0 0 224px;
   flex-direction: column;
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
-  justify-content: space-between;
+  height: auto;
   min-height: 0;
+  margin: 16px 0 16px 16px;
   padding: 22px 20px 18px;
   text-align: left;
 }
@@ -21,6 +24,23 @@
 .admin-sidebar__content {
   display: flex;
   flex-direction: column;
+}
+
+.admin-sidebar__collapse-button {
+  align-self: flex-end;
+  background: transparent;
+  border: 0;
+  color: var(--sidebar-muted);
+  cursor: pointer;
+  display: grid;
+  margin: -4px -4px 10px 0;
+  padding: 4px;
+  place-items: center;
+}
+
+.admin-sidebar__collapse-button svg {
+  height: 18px;
+  width: 18px;
 }
 
 .admin-sidebar__identity {
@@ -122,6 +142,49 @@
   background: #dbe4e8;
   box-shadow: inset -3px 0 0 var(--sidebar-teal);
   color: #006578;
+}
+
+.admin-sidebar--collapsed {
+  flex-basis: 72px;
+  padding-inline: 12px;
+}
+
+.admin-sidebar--collapsed .admin-sidebar__collapse-button {
+  align-self: center;
+  margin-right: 0;
+}
+
+.admin-sidebar--collapsed .admin-sidebar__identity {
+  display: none;
+}
+
+.admin-sidebar--collapsed .admin-sidebar__new-program {
+  padding: 9px;
+}
+
+.admin-sidebar--collapsed .admin-sidebar__new-program span,
+.admin-sidebar--collapsed .admin-sidebar__link span,
+.admin-sidebar--collapsed .admin-sidebar__active-arrow {
+  display: none;
+}
+
+.admin-sidebar--collapsed .admin-sidebar__link {
+  justify-content: center;
+  padding-inline: 6px;
+}
+
+.admin-sidebar--collapsed .admin-sidebar__link.tooltip::after,
+.admin-sidebar__collapse-button.tooltip::after {
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
+.admin-sidebar--collapsed .admin-sidebar__link.tooltip:hover::after,
+.admin-sidebar--collapsed .admin-sidebar__link.tooltip:focus-visible::after,
+.admin-sidebar__collapse-button.tooltip:hover::after,
+.admin-sidebar__collapse-button.tooltip:focus-visible::after {
+  transform: translate(0, -50%);
 }
 
 .admin-sidebar__active-arrow {

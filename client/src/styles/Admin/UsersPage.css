@@ -15,12 +15,14 @@
 }
 .admin-users__topbar {
   align-items: center;
-  background: #fff;
-  border-bottom: 1px solid #e4e8eb;
+  backdrop-filter: blur(14px);
+  background: rgb(255 255 255 / 72%);
+  border-bottom: 1px solid rgb(228 232 235 / 28%);
   display: flex;
   min-height: 64px;
   padding: 0 clamp(24px, 3vw, 52px);
   position: relative;
+  z-index: 10;
 }
 .admin-users__brand {
   color: #006878;
@@ -98,6 +100,24 @@
   flex: 1;
   min-height: 0;
   overflow: auto;
+  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
+}
+.admin-users__body:hover {
+  scrollbar-color: #aab8bd transparent;
+}
+.admin-users__body::-webkit-scrollbar {
+  width: 9px;
+}
+.admin-users__body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.admin-users__body::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 999px;
+}
+.admin-users__body:hover::-webkit-scrollbar-thumb {
+  background: #aab8bd;
 }
 .admin-users__main {
   margin: 0 auto;
@@ -187,14 +207,16 @@
 }
 .admin-users__table-panel {
   margin-top: 24px;
-  overflow: hidden;
+  overflow: visible;
 }
 .admin-users__table-scroll {
-  overflow-x: auto;
+  border-radius: 8px 8px 0 0;
+  overflow-x: clip;
 }
 .admin-users table {
   border-collapse: collapse;
-  min-width: 620px;
+  min-width: 0;
+  table-layout: fixed;
   width: 100%;
 }
 .admin-users th {
@@ -209,6 +231,7 @@
 }
 .admin-users th:last-child,
 .admin-users td:last-child {
+  padding-right: 32px;
   text-align: center;
   width: 62px;
 }
@@ -218,12 +241,13 @@
   font-size: 13px;
   padding: 15px 18px;
   vertical-align: middle;
+  word-break: break-word;
 }
 .admin-users__person {
   align-items: center;
   display: flex;
   gap: 11px;
-  min-width: 205px;
+  min-width: 0;
 }
 .admin-users__person img,
 .admin-users__initials {
@@ -315,6 +339,15 @@
 .admin-users__pagination svg {
   height: 15px;
   width: 15px;
+}
+.admin-users__pagination .tooltip::after {
+  bottom: calc(100% + 8px);
+  top: auto;
+  transform: translate(-50%, 4px);
+}
+.admin-users__pagination .tooltip:hover::after,
+.admin-users__pagination .tooltip:focus-visible::after {
+  transform: translate(-50%, 0);
 }
 
 @media (max-width: 760px) {

@@ -69,22 +69,23 @@ function Users() {
             />
           </label>
           <div className="admin-users__topbar-actions">
-            <button type="button" aria-label="Notifications">
+            <button className="tooltip" type="button" aria-label="Notifications" data-tooltip="Notifications">
               <FiBell aria-hidden="true" />
             </button>
-            <button type="button" aria-label="Help">
+            <button className="tooltip" type="button" aria-label="Help" data-tooltip="Help">
               <FiHelpCircle aria-hidden="true" />
             </button>
-            <button type="button" aria-label="Account">
+            <button className="tooltip" type="button" aria-label="Account" data-tooltip="Account">
               <FiUser aria-hidden="true" />
             </button>
-            <button type="button" aria-label="Theme toggle">
+            <button className="tooltip" type="button" aria-label="Theme toggle" data-tooltip="Theme toggle">
               <FiMoon aria-hidden="true" />
             </button>
             <button
-              className="admin-users__logout"
+              className="admin-users__logout tooltip"
               type="button"
               aria-label="Logout"
+              data-tooltip="Logout"
             >
               <FiLogOut aria-hidden="true" />
             </button>
@@ -185,9 +186,10 @@ function Users() {
                       <td>{user.lastActive}</td>
                       <td>
                         <button
-                          className="admin-users__row-menu"
+                          className="admin-users__row-menu tooltip"
                           type="button"
                           aria-label={`Actions for ${user.name}`}
+                          data-tooltip={`Actions for ${user.name}`}
                         >
                           <FiMoreVertical aria-hidden="true" />
                         </button>
@@ -200,10 +202,10 @@ function Users() {
             <footer className="admin-users__pagination">
               <span>Showing 1 to 4 of 24 users</span>
               <div>
-                <button type="button" aria-label="Previous page">
+                <button className="tooltip" type="button" aria-label="Previous page" data-tooltip="Previous page">
                   <FiChevronLeft aria-hidden="true" />
                 </button>
-                <button type="button" aria-label="Next page">
+                <button className="tooltip" type="button" aria-label="Next page" data-tooltip="Next page">
                   <FiChevronRight aria-hidden="true" />
                 </button>
               </div>

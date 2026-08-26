@@ -19,6 +19,24 @@
   flex: 1;
   min-height: 0;
   overflow: auto;
+  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
+}
+.admin-home__body:hover {
+  scrollbar-color: #aab8bd transparent;
+}
+.admin-home__body::-webkit-scrollbar {
+  width: 9px;
+}
+.admin-home__body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.admin-home__body::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 999px;
+}
+.admin-home__body:hover::-webkit-scrollbar-thumb {
+  background: #aab8bd;
 }
 .admin-home__workspace {
   display: flex;
@@ -28,12 +46,14 @@
 }
 .admin-home__topbar {
   align-items: center;
-  background: #fff;
-  border-bottom: 1px solid #e4e8eb;
+  backdrop-filter: blur(14px);
+  background: rgb(255 255 255 / 72%);
+  border-bottom: 1px solid rgb(228 232 235 / 28%);
   display: flex;
   min-height: 64px;
   padding: 0 clamp(24px, 3vw, 52px);
   position: relative;
+  z-index: 10;
 }
 .admin-home__brand {
   color: #006878;

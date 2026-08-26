@@ -56,23 +56,24 @@ function Home() {
             <input id="admin-search" type="search" placeholder="Search..." />
           </label>
           <div className="admin-home__topbar-actions">
-            <button type="button" aria-label="Notifications">
+            <button className="tooltip" type="button" aria-label="Notifications" data-tooltip="Notifications">
               <FiBell aria-hidden="true" />
               <span className="admin-home__notification-dot" />
             </button>
-            <button type="button" aria-label="Help">
+            <button className="tooltip" type="button" aria-label="Help" data-tooltip="Help">
               <FiHelpCircle aria-hidden="true" />
             </button>
-            <button type="button" aria-label="Account">
+            <button className="tooltip" type="button" aria-label="Account" data-tooltip="Account">
               <FiUser aria-hidden="true" />
             </button>
-            <button type="button" aria-label="Theme toggle">
+            <button className="tooltip" type="button" aria-label="Theme toggle" data-tooltip="Theme toggle">
               <FiMoon aria-hidden="true" />
             </button>
             <button
-              className="admin-home__logout"
+              className="admin-home__logout tooltip"
               type="button"
               aria-label="Logout"
+              data-tooltip="Logout"
             >
               <FiLogOut aria-hidden="true" />
             </button>
