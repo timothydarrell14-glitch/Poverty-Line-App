@@ -6,6 +6,7 @@ import ProgressSection from './components/ProgressSection';
 import Footer from './components/Footer';
 import ContactScreen from './components/ContactScreen';
 import GetHelpPage from './pages/GetHelpPage';
+import './styles/Homepage.css';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('home');
