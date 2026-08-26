@@ -56,4 +56,10 @@ def create_app():
 	from app.controllers.community_posts_controller import community_posts_bp
 	app.register_blueprint(community_posts_bp)
 
+	from app.controllers.assessment_questions_controller import assessment_questions_bp
+	app.register_blueprint(assessment_questions_bp)
+
+	from app.controllers.assessment_responses_controller import assessment_responses_bp
+	app.register_blueprint(assessment_responses_bp)
+
 	return app
