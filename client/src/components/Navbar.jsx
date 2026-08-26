@@ -16,10 +16,12 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate, onOpenLogin }) =
   const items = [
     ['/', 'home', 'Home'],
     ['/get-help', 'get-help', 'Get Help'],
+    ['/community', 'community', 'Community'],
     ['/donors', 'donors', 'Donors'],
     ['/organisations', 'organisations', 'Organisations'],
     ['/contact', 'contact', 'Contact Us'],
   ];
+
 
   const handleSelect = (path, id) => {
     setOpen(false);
