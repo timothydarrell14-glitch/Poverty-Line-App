@@ -13,6 +13,7 @@ class Organisation(db.Model):
 	website = db.Column(db.String(255))
 	location = db.Column(db.String(255))
 	verified = db.Column(db.Boolean, nullable=False, default=False)
+	owner_user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
 
 	programs = db.relationship("Program", back_populates="organisation")
 	jobs = db.relationship("Job", back_populates="organisation")
