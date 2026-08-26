@@ -231,9 +231,10 @@
 }
 .admin-users th:last-child,
 .admin-users td:last-child {
+  padding-left: 16px;
   padding-right: 32px;
   text-align: center;
-  width: 62px;
+  width: 112px;
 }
 .admin-users td {
   border-top: 1px solid #d1d9dc;
