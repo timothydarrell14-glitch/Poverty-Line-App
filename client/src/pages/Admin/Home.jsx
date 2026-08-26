@@ -9,8 +9,9 @@ import {
   FiUser,
   FiUsers,
 } from "react-icons/fi";
-import SideBar from "../../components/SideBar";
-import "../../styles/Admin/AdminHomePage.css";
+import { Link } from "react-router-dom";
+import SideBar from "../../components/Admin/SideBar"
+import "../../styles/Admin/Home.css";
 
 const activities = [
   {
@@ -44,9 +45,9 @@ function Home() {
   return (
     <div className="admin-home">
       <header className="admin-home__topbar">
-        <a className="admin-home__brand" href="#dashboard">
+        <Link className="admin-home__brand" to="/admin">
           Poverty Line
-        </a>
+        </Link>
         <div className="admin-home__topbar-content">
           <label className="admin-home__search" htmlFor="admin-search">
             <FiSearch aria-hidden="true" />
@@ -68,7 +69,7 @@ function Home() {
       </header>
 
       <div className="admin-home__body">
-        <SideBar activeItem="Dashboard" />
+        <SideBar />
         <div className="admin-home__workspace">
         <main className="admin-home__main">
           <section

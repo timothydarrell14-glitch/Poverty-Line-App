@@ -11,18 +11,19 @@ import {
   FiTruck,
   FiUsers,
 } from "react-icons/fi";
-import "../styles/Admin/SideBar.css";
+import { NavLink } from "react-router-dom";
+import "../../styles/Admin/SideBar.css";
 
 const navigationItems = [
-  { label: "Dashboard", icon: FiGrid },
-  { label: "Users", icon: FiUsers },
-  { label: "Programs", icon: FiBox },
-  { label: "Deliveries", icon: FiTruck },
-  { label: "Chats", icon: FiMessageSquare },
-  { label: "Settings", icon: FiSettings },
+  { label: "Dashboard", icon: FiGrid, to: "/admin" },
+  { label: "Users", icon: FiUsers, to: "/admin/users" },
+  { label: "Programs", icon: FiBox, to: "/admin/programs" },
+  { label: "Deliveries", icon: FiTruck, to: "/admin/deliveries" },
+  { label: "Chats", icon: FiMessageSquare, to: "/admin/chats" },
+  { label: "Settings", icon: FiSettings, to: "/admin/settings" },
 ];
 
-function SideBar({ activeItem = "Dashboard" }) {
+function SideBar() {
   return (
     <aside className="admin-sidebar" aria-label="Admin navigation">
       <div className="admin-sidebar__content">
@@ -45,28 +46,24 @@ function SideBar({ activeItem = "Dashboard" }) {
 
         <nav className="admin-sidebar__nav">
           <ul>
-            {navigationItems.map(({ label, icon: Icon }) => {
-              const isActive = label === activeItem;
-
-              return (
-                <li key={label}>
-                  <a
-                    className={`admin-sidebar__link${isActive ? " admin-sidebar__link--active" : ""}`}
-                    href={`#${label.toLowerCase()}`}
-                    aria-current={isActive ? "page" : undefined}
-                  >
+            {navigationItems.map(({ label, icon: Icon, to }) => (
+              <li key={label}>
+                <NavLink
+                  className={({ isActive }) =>
+                    `admin-sidebar__link${isActive ? " admin-sidebar__link--active" : ""}`
+                  }
+                  end={to === "/admin"}
+                  to={to}
+                >
                     <Icon aria-hidden="true" />
                     <span>{label}</span>
-                    {isActive && (
-                      <FiChevronRight
-                        className="admin-sidebar__active-arrow"
-                        aria-hidden="true"
-                      />
-                    )}
-                  </a>
-                </li>
-              );
-            })}
+                    <FiChevronRight
+                      className="admin-sidebar__active-arrow"
+                      aria-hidden="true"
+                    />
+                </NavLink>
+              </li>
+            ))}
           </ul>
         </nav>
       </div>

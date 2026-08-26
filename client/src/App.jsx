@@ -1,9 +1,22 @@
 import './App.css'
-import AdminPage from './pages/Admin/AdminPage';
+import { Navigate, Route, Routes } from 'react-router-dom'
+import Deliveries from './pages/Admin/Deliveries'
+import Home from './pages/Admin/Home'
+import Programs from './pages/Admin/Programs'
+import Settings from './pages/Admin/Settings'
+import Users from './pages/Admin/Users'
 
 function App() {
   return (
-    <AdminPage />
+    <Routes>
+      <Route path="/" element={<Navigate replace to="/admin" />} />
+      <Route path="/admin" element={<Home />} />
+      <Route path="/admin/users" element={<Users />} />
+      <Route path="/admin/programs" element={<Programs />} />
+      <Route path="/admin/deliveries" element={<Deliveries />} />
+      <Route path="/admin/settings" element={<Settings />} />
+      <Route path="*" element={<Navigate replace to="/admin" />} />
+    </Routes>
   )
 }
 

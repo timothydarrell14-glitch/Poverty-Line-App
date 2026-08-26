@@ -1,5 +1,5 @@
-{/* Title(Programs/Donations), description, NavBar(Active, Suspended, Completed) */}
+function Programs() {
+  return <h1>Programs</h1>;
+}
 
-{/* Program Cards (Image, Title, Description, Budget, Impact, label) + view Details(+requirements) */ }
-
-{/* Total Donations */}
+export default Programs;

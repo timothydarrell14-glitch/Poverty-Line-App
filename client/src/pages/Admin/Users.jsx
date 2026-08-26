@@ -8,7 +8,8 @@ import {
   FiUserPlus,
   FiUser,
 } from "react-icons/fi";
-import SideBar from "../../components/SideBar";
+import { Link } from "react-router-dom";
+import SideBar from "../../components/Admin/SideBar";
 import "../../styles/Admin/UsersPage.css";
 
 const users = [
@@ -50,9 +51,9 @@ function Users() {
   return (
     <div className="admin-users">
       <header className="admin-users__topbar">
-        <a className="admin-users__brand" href="#dashboard">
+        <Link className="admin-users__brand" to="/admin">
           Poverty Line
-        </a>
+        </Link>
         <div className="admin-users__topbar-content">
           <label
             className="admin-users__global-search"
@@ -80,7 +81,7 @@ function Users() {
       </header>
 
       <div className="admin-users__body">
-        <SideBar activeItem="Users" />
+        <SideBar />
         <main className="admin-users__main">
           <div className="admin-users__page-heading">
             <div>
