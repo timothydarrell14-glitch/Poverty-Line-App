@@ -32,7 +32,6 @@ class JobUpdateSchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
 		model = Job
 		load_instance = False
-		partial = True
 		fields = (
 			"title",
 			"description",
@@ -47,4 +46,4 @@ class JobUpdateSchema(ma.SQLAlchemyAutoSchema):
 job_schema = JobSchema()
 jobs_schema = JobSchema(many=True)
 job_create_schema = JobCreateSchema()
-job_update_schema = JobUpdateSchema()
+job_update_schema = JobUpdateSchema(partial=True)
