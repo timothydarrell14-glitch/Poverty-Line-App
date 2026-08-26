@@ -8,6 +8,7 @@ class OrganisationSchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
 		model = Organisation
 		load_instance = False
+		include_fk = True
 
 
 class OrganisationCreateSchema(ma.SQLAlchemyAutoSchema):

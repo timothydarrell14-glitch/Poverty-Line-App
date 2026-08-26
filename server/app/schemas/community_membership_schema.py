@@ -8,6 +8,7 @@ class CommunityMembershipSchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
 		model = CommunityMembership
 		load_instance = False
+		include_fk = True
 
 
 class CommunityMembershipCreateSchema(ma.SQLAlchemyAutoSchema):

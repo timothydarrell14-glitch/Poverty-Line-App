@@ -8,6 +8,7 @@ class DonationSchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
 		model = Donation
 		load_instance = False
+		include_fk = True
 
 
 class DonationCreateSchema(ma.SQLAlchemyAutoSchema):

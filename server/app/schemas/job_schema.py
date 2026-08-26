@@ -8,6 +8,7 @@ class JobSchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
 		model = Job
 		load_instance = False
+		include_fk = True
 
 
 class JobCreateSchema(ma.SQLAlchemyAutoSchema):

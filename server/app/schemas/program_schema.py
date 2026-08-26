@@ -8,6 +8,7 @@ class ProgramSchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
 		model = Program
 		load_instance = False
+		include_fk = True
 
 
 class ProgramCreateSchema(ma.SQLAlchemyAutoSchema):
