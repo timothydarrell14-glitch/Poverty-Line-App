@@ -35,5 +35,19 @@ def create_app():
     from app.controllers.users_controller import users_bp
     app.register_blueprint(users_bp)
     app.register_blueprint(callback_bp)
+    from app.controllers.jobs_controller import jobs_bp
+    app.register_blueprint(jobs_bp)
+
+    from app.controllers.job_applications_controller import job_applications_bp
+    app.register_blueprint(job_applications_bp)
+
+    from app.controllers.programs_controller import programs_bp
+    app.register_blueprint(programs_bp)
+
+    from app.controllers.program_memberships_controller import program_memberships_bp
+    app.register_blueprint(program_memberships_bp)
+
+    from app.controllers.donations_controller import donations_bp
+    app.register_blueprint(donations_bp)
 
     return app
