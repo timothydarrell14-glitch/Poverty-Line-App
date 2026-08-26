@@ -62,4 +62,7 @@ def create_app():
 	from app.controllers.assessment_responses_controller import assessment_responses_bp
 	app.register_blueprint(assessment_responses_bp)
 
+	from app.controllers.organisations_controller import organisations_bp
+	app.register_blueprint(organisations_bp)
+
 	return app
