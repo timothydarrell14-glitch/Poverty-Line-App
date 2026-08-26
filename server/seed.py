@@ -338,3 +338,122 @@ def seed_job_applications(users, jobs):
 	db.session.add_all(applications)
 	db.session.commit()
 	return applications
+
+
+
+
+def seed_programs(organisations):
+	programs = [
+		Program(
+			organisation_id=organisations[0].organisation_id,
+			name="Kericho Smallholder Support",
+			description="Training and input support for small tea and vegetable farmers.",
+			category="Agriculture",
+			location="Kericho",
+			eligibility="Smallholder farmers with less than 2 acres",
+			start_date=date(2026, 1, 1),
+			end_date=date(2026, 12, 31),
+			status="active",
+		),
+		Program(
+			organisation_id=organisations[1].organisation_id,
+			name="Kisumu Youth Skills",
+			description="Digital and vocational skills training for unemployed youth.",
+			category="Education",
+			location="Kisumu",
+			eligibility="Ages 18-30, unemployed",
+			start_date=date(2026, 2, 1),
+			end_date=date(2026, 11, 30),
+			status="active",
+		),
+		Program(
+			organisation_id=organisations[2].organisation_id,
+			name="Coastal Women Empowerment",
+			description="Business and craft training for women's savings groups.",
+			category="Livelihood",
+			location="Mombasa",
+			eligibility="Women aged 18+ in a registered savings group",
+			start_date=date(2026, 3, 1),
+			end_date=date(2026, 12, 31),
+			status="active",
+		),
+		Program(
+			organisation_id=organisations[3].organisation_id,
+			name="Nairobi Digital Literacy",
+			description="Basic computer and smartphone skills for job seekers.",
+			category="Education",
+			location="Nairobi",
+			eligibility="Open to all unemployed adults",
+			start_date=date(2026, 1, 15),
+			end_date=date(2026, 6, 15),
+			status="active",
+		),
+	]
+	db.session.add_all(programs)
+	db.session.commit()
+	return programs
+
+
+def seed_program_memberships(users, programs):
+	memberships = [
+		ProgramMembership(user_id=users[4].user_id, program_id=programs[0].program_id, status="active"),
+		ProgramMembership(user_id=users[5].user_id, program_id=programs[1].program_id, status="active"),
+		ProgramMembership(user_id=users[6].user_id, program_id=programs[2].program_id, status="active"),
+		ProgramMembership(user_id=users[7].user_id, program_id=programs[3].program_id, status="active"),
+		ProgramMembership(user_id=users[0].user_id, program_id=programs[0].program_id, status="active"),
+	]
+	db.session.add_all(memberships)
+	db.session.commit()
+	return memberships
+
+
+def seed_donations(programs):
+	donations = [
+		Donation(
+			program_id=programs[0].program_id,
+			donor_name="Safaricom Foundation",
+			donor_type="Corporate",
+			amount=150000.00,
+			currency="KES",
+			donation_date=date(2026, 2, 10),
+			payment_method="Bank transfer",
+			anonymous=False,
+			transaction_reference="TXN-SF-001",
+		),
+		Donation(
+			program_id=programs[1].program_id,
+			donor_name="John Kiptoo",
+			donor_type="Individual",
+			amount=5000.00,
+			currency="KES",
+			donation_date=date(2026, 3, 5),
+			payment_method="M-Pesa",
+			anonymous=False,
+			transaction_reference="TXN-JK-002",
+		),
+		Donation(
+			program_id=programs[2].program_id,
+			donor_name=None,
+			donor_type="Individual",
+			amount=2000.00,
+			currency="KES",
+			donation_date=date(2026, 4, 1),
+			payment_method="M-Pesa",
+			anonymous=True,
+			transaction_reference="TXN-ANN-003",
+		),
+		Donation(
+			program_id=programs[3].program_id,
+			donor_name="Nairobi Rotary Club",
+			donor_type="Organisation",
+			amount=75000.00,
+			currency="KES",
+			donation_date=date(2026, 1, 20),
+			payment_method="Cheque",
+			anonymous=False,
+			transaction_reference="TXN-NRC-004",
+		),
+	]
+	db.session.add_all(donations)
+	db.session.commit()
+	return donations
