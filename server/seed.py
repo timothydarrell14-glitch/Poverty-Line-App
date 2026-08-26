@@ -457,3 +457,99 @@ def seed_donations(programs):
 	db.session.add_all(donations)
 	db.session.commit()
 	return donations
+
+
+def seed_communities():
+	communities = [
+		Community(
+			name="Kericho Farmers Circle",
+			description="A space for smallholder farmers to share tips and market prices.",
+			category="Agriculture",
+			location="Kericho",
+		),
+		Community(
+			name="Nairobi Job Seekers",
+			description="Peer support and job leads for people looking for work in Nairobi.",
+			category="Employment",
+			location="Nairobi",
+		),
+		Community(
+			name="Coastal Entrepreneurs",
+			description="Small business owners along the coast sharing ideas and support.",
+			category="Business",
+			location="Mombasa",
+		),
+	]
+	db.session.add_all(communities)
+	db.session.commit()
+	return communities
+
+
+def seed_community_posts(users, communities):
+	posts = [
+		CommunityPost(
+			community_id=communities[0].community_id,
+			user_id=users[0].user_id,
+			content="Tea prices are looking better this month, anyone else noticing this in Kericho?",
+		),
+		CommunityPost(
+			community_id=communities[1].community_id,
+			user_id=users[3].user_id,
+			content="Just landed a data entry role through this platform, happy to share tips.",
+		),
+		CommunityPost(
+			community_id=communities[2].community_id,
+			user_id=users[2].user_id,
+			content="Looking for two more members to join our beadwork cooperative.",
+		),
+		CommunityPost(
+			community_id=communities[1].community_id,
+			user_id=users[6].user_id,
+			content="Does anyone have advice for interviews with NGOs in Nairobi?",
+		),
+	]
+	db.session.add_all(posts)
+	db.session.commit()
+	return posts
+
+
+def seed_community_memberships(users, communities):
+	memberships = [
+		CommunityMembership(user_id=users[0].user_id, community_id=communities[0].community_id, role="member"),
+		CommunityMembership(user_id=users[4].user_id, community_id=communities[0].community_id, role="member"),
+		CommunityMembership(user_id=users[3].user_id, community_id=communities[1].community_id, role="moderator"),
+		CommunityMembership(user_id=users[6].user_id, community_id=communities[1].community_id, role="member"),
+		CommunityMembership(user_id=users[2].user_id, community_id=communities[2].community_id, role="moderator"),
+		CommunityMembership(user_id=users[7].user_id, community_id=communities[2].community_id, role="member"),
+	]
+	db.session.add_all(memberships)
+	db.session.commit()
+	return memberships
+
+
+def run_seed():
+	app = create_app()
+	with app.app_context():
+		clear_data()
+
+		users = seed_users()
+		questions = seed_assessment_questions()
+		seed_assessment_responses(users, questions)
+
+		organisations = seed_organisations(users)
+		jobs = seed_jobs(organisations)
+		seed_job_applications(users, jobs)
+
+		programs = seed_programs(organisations)
+		seed_program_memberships(users, programs)
+		seed_donations(programs)
+
+		communities = seed_communities()
+		seed_community_posts(users, communities)
+		seed_community_memberships(users, communities)
+
+		print("Database seeded successfully.")
+
+
+if __name__ == "__main__":
+	run_seed()
