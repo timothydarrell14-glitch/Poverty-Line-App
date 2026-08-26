@@ -63,7 +63,7 @@ def test_create_and_list_posts(client):
 	assert p_res.status_code == 201
 	p_data = p_res.get_json()
 	assert p_data["content"] == "Hello community!"
-	assert p_data["user"]["first_name"] == "Sarah"
+	assert p_data["user"]["first_name"] == "Caroline"
 
 	
 	get_res = client.get(f"/api/communities/{c_id}/posts")
