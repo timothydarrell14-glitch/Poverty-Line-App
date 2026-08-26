@@ -18,13 +18,13 @@
   background: #fff;
   border-bottom: 1px solid #e4e8eb;
   display: flex;
-  min-height: 56px;
-  padding: 0 31px;
+  min-height: 64px;
+  padding: 0 clamp(24px, 3vw, 52px);
   position: relative;
 }
 .admin-users__brand {
   color: #006878;
-  font-size: 18px;
+  font-size: 21px;
   font-weight: 700;
   line-height: 1.2;
   text-decoration: none;
@@ -46,12 +46,12 @@
   background: #ebeff3;
   border-radius: 20px;
   color: #1a383d;
-  height: 31px;
+  height: 38px;
   left: 50%;
-  padding: 0 11px;
+  padding: 0 14px;
   position: absolute;
   transform: translateX(-50%);
-  width: min(336px, 50%);
+  width: min(420px, 45%);
 }
 .admin-users__global-search input,
 .admin-users__user-search input {
@@ -59,7 +59,7 @@
   border: 0;
   color: #203238;
   font: inherit;
-  font-size: 12px;
+  font-size: 14px;
   min-width: 0;
   outline: 0;
   width: 100%;
@@ -71,13 +71,13 @@
 .admin-users__global-search svg,
 .admin-users__topbar-actions svg,
 .admin-users__user-search svg {
-  height: 16px;
-  width: 16px;
+  height: 18px;
+  width: 18px;
 }
 .admin-users__topbar-actions {
   align-items: center;
   display: flex;
-  gap: 22px;
+  gap: 26px;
 }
 .admin-users__topbar-actions button,
 .admin-users__row-menu,
@@ -90,6 +90,9 @@
   padding: 0;
   place-items: center;
 }
+.admin-users__topbar-actions .admin-users__logout {
+  color: #c41212;
+}
 .admin-users__body {
   display: flex;
   flex: 1;
@@ -98,8 +101,8 @@
 }
 .admin-users__main {
   margin: 0 auto;
-  max-width: 840px;
-  padding: 29px 30px 42px;
+  max-width: 1600px;
+  padding: 34px clamp(24px, 4vw, 64px) 48px;
   width: 100%;
 }
 .admin-users__page-heading {
@@ -113,13 +116,13 @@
 }
 .admin-users__page-heading h1 {
   color: #171f23;
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 600;
   line-height: 1.15;
 }
 .admin-users__page-heading p {
   color: #334047;
-  font-size: 12px;
+  font-size: 14px;
   margin-top: 8px;
 }
 .admin-users__add-button {
@@ -131,7 +134,7 @@
   cursor: pointer;
   display: flex;
   font: inherit;
-  font-size: 11px;
+  font-size: 13px;
   gap: 7px;
   padding: 9px 14px;
 }
@@ -151,16 +154,16 @@
   display: flex;
   justify-content: space-between;
   margin-top: 25px;
-  padding: 12px;
+  padding: 16px;
 }
 .admin-users__user-search {
   background: #f4f7fb;
   border: 1px solid #cbd5da;
   border-radius: 6px;
   color: #52636a;
-  height: 33px;
-  padding: 0 10px;
-  width: 240px;
+  height: 40px;
+  padding: 0 12px;
+  width: 320px;
 }
 .admin-users__role-filters {
   display: flex;
@@ -173,7 +176,7 @@
   color: #25343a;
   cursor: pointer;
   font: inherit;
-  font-size: 11px;
+  font-size: 13px;
   padding: 6px 14px;
   white-space: nowrap;
 }
@@ -197,9 +200,9 @@
 .admin-users th {
   background: #f2f5f9;
   color: #26353b;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
-  height: 40px;
+  height: 48px;
   letter-spacing: 0.2px;
   padding: 0 18px;
   text-align: left;
@@ -212,8 +215,8 @@
 .admin-users td {
   border-top: 1px solid #d1d9dc;
   color: #2c393f;
-  font-size: 11px;
-  padding: 12px 18px;
+  font-size: 13px;
+  padding: 15px 18px;
   vertical-align: middle;
 }
 .admin-users__person {
@@ -225,10 +228,10 @@
 .admin-users__person img,
 .admin-users__initials {
   border-radius: 50%;
-  flex: 0 0 29px;
-  height: 29px;
+  flex: 0 0 36px;
+  height: 36px;
   object-fit: cover;
-  width: 29px;
+  width: 36px;
 }
 .admin-users__initials {
   align-items: center;
@@ -244,19 +247,19 @@
 }
 .admin-users__person strong {
   color: #17242a;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 500;
 }
 .admin-users__person div span {
   color: #354348;
-  font-size: 10px;
+  font-size: 12px;
   margin-top: 3px;
 }
 .admin-users__role-badge,
 .admin-users__status {
   border-radius: 10px;
   display: inline-flex;
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1;
   padding: 4px 9px;
   white-space: nowrap;
@@ -297,9 +300,9 @@
   border-top: 1px solid #d1d9dc;
   color: #344248;
   display: flex;
-  font-size: 10px;
+  font-size: 12px;
   justify-content: space-between;
-  min-height: 39px;
+  min-height: 46px;
   padding: 0 16px 0 18px;
 }
 .admin-users__pagination div {

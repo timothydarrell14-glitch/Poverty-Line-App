@@ -2,10 +2,7 @@ import {
   FiBox,
   FiChevronRight,
   FiGrid,
-  FiHelpCircle,
-  FiLogOut,
   FiMessageSquare,
-  FiMoon,
   FiPlus,
   FiSettings,
   FiTruck,
@@ -66,27 +63,6 @@ function SideBar() {
             ))}
           </ul>
         </nav>
-      </div>
-
-      <div className="admin-sidebar__footer">
-        <button className="admin-sidebar__footer-action" type="button">
-          <FiMoon aria-hidden="true" />
-          <span>Theme Toggle</span>
-        </button>
-        <a
-          className="admin-sidebar__footer-action admin-sidebar__footer-action--logout"
-          href="#logout"
-        >
-          <FiLogOut aria-hidden="true" />
-          <span>Logout</span>
-        </a>
-        <button
-          className="admin-sidebar__help"
-          type="button"
-          aria-label="Help and support"
-        >
-          <FiHelpCircle aria-hidden="true" />
-        </button>
       </div>
     </aside>
   );

@@ -5,6 +5,8 @@ import {
   FiEdit2,
   FiFileText,
   FiHelpCircle,
+  FiLogOut,
+  FiMoon,
   FiSearch,
   FiUser,
   FiUsers,
@@ -63,6 +65,16 @@ function Home() {
             </button>
             <button type="button" aria-label="Account">
               <FiUser aria-hidden="true" />
+            </button>
+            <button type="button" aria-label="Theme toggle">
+              <FiMoon aria-hidden="true" />
+            </button>
+            <button
+              className="admin-home__logout"
+              type="button"
+              aria-label="Logout"
+            >
+              <FiLogOut aria-hidden="true" />
             </button>
           </div>
         </div>

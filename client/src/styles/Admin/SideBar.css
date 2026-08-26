@@ -9,12 +9,12 @@
   box-sizing: border-box;
   color: var(--sidebar-ink);
   display: flex;
-  flex: 0 0 192px;
+  flex: 0 0 224px;
   flex-direction: column;
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
   justify-content: space-between;
   min-height: 0;
-  padding: 18px 18px 16px;
+  padding: 22px 20px 18px;
   text-align: left;
 }
 
@@ -29,17 +29,17 @@
   border: 1px solid #c6d4d9;
   border-radius: 6px;
   display: flex;
-  gap: 10px;
+  gap: 12px;
   margin: 0 0 24px;
-  padding: 10px;
+  padding: 12px;
 }
 
 .admin-sidebar__avatar {
   border: 1px solid #d0d9dc;
   border-radius: 50%;
-  height: 29px;
+  height: 36px;
   object-fit: cover;
-  width: 29px;
+  width: 36px;
 }
 
 .admin-sidebar__name,
@@ -49,13 +49,13 @@
 
 .admin-sidebar__name {
   color: var(--sidebar-ink);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.25;
 }
 
 .admin-sidebar__role {
   color: #202c30;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.25;
 }
 
@@ -68,12 +68,12 @@
   cursor: pointer;
   display: flex;
   font: inherit;
-  font-size: 11px;
+  font-size: 13px;
   gap: 8px;
   justify-content: center;
   letter-spacing: 0;
-  min-height: 36px;
-  padding: 8px 12px;
+  min-height: 42px;
+  padding: 9px 14px;
 }
 
 .admin-sidebar__new-program svg {
@@ -100,11 +100,11 @@
   border-radius: 5px;
   color: var(--sidebar-ink);
   display: flex;
-  font-size: 11px;
+  font-size: 13px;
   gap: 11px;
   line-height: 1;
-  min-height: 31px;
-  padding: 4px 10px;
+  min-height: 38px;
+  padding: 6px 11px;
   text-decoration: none;
 }
 
@@ -129,48 +129,6 @@
   opacity: 0;
 }
 
-.admin-sidebar__footer {
-  border-top: 1px solid var(--sidebar-border);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding-top: 14px;
-}
-
-.admin-sidebar__footer-action {
-  align-items: center;
-  background: transparent;
-  border: 0;
-  color: var(--sidebar-ink);
-  cursor: pointer;
-  display: flex;
-  font: inherit;
-  font-size: 11px;
-  gap: 12px;
-  padding: 0;
-  text-align: left;
-  text-decoration: none;
-}
-
-.admin-sidebar__footer-action svg {
-  height: 15px;
-  width: 15px;
-}
-
-.admin-sidebar__footer-action--logout {
-  color: #c41212;
-}
-
-.admin-sidebar__help {
-  align-self: flex-start;
-  background: transparent;
-  border: 0;
-  color: var(--sidebar-muted);
-  cursor: pointer;
-  display: none;
-  padding: 0;
-}
-
 @media (max-width: 760px) {
   .admin-sidebar {
     flex-basis: auto;
@@ -180,7 +138,6 @@
 
   .admin-sidebar__identity,
   .admin-sidebar__new-program,
-  .admin-sidebar__footer,
   .admin-sidebar__nav {
     display: none;
   }

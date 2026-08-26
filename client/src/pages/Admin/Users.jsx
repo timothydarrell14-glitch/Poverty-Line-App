@@ -3,6 +3,8 @@ import {
   FiChevronLeft,
   FiChevronRight,
   FiHelpCircle,
+  FiLogOut,
+  FiMoon,
   FiMoreVertical,
   FiSearch,
   FiUserPlus,
@@ -75,6 +77,16 @@ function Users() {
             </button>
             <button type="button" aria-label="Account">
               <FiUser aria-hidden="true" />
+            </button>
+            <button type="button" aria-label="Theme toggle">
+              <FiMoon aria-hidden="true" />
+            </button>
+            <button
+              className="admin-users__logout"
+              type="button"
+              aria-label="Logout"
+            >
+              <FiLogOut aria-hidden="true" />
             </button>
           </div>
         </div>
