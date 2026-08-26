@@ -11,43 +11,49 @@ load_dotenv()
 
 
 def create_app():
-    """Application factory function to instantiate the Flask app."""
-    app = Flask(__name__)
+	app = Flask(__name__)
 
-    # Configure app settings
-    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-key")
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///app.db")
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY", "dev-jwt-secret")
+	app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-key")
+	app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///app.db")
+	app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+	app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY", "dev-jwt-secret")
 
-    # Initialize extensions with the app
-    db.init_app(app)
-    migrate.init_app(app, db)
-    ma.init_app(app)
-    cors.init_app(app)
-    jwt.init_app(app)
+	db.init_app(app)
+	migrate.init_app(app, db)
+	ma.init_app(app)
+	cors.init_app(app)
+	jwt.init_app(app)
 
-    @app.route("/")
-    def home():
-        return jsonify({"message": "Welcome to the BACKEND API!"})
+	@app.route("/")
+	def home():
+		return jsonify({"message": "Welcome to the BACKEND API!"})
 
-    # Register blueprints
-    from app.controllers.users_controller import users_bp
-    app.register_blueprint(users_bp)
-    app.register_blueprint(callback_bp)
-    from app.controllers.jobs_controller import jobs_bp
-    app.register_blueprint(jobs_bp)
+	from app.controllers.users_controller import users_bp
+	app.register_blueprint(users_bp)
+	app.register_blueprint(callback_bp)
 
-    from app.controllers.job_applications_controller import job_applications_bp
-    app.register_blueprint(job_applications_bp)
+	from app.controllers.jobs_controller import jobs_bp
+	app.register_blueprint(jobs_bp)
 
-    from app.controllers.programs_controller import programs_bp
-    app.register_blueprint(programs_bp)
+	from app.controllers.job_applications_controller import job_applications_bp
+	app.register_blueprint(job_applications_bp)
 
-    from app.controllers.program_memberships_controller import program_memberships_bp
-    app.register_blueprint(program_memberships_bp)
+	from app.controllers.programs_controller import programs_bp
+	app.register_blueprint(programs_bp)
 
-    from app.controllers.donations_controller import donations_bp
-    app.register_blueprint(donations_bp)
+	from app.controllers.program_memberships_controller import program_memberships_bp
+	app.register_blueprint(program_memberships_bp)
 
-    return app
+	from app.controllers.donations_controller import donations_bp
+	app.register_blueprint(donations_bp)
+
+	from app.controllers.communities_controller import communities_bp
+	app.register_blueprint(communities_bp)
+
+	from app.controllers.community_memberships_controller import community_memberships_bp
+	app.register_blueprint(community_memberships_bp)
+
+	from app.controllers.community_posts_controller import community_posts_bp
+	app.register_blueprint(community_posts_bp)
+
+	return app
