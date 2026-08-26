@@ -214,3 +214,127 @@ def seed_assessment_responses(users, questions):
 	db.session.add_all(responses)
 	db.session.commit()
 	return responses
+
+
+
+def seed_organisations(users):
+	organisations = [
+		Organisation(
+			owner_user_id=users[0].user_id,
+			name="Kericho Community Trust",
+			organisation_type="NGO",
+			description="Supports smallholder farmers and tea pickers in Kericho County.",
+			email="info@kerichotrust.org",
+			phone="+254701000001",
+			website="https://kerichotrust.org",
+			location="Kericho",
+			verified=True,
+		),
+		Organisation(
+			owner_user_id=users[1].user_id,
+			name="Lake Victoria Youth Network",
+			organisation_type="NGO",
+			description="Skills training and job placement for youth around Kisumu.",
+			email="info@lvyn.org",
+			phone="+254701000002",
+			website="https://lvyn.org",
+			location="Kisumu",
+			verified=True,
+		),
+		Organisation(
+			owner_user_id=users[2].user_id,
+			name="Coastal Skills Foundation",
+			organisation_type="NGO",
+			description="Vocational training for women and youth along the coast.",
+			email="info@coastalskills.org",
+			phone="+254701000003",
+			website="https://coastalskills.org",
+			location="Mombasa",
+			verified=False,
+		),
+		Organisation(
+			owner_user_id=users[3].user_id,
+			name="Nairobi Empowerment Hub",
+			organisation_type="Social Enterprise",
+			description="Digital skills and micro-enterprise support in Nairobi.",
+			email="info@nairobihub.org",
+			phone="+254701000004",
+			website="https://nairobihub.org",
+			location="Nairobi",
+			verified=False,
+		),
+	]
+	db.session.add_all(organisations)
+	db.session.commit()
+	return organisations
+
+
+def seed_jobs(organisations):
+	jobs = [
+		Job(
+			organisation_id=organisations[0].organisation_id,
+			title="Farm Extension Officer",
+			description="Advise smallholder farmers on best agricultural practices.",
+			requirements="Diploma in agriculture or related field",
+			minimum_education="Tertiary",
+			experience="1-2 years",
+			application_deadline=date(2026, 9, 30),
+			status="open",
+		),
+		Job(
+			organisation_id=organisations[0].organisation_id,
+			title="Community Health Volunteer",
+			description="Support household health assessments in rural Kericho.",
+			requirements="Secondary education, willingness to travel locally",
+			minimum_education="Secondary",
+			experience="None",
+			application_deadline=date(2026, 9, 15),
+			status="open",
+		),
+		Job(
+			organisation_id=organisations[1].organisation_id,
+			title="Youth Program Coordinator",
+			description="Coordinate skills training sessions for youth cohorts.",
+			requirements="Experience running community programs",
+			minimum_education="Tertiary",
+			experience="2-3 years",
+			application_deadline=date(2026, 10, 10),
+			status="open",
+		),
+		Job(
+			organisation_id=organisations[2].organisation_id,
+			title="Tailoring Trainer",
+			description="Teach basic tailoring skills to women's groups.",
+			requirements="Proven tailoring skill, teaching ability",
+			minimum_education="Secondary",
+			experience="3+ years",
+			application_deadline=date(2026, 8, 31),
+			status="closed",
+		),
+		Job(
+			organisation_id=organisations[3].organisation_id,
+			title="Data Clerk",
+			description="Maintain beneficiary records and enter program data.",
+			requirements="Comfortable with spreadsheets",
+			minimum_education="Secondary",
+			experience="None",
+			application_deadline=date(2026, 9, 20),
+			status="open",
+		),
+	]
+	db.session.add_all(jobs)
+	db.session.commit()
+	return jobs
+
+
+def seed_job_applications(users, jobs):
+	applications = [
+		JobApplication(user_id=users[4].user_id, job_id=jobs[0].job_id, status="pending"),
+		JobApplication(user_id=users[5].user_id, job_id=jobs[0].job_id, status="pending"),
+		JobApplication(user_id=users[6].user_id, job_id=jobs[2].job_id, status="pending"),
+		JobApplication(user_id=users[7].user_id, job_id=jobs[4].job_id, status="pending"),
+		JobApplication(user_id=users[4].user_id, job_id=jobs[1].job_id, status="pending"),
+	]
+	db.session.add_all(applications)
+	db.session.commit()
+	return applications
