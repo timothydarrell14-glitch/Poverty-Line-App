@@ -17,8 +17,10 @@
 .admin-home__body {
   display: flex;
   flex: 1;
+  margin-top: -64px;
   min-height: 0;
   overflow: auto;
+  padding-top: 64px;
   scrollbar-color: transparent transparent;
   scrollbar-width: thin;
 }
