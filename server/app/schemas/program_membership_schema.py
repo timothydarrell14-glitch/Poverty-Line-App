@@ -8,6 +8,7 @@ class ProgramMembershipSchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
 		model = ProgramMembership
 		load_instance = False
+		include_fk = True
 
 
 class ProgramMembershipCreateSchema(ma.SQLAlchemyAutoSchema):

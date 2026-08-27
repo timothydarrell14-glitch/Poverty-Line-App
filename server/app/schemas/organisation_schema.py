@@ -8,6 +8,7 @@ class OrganisationSchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
 		model = Organisation
 		load_instance = False
+		include_fk = True
 
 
 class OrganisationCreateSchema(ma.SQLAlchemyAutoSchema):
@@ -32,7 +33,6 @@ class OrganisationUpdateSchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
 		model = Organisation
 		load_instance = False
-		partial = True
 		fields = (
 			"name",
 			"organisation_type",
@@ -47,4 +47,4 @@ class OrganisationUpdateSchema(ma.SQLAlchemyAutoSchema):
 organisation_schema = OrganisationSchema()
 organisations_schema = OrganisationSchema(many=True)
 organisation_create_schema = OrganisationCreateSchema()
-organisation_update_schema = OrganisationUpdateSchema()
+organisation_update_schema = OrganisationUpdateSchema(partial=True)

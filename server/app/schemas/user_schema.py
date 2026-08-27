@@ -36,7 +36,6 @@ class UserUpdateSchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
 		model = User
 		load_instance = False
-		partial = True
 		fields = (
 			"first_name",
 			"last_name",
@@ -54,4 +53,4 @@ class UserUpdateSchema(ma.SQLAlchemyAutoSchema):
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 user_register_schema = UserRegisterSchema()
-user_update_schema = UserUpdateSchema()
+user_update_schema = UserUpdateSchema(partial=True)

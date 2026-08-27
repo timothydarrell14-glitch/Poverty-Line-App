@@ -8,6 +8,7 @@ class CommunityPostSchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
 		model = CommunityPost
 		load_instance = False
+		include_fk = True
 
 
 class CommunityPostCreateSchema(ma.SQLAlchemyAutoSchema):

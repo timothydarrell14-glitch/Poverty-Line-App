@@ -8,6 +8,7 @@ class ProgramSchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
 		model = Program
 		load_instance = False
+		include_fk = True
 
 
 class ProgramCreateSchema(ma.SQLAlchemyAutoSchema):
@@ -33,7 +34,6 @@ class ProgramUpdateSchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
 		model = Program
 		load_instance = False
-		partial = True
 		fields = (
 			"name",
 			"description",
@@ -49,4 +49,4 @@ class ProgramUpdateSchema(ma.SQLAlchemyAutoSchema):
 program_schema = ProgramSchema()
 programs_schema = ProgramSchema(many=True)
 program_create_schema = ProgramCreateSchema()
-program_update_schema = ProgramUpdateSchema()
+program_update_schema = ProgramUpdateSchema(partial=True)

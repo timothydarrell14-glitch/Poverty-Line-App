@@ -8,6 +8,7 @@ class AssessmentResponseSchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
 		model = AssessmentResponse
 		load_instance = False
+		include_fk = True
 
 
 class AssessmentResponseCreateSchema(ma.SQLAlchemyAutoSchema):
