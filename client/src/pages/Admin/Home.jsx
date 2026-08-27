@@ -6,12 +6,13 @@ import {
   FiFileText,
   FiHelpCircle,
   FiLogOut,
+  FiMessageSquare,
   FiMoon,
   FiSearch,
   FiUser,
   FiUsers,
 } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SideBar from "../../components/Admin/SideBar"
 import "../../styles/Admin/Home.css";
 
@@ -44,6 +45,8 @@ const activities = [
 ];
 
 function Home() {
+  const navigate = useNavigate();
+
   return (
     <div className="admin-home">
       <header className="admin-home__topbar">
@@ -147,11 +150,11 @@ function Home() {
                     <span>New Program</span>
                     <FiChevronRight aria-hidden="true" />
                   </button>
-                  <button type="button">
+                  <button type="button" onClick={() => navigate("/admin/chats")}>
                     <span className="admin-home__action-icon admin-home__action-icon--green">
-                      <FiBox aria-hidden="true" />
+                      <FiMessageSquare aria-hidden="true" />
                     </span>
-                    <span>Generate Report</span>
+                    <span>View Chats</span>
                     <FiChevronRight aria-hidden="true" />
                   </button>
                 </div>

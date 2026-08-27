@@ -93,7 +93,6 @@
 }
 
 .admin-chats__topbar-actions button,
-.chats-list__filters button,
 .chats-list__conversation {
   background: transparent;
   border: 0;
@@ -182,14 +181,17 @@
 
 .chats-list__header {
   border-bottom: 1px solid #c9d3d8;
-  padding: 16px 18px;
+  padding: 18px;
 }
 
 .chats-list__filters {
+  background: #f4f7fb;
+  border: 1px solid #cad4d8;
+  border-radius: 12px;
   display: flex;
   gap: 7px;
   overflow-x: auto;
-  padding-bottom: 2px;
+  padding: 5px;
   scrollbar-width: none;
 }
 
@@ -200,12 +202,12 @@
 .chats-list__filter {
   background: #fff;
   border: 1px solid #cad4d8;
-  border-radius: 16px;
+  border-radius: 8px;
   color: #25343a;
   cursor: pointer;
   font: inherit;
   font-size: 13px;
-  padding: 6px 14px;
+  padding: 8px 14px;
   white-space: nowrap;
 }
 
@@ -238,13 +240,19 @@
   align-items: center;
   display: flex;
   gap: 12px;
-  padding: 12px 14px;
+  border-radius: 8px;
+  padding: 14px;
   text-align: left;
   width: 100%;
 }
 
 .chats-list__conversation:hover {
   background: #f4f7fb;
+}
+
+.chats-list__conversation--selected {
+  background: #e4f1f3;
+  box-shadow: inset 3px 0 0 #007d89;
 }
 
 .chats-list__conversation-avatar {
@@ -327,9 +335,12 @@
   height: 18px;
   min-width: 18px;
   padding: 2px 5px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
   position: absolute;
-  right: 0;
-  top: 12px;
+  right: -5px;
+  top: -5px;
 }
 
 .chat-messages {
@@ -356,6 +367,23 @@
   border-radius: 50%;
   height: 40px;
   object-fit: cover;
+  width: 40px;
+}
+
+.chat-messages__participant-initials,
+.chat-messages__message-initials {
+  align-items: center;
+  background: #b34b24;
+  border-radius: 50%;
+  color: #fff;
+  display: grid;
+  font-size: 13px;
+  font-weight: 700;
+  place-items: center;
+}
+
+.chat-messages__participant-initials {
+  height: 40px;
   width: 40px;
 }
 
@@ -394,7 +422,7 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 16px 20px;
+  padding: 24px;
   scrollbar-width: thin;
 }
 
@@ -414,7 +442,7 @@
 .chat-messages__message {
   display: flex;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 22px;
   max-width: 70%;
 }
 
@@ -422,6 +450,12 @@
   border-radius: 50%;
   height: 32px;
   object-fit: cover;
+  width: 32px;
+}
+
+.chat-messages__message-initials {
+  flex: 0 0 32px;
+  height: 32px;
   width: 32px;
 }
 
@@ -475,7 +509,7 @@
   border-top: 1px solid #c9d3d8;
   display: flex;
   gap: 12px;
-  padding: 14px 20px;
+  padding: 16px 20px;
 }
 
 .chat-messages__input-icon {

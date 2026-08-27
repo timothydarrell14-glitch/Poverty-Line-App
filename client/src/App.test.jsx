@@ -48,4 +48,18 @@ describe('App', () => {
       screen.getByRole('heading', { name: previewHeading }),
     ).toBeInTheDocument()
   })
+
+  it('switches the active chat conversation', () => {
+    render(
+      <MemoryRouter initialEntries={['/admin/chats']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'See preview' }))
+    const mercyConversation = screen.getByRole('button', { name: /Mercy Corps/ })
+    fireEvent.click(mercyConversation)
+
+    expect(mercyConversation).toHaveAttribute('aria-pressed', 'true')
+  })
 })
