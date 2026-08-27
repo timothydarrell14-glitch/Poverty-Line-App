@@ -165,14 +165,16 @@
 }
 
 .settings-sidebar {
-  background: #fff;
-  border: 1px solid #c9d3d8;
-  border-radius: 8px;
-  box-shadow: 0 8px 17px rgb(34 57 74 / 4%);
+  align-self: start;
+  background: #f4f7f9;
+  border: 1px solid #ccd5da;
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgb(34 57 74 / 7%);
+  padding: 14px;
 }
 
 .settings-sidebar__nav {
-  padding: 16px 0;
+  padding: 0;
 }
 
 .settings-sidebar__nav ul {
@@ -183,19 +185,39 @@
 
 .settings-sidebar__tab {
   align-items: center;
-  color: #4f6066;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #294047;
   cursor: pointer;
   display: flex;
   font: inherit;
   font-size: 13px;
+  font-weight: 600;
   gap: 11px;
-  padding: 10px 20px;
+  min-height: 42px;
+  padding: 9px 12px;
   text-align: left;
+  transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
   width: 100%;
 }
 
+.settings-sidebar__nav li + li {
+  margin-top: 6px;
+}
+
 .settings-sidebar__tab:hover {
-  background: #f4f7fb;
+  background: #e5edf0;
+  border-color: #d3e0e4;
+  transform: translateX(2px);
+}
+
+.settings-sidebar__tab:focus-visible,
+.settings-additional__header:focus-visible,
+.settings-toggle__switch:focus-visible,
+.settings-form__save:focus-visible {
+  outline: 3px solid rgb(0 112 123 / 28%);
+  outline-offset: -1px;
 }
 
 .settings-sidebar__tab--active {
@@ -212,6 +234,13 @@
 .settings-sidebar__active-arrow {
   margin-left: auto;
   opacity: 0;
+  transform: translateX(-3px);
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+.settings-sidebar__tab--active .settings-sidebar__active-arrow {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .settings-content {
@@ -311,6 +340,12 @@
 
 .settings-form__save:hover {
   background: #006069;
+}
+
+.settings-form__save-status {
+  color: #18733c;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .settings-placeholder {
@@ -508,7 +543,27 @@
     grid-template-columns: 1fr;
   }
   .settings-sidebar {
-    display: none;
+    display: block;
+    overflow-x: auto;
+    padding: 8px;
+  }
+  .settings-sidebar__nav {
+    padding: 0;
+  }
+  .settings-sidebar__nav ul {
+    display: flex;
+    gap: 6px;
+    min-width: max-content;
+  }
+  .settings-sidebar__tab {
+    border-radius: 7px;
+    padding: 9px 13px;
+  }
+  .settings-sidebar__tab--active {
+    box-shadow: none;
+  }
+  .settings-sidebar__nav li + li {
+    margin-top: 0;
   }
 }
 

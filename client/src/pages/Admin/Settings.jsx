@@ -82,6 +82,7 @@ function Settings() {
     communication: true,
     permissions: true,
   });
+  const [saveStatus, setSaveStatus] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -98,7 +99,7 @@ function Settings() {
 
   const handleSave = () => {
     console.log("Saving settings...", { orgDetails, preferences, permissions });
-    alert("Settings saved successfully!");
+    setSaveStatus("Changes saved");
   };
 
   const handleExpand = (section) => {
@@ -167,6 +168,7 @@ function Settings() {
                         className={`settings-sidebar__tab${activeTab === id ? " settings-sidebar__tab--active" : ""}`}
                         type="button"
                         onClick={() => setActiveTab(id)}
+                        aria-current={activeTab === id ? "page" : undefined}
                       >
                         <Icon aria-hidden="true" />
                         <span>{label}</span>
@@ -227,6 +229,7 @@ function Settings() {
                     >
                       Save Changes
                     </button>
+                    {saveStatus && <span className="settings-form__save-status" role="status">{saveStatus}</span>}
                   </form>
                 </div>
               )}
@@ -368,4 +371,3 @@ function Settings() {
 }
 
 export default Settings;
-
