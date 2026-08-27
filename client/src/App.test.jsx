@@ -15,4 +15,16 @@ describe('App', () => {
       screen.getByRole('heading', { name: 'Timothy Darrell' }),
     ).toBeInTheDocument()
   })
+
+  it('renders the programs page at the sidebar programs route', () => {
+    render(
+      <MemoryRouter initialEntries={['/admin/programs']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    expect(
+      screen.getByRole('heading', { name: 'Program Overview' }),
+    ).toBeInTheDocument()
+  })
 })
