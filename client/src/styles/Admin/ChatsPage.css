@@ -140,9 +140,9 @@
 }
 
 .admin-chats__main {
-  margin: 0 auto;
-  max-width: 1600px;
-  padding: 34px clamp(24px, 4vw, 64px) 48px;
+  display: flex;
+  flex-direction: column;
+  padding: 28px clamp(24px, 4vw, 64px);
   width: 100%;
 }
 
@@ -160,8 +160,10 @@
 
 .admin-chats__content-grid {
   display: grid;
+  flex: 1;
   gap: 18px;
   grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.7fr);
+  min-height: 0;
 }
 
 .chats-list,
@@ -173,6 +175,8 @@
 }
 
 .chats-list {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
@@ -219,7 +223,8 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  max-height: calc(100vh - 300px);
+  flex: 1;
+  max-height: none;
   overflow-y: auto;
   padding: 8px;
   scrollbar-width: none;

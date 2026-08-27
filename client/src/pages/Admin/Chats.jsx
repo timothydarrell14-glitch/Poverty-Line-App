@@ -8,6 +8,7 @@ import {
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import SideBar from "../../components/Admin/SideBar";
+import ComingSoon from "../../components/Admin/ComingSoon";
 import "../../styles/Admin/ChatsPage.css";
 
 const conversations = [
@@ -46,6 +47,12 @@ const conversations = [
 const filters = ["All Active", "Field Agents", "Partners"];
 
 function Chats() {
+  const [showPreview, setShowPreview] = useState(false);
+
+  if (!showPreview) {
+    return <ComingSoon feature="Chats" onPreview={() => setShowPreview(true)} />;
+  }
+
   return (
     <div className="admin-chats">
       <header className="admin-chats__topbar">
@@ -226,3 +233,4 @@ function Chats() {
 }
 
 export default Chats;
+import { useState } from "react";
