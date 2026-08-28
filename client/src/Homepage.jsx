@@ -33,7 +33,6 @@ export default function HomePage() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenDonate={() => alert('Donate modal opened')}
-        onOpenLogin={() => alert('Login modal opened')}
       />
 
       {activeTab === 'home' && (
