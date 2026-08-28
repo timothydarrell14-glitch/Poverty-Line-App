@@ -1,10 +1,14 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import Login from './Login';
-import Signup from './Signup';
-import { clearAuthSession, getCurrentUser, isAuthenticated } from '../utils/auth';
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import Login from "./Login";
+import Signup from "./Signup";
+import {
+  clearAuthSession,
+  getCurrentUser,
+  isAuthenticated,
+} from "../utils/auth";
 
-export const Navbar = ({ activeTab, setActiveTab, onOpenDonate, onOpenLogin }) => {
+export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -15,17 +19,17 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate, onOpenLogin }) =
 
   useEffect(() => {
     const handle = () => setIsScrolled(window.scrollY > 12);
-    window.addEventListener('scroll', handle);
-    return () => window.removeEventListener('scroll', handle);
+    window.addEventListener("scroll", handle);
+    return () => window.removeEventListener("scroll", handle);
   }, []);
 
   useEffect(() => {
     const syncAuthState = () => setCurrentUser(getCurrentUser());
-    window.addEventListener('povertyline-auth-change', syncAuthState);
-    window.addEventListener('storage', syncAuthState);
+    window.addEventListener("povertyline-auth-change", syncAuthState);
+    window.addEventListener("storage", syncAuthState);
     return () => {
-      window.removeEventListener('povertyline-auth-change', syncAuthState);
-      window.removeEventListener('storage', syncAuthState);
+      window.removeEventListener("povertyline-auth-change", syncAuthState);
+      window.removeEventListener("storage", syncAuthState);
     };
   }, []);
 
@@ -36,15 +40,15 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate, onOpenLogin }) =
 
   const signOut = () => {
     clearAuthSession();
-    navigate('/');
+    navigate("/");
   };
 
   const items = [
-    ['/', 'home', 'Home'],
-    ['/get-help', 'get-help', 'Get Help'],
-    ['/donors', 'donors', 'Donors'],
-    ['/organisations', 'organisations', 'Organisations'],
-    ['/contact', 'contact', 'Contact Us'],
+    ["/", "home", "Home"],
+    ["/get-help", "get-help", "Get Help"],
+    ["/donors", "donors", "Donors"],
+    ["/organisations", "organisations", "Organisations"],
+    ["/contact", "contact", "Contact Us"],
   ];
 
   const handleSelect = (path, id) => {
@@ -55,7 +59,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate, onOpenLogin }) =
     if (navigate) {
       navigate(path);
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const isTabActive = (path, id) => {
@@ -66,17 +70,22 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate, onOpenLogin }) =
 
   return (
     <>
-      <nav className={`site-nav ${isScrolled ? 'scrolled' : ''}`}>
+      <nav className={`site-nav ${isScrolled ? "scrolled" : ""}`}>
         <div className="nav-inner">
-          <button className="brand font-heading" onClick={() => handleSelect('/', 'home')}>
-            <span className="material-symbols-outlined material-symbols-fill">volunteer_activism</span>
+          <button
+            className="brand font-heading"
+            onClick={() => handleSelect("/", "home")}
+          >
+            <span className="material-symbols-outlined material-symbols-fill">
+              volunteer_activism
+            </span>
             Poverty Line
           </button>
           <div className="nav-links">
             {items.map(([path, id, label]) => (
               <button
                 key={id}
-                className={`nav-link ${isTabActive(path, id) ? 'active' : ''}`}
+                className={`nav-link ${isTabActive(path, id) ? "active" : ""}`}
                 onClick={() => handleSelect(path, id)}
               >
                 {label}
@@ -86,44 +95,81 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate, onOpenLogin }) =
           <div className="nav-actions">
             {isAuthenticated() ? (
               <>
-                {currentUser?.role === 'admin' && <span className="admin-badge">Admin</span>}
-                <button className="login-button" onClick={signOut}>Log out</button>
+                {currentUser?.role === "admin" && (
+                  <span className="admin-badge">Admin</span>
+                )}
+                <button className="login-button" onClick={signOut}>
+                  Log out
+                </button>
               </>
-            ) : <button className="login-button" onClick={openLogin}>Login</button>}
+            ) : (
+              <button className="login-button" onClick={openLogin}>
+                Login
+              </button>
+            )}
             <button className="pill-button nav-donate" onClick={onOpenDonate}>
-              <span className="material-symbols-outlined">favorite</span>Donate Now
+              <span className="material-symbols-outlined">favorite</span>Donate
+              Now
             </button>
           </div>
-          <button className="menu-button" onClick={() => setOpen(!open)} aria-label="Toggle navigation">
-            <span className="material-symbols-outlined">{open ? 'close' : 'menu'}</span>
+          <button
+            className="menu-button"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle navigation"
+          >
+            <span className="material-symbols-outlined">
+              {open ? "close" : "menu"}
+            </span>
           </button>
         </div>
       </nav>
-      <div className={`mobile-menu ${open ? 'open' : ''}`}>
+      <div className={`mobile-menu ${open ? "open" : ""}`}>
         {items.map(([path, id, label]) => (
           <button
             key={id}
-            className={`nav-link ${isTabActive(path, id) ? 'active' : ''}`}
+            className={`nav-link ${isTabActive(path, id) ? "active" : ""}`}
             onClick={() => handleSelect(path, id)}
           >
             {label}
           </button>
         ))}
         <div className="nav-actions">
-          <button className="pill-button" onClick={() => { setOpen(false); onOpenDonate?.(); }}>Donate Now</button>
-          {isAuthenticated() ? <button className="login-button" onClick={signOut}>Log out</button> : <button className="login-button" onClick={openLogin}>Login</button>}
+          <button
+            className="pill-button"
+            onClick={() => {
+              setOpen(false);
+              onOpenDonate?.();
+            }}
+          >
+            Donate Now
+          </button>
+          {isAuthenticated() ? (
+            <button className="login-button" onClick={signOut}>
+              Log out
+            </button>
+          ) : (
+            <button className="login-button" onClick={openLogin}>
+              Login
+            </button>
+          )}
         </div>
       </div>
       <Login
         isOpen={isLoginOpen}
         onClose={() => setIsLoginOpen(false)}
-        onShowSignup={() => { setIsLoginOpen(false); setIsSignupOpen(true); }}
+        onShowSignup={() => {
+          setIsLoginOpen(false);
+          setIsSignupOpen(true);
+        }}
         onAuthenticated={(user) => setCurrentUser(user)}
       />
       <Signup
         isOpen={isSignupOpen}
         onClose={() => setIsSignupOpen(false)}
-        onShowLogin={() => { setIsSignupOpen(false); setIsLoginOpen(true); }}
+        onShowLogin={() => {
+          setIsSignupOpen(false);
+          setIsLoginOpen(true);
+        }}
       />
     </>
   );
