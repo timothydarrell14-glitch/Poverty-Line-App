@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import HomePage from "./Homepage";
 import GetHelpPage from "./pages/GetHelpPage";
 import OrganisationsPage from "./pages/OrganisationsPage";
+import DonorsPage from "./pages/DonorsPage";
 import "./App.css";
 
 // Fallback placeholder views for routes pending from teammates
@@ -39,6 +40,8 @@ function App() {
             path="/organisations"
             element={<OrganisationsPage />}
           />
+
+          <Route path="/donors" element={<DonorsPage />} />
 
           <Route path="/jobs" element={<JobsPlaceholder />} />
 
