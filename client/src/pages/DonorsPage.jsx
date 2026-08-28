@@ -19,6 +19,13 @@ const impactUpdates = [
   { time: "2 Weeks Ago", county: "Kericho & Trans Nzoia", title: "Kericho co-op harvest boosts food resilience", summary: "Distributed drip irrigation kits to 140 smallholder farmers, boosting food resilience by 65%.", auditor: "Kilimo Endelevu Rift Agronomist" },
 ];
 
+const publicPrograms = [
+  { id: "wells", title: "Sustainable Wells Initiative", category: "Clean Water", icon: "water_drop", description: "Building community-managed water infrastructure in drought-prone regions to ensure long-term health.", impact: "38,000+ people with ongoing access to verified clean water", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBmNSg5zfE7DQ3zu5jpj5Zxxyv-P3AAA9BiSGKYxSlW2irxydJVOEb5SCAVHab0zd0X_NXRgsx9Q3_5x_mQqqm5j33uVZmAjGKZT2aSB0ArTXiTd9-t5i6bne2ufq2LMtQR8jD_hUaYQ6cLisWMt3gahkzoPp5-DMn96ZRgFic6yJOtBbgRS2qVKuJSLP_7jEZwV21k4cKg2og2XK-CdC2-_PmSZwYQWy8nd3Xj-zuvOxoTe9LwT1ChUA" },
+  { id: "nutrition", title: "Urban Nutrition Centers", category: "Food Security", icon: "restaurant", description: "Providing dignified access to nutritious meals through community-led kitchens and local farm partnerships.", impact: "14,200 nutritious hot meals served every single week", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuD_nYDP1xQ8ebU7wdi6mFVIap80ikftYXPIAXzwTBRJfZ_3D9tIu3wAZS0WGnOrYslEHQKUKTtDZkbWObyTwFG6N5EsgaICBCzUhouo0XSHEnnb3ZZm3tEaSrs4LPTJbgF9h8CxZNgpK69HSdFb_CCBWgyxGzTUusU_ugcsTaW18PNOX5MESMrKSR3jUmBfBed3lC9jWjTWBk-y734hWnBuotUaDYQslcmGH5k5vYmy8jQnf5UC_Ijqyg" },
+  { id: "literacy", title: "Digital Literacy Access", category: "Education", icon: "school", description: "Equipping adults and youth with essential tech skills to bridge the digital divide and open employment pathways.", impact: "1,840 graduates placed in living-wage career pathways", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDv-4_7XiKvt01r0Aw_OFZxR2Q-vkmIfbyWAKs_S4bOVBD9T7eRbWMa0pa_QdAy9SJaTCBa3Tdw9nP0Ab0AAn7_DErNvG3iphSY-UUXhuWn1po_I3zpPXZQ0Ka35fgsMXT9uHlNMsg_QAgaWY77bJkZOAtSyFaawffzMonEbLjUwMxOhmZsP1SyO1qcB3pZQS0mBk9Pm0t--Qn9QHtgRIco2uIleBcRbi18acrnOKbEyHMzQlDz5_9d1Q" },
+  { id: "health", title: "Mobile Health Clinics", category: "Healthcare Access", icon: "medical_services", description: "Bringing essential medical services and health education directly to underserved neighborhoods through our fleet of mobile units.", impact: "65% funded • 9,400 clinic visits conducted this year", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuD58UOor5Jf6HP23RKceLauPM03eh82qXCZBYAXfvoz1_rK5DNZuv7sv_Bkf2BSJb5Jhpp-M-KSulKhnF0Jq97h0gdeeQyUBlq9_bjAy0-7qtHD1Z68xJ_hfEScK2EDuZZfwnHPT7_PRXP-BuMhNgA9HeEbmyHOFdU99Qd36ct6P28LMtCef7lL1-arjnggsW7klvzzXunsdL5DtMKH4rzs1fSYBH1Sg26MCMqQU7-rOIhZLH-JfeI-WQ" },
+];
+
 const formatCurrency = (amount) => `KSh ${amount.toLocaleString()}`;
 
 const isUserLoggedIn = () =>
@@ -47,11 +54,19 @@ export default function DonorsPage() {
     return (
       <div className="donors-page">
         <Navbar onOpenLogin={() => window.alert("Please log in to access your donor dashboard.")} />
-        <main className="donor-access-gate">
-          <span className="material-symbols-outlined">lock</span>
-          <h1>Your donor dashboard is private</h1>
-          <p>Log in to view your giving history, impact updates, and monthly giving settings.</p>
-          <button type="button" onClick={() => window.alert("Please use the site login to continue.")}>Log in to continue</button>
+        <main className="public-donors-content">
+          <section className="public-donors-hero">
+            <div className="public-donors-copy">
+              <span className="public-eyebrow"><span className="material-symbols-outlined material-symbols-fill">favorite</span> Empowering Resilient Futures</span>
+              <h1>Together, We Bring Hope and <em>Change Lives</em></h1>
+              <p>Your generous donations empower communities, provide essential resources, and create lasting sustainable change. Join us in making a difference today.</p>
+              <div className="public-hero-actions"><button type="button" className="public-primary-button" onClick={showDonationNotice}><span className="material-symbols-outlined">volunteer_activism</span> Make a Donation</button><button type="button" className="public-secondary-button" onClick={() => window.alert("The impact report will be available soon.")}><span className="material-symbols-outlined">description</span> View Impact Report</button></div>
+              <div className="public-stat-row"><div><b>10K+</b><span>Donations Received</span></div><div><b>50K+</b><span>Lives Impacted</span></div><div><b>520+</b><span>Active Volunteers</span></div></div>
+            </div>
+            <img className="public-hero-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBy3M80B5UbKEYaAg7SzGUdGfva1q6-sb_S_FpyZgCcVzlY3LwQjBEJ6Q2H21Fj6GLhM_2Eh4tS1BdFlkDf-xsfq65T608S7RqIEMbMui4tIA7Cgh5TAFbBN6uBBAZiHIn2VT2xR-TFiQgxW9oAQgu49O8EYBI8ljGOpLllhJkOuJwJ9pkTgqSPmUb0-ES1aLoJzfBTVO3MQXpTqML1MMgfoDV3_J0bGZLYz5UhQyfdA0NgVOwm8nmPpA" alt="Community food and essentials distribution" />
+          </section>
+          <section className="public-programs" id="active-programs-section"><header><div><h2>Active Programs</h2><p>Choose where your support creates direct, transparent, and durable impact.</p></div><button type="button" onClick={showDonationNotice}>Custom allocation or monthly pledge <span className="material-symbols-outlined">arrow_forward</span></button></header><div className="public-program-grid">{publicPrograms.map((program) => <article key={program.id} className="public-program-card"><div className="public-program-image"><img src={program.image} alt={program.title} /><span><span className="material-symbols-outlined">{program.icon}</span>{program.category}</span></div><div className="public-program-copy"><div><h3>{program.title}</h3><p>{program.description}</p></div>{program.id === "health" && <div className="public-progress"><p><span>Campaign Goal: $1,000,000</span><b>65% Funded ($650K)</b></p><i><i /></i></div>}<div className="public-program-footer"><p><span className="material-symbols-outlined">verified</span>{program.impact}</p><div><button type="button" onClick={showDonationNotice}>Support Program <span className="material-symbols-outlined">arrow_forward</span></button><button type="button" onClick={showDonationNotice}>Learn more</button></div></div></div></article>)}</div></section>
+          <section className="public-transparency"><div><span><span className="material-symbols-outlined">shield</span> 100% Transparency Commitment</span><h2>Every cent tracked with open accountability.</h2><p>All program logistics and expenditures are audited every month. Donors receive live updates and dispatch confirmations as provisions reach local distribution hubs.</p></div><button type="button" onClick={showDonationNotice}><span className="material-symbols-outlined">volunteer_activism</span> Start Monthly Giving</button></section>
         </main>
         <Footer onSelectTab={(tab) => navigate(tab === "home" ? "/" : `/${tab}`)} />
       </div>
