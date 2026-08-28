@@ -1,4 +1,4 @@
-"""add is_admin to users
+"""add role to users
 
 Revision ID: 6da3c8034c1e
 Revises: 2aa3fef6582c
@@ -18,10 +18,10 @@ depends_on = None
 def upgrade():
     with op.batch_alter_table("users", schema=None) as batch_op:
         batch_op.add_column(
-            sa.Column("is_admin", sa.Boolean(), nullable=False, server_default=sa.false())
+            sa.Column("role", sa.String(length=50), nullable=False, server_default="user")
         )
 
 
 def downgrade():
     with op.batch_alter_table("users", schema=None) as batch_op:
-        batch_op.drop_column("is_admin")
+        batch_op.drop_column("role")

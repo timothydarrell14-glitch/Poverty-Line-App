@@ -86,7 +86,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate, onOpenLogin }) =
           <div className="nav-actions">
             {isAuthenticated() ? (
               <>
-                {currentUser?.is_admin && <span className="admin-badge">Admin</span>}
+                {currentUser?.role === 'admin' && <span className="admin-badge">Admin</span>}
                 <button className="login-button" onClick={signOut}>Log out</button>
               </>
             ) : <button className="login-button" onClick={openLogin}>Login</button>}

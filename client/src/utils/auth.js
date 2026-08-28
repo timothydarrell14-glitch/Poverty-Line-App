@@ -27,4 +27,4 @@ export const getCurrentUser = () => {
 export const isAuthenticated = () =>
   Boolean(sessionStorage.getItem(AUTH_TOKEN_KEY) && getCurrentUser());
 
-export const isAdmin = () => Boolean(getCurrentUser()?.is_admin);
+export const isAdmin = () => getCurrentUser()?.role === "admin";
