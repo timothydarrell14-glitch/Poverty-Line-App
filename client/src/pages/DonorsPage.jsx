@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -21,8 +21,12 @@ const impactUpdates = [
 
 const formatCurrency = (amount) => `KSh ${amount.toLocaleString()}`;
 
+const isUserLoggedIn = () =>
+  sessionStorage.getItem("povertyLineLoggedIn") === "true";
+
 export default function DonorsPage() {
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(isUserLoggedIn);
   const [selectedReceipt, setSelectedReceipt] = useState(null);
   const [isSubscriptionOpen, setIsSubscriptionOpen] = useState(false);
   const [monthlyAmount, setMonthlyAmount] = useState(2500);
@@ -32,6 +36,27 @@ export default function DonorsPage() {
   const showDonationNotice = () => {
     window.alert("The donation flow will be available here soon.");
   };
+
+  useEffect(() => {
+    const syncLoginStatus = () => setIsLoggedIn(isUserLoggedIn());
+    window.addEventListener("storage", syncLoginStatus);
+    return () => window.removeEventListener("storage", syncLoginStatus);
+  }, []);
+
+  if (!isLoggedIn) {
+    return (
+      <div className="donors-page">
+        <Navbar onOpenLogin={() => window.alert("Please log in to access your donor dashboard.")} />
+        <main className="donor-access-gate">
+          <span className="material-symbols-outlined">lock</span>
+          <h1>Your donor dashboard is private</h1>
+          <p>Log in to view your giving history, impact updates, and monthly giving settings.</p>
+          <button type="button" onClick={() => window.alert("Please use the site login to continue.")}>Log in to continue</button>
+        </main>
+        <Footer onSelectTab={(tab) => navigate(tab === "home" ? "/" : `/${tab}`)} />
+      </div>
+    );
+  }
 
   return (
     <div className="donors-page">
