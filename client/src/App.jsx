@@ -1,8 +1,11 @@
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+
 import HomePage from "./Homepage";
 import GetHelpPage from "./pages/GetHelpPage";
 import OrganisationsPage from "./pages/OrganisationsPage";
 import DonorsPage from "./pages/DonorsPage";
+import LogisticsPage from "./pages/LogisticsPage";
+
 import "./App.css";
 
 // Fallback placeholder views for routes pending from teammates
@@ -31,8 +34,10 @@ function App() {
     <Router>
       <main>
         <Routes>
+          {/* Home */}
           <Route path="/" element={<HomePage />} />
 
+          {/* Get Help */}
           <Route path="/get-help" element={<GetHelpPage />} />
 
           {/* Organisations Page */}
@@ -44,8 +49,23 @@ function App() {
           <Route path="/donors" element={<DonorsPage />} />
 
           <Route path="/jobs" element={<JobsPlaceholder />} />
+          {/* Logistics Page */}
+          <Route
+            path="/logistics"
+            element={<LogisticsPage />}
+          />
 
-          <Route path="/community" element={<CommunityPlaceholder />} />
+          {/* Jobs */}
+          <Route
+            path="/jobs"
+            element={<JobsPlaceholder />}
+          />
+
+          {/* Community */}
+          <Route
+            path="/community"
+            element={<CommunityPlaceholder />}
+          />
         </Routes>
       </main>
     </Router>
