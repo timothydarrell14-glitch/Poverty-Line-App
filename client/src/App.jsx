@@ -5,6 +5,7 @@ import OrganisationsPage from "./pages/OrganisationsPage";
 import LogisticsPage from "./pages/LogisticsPage";
 import "./App.css";
 
+// Fallback placeholder views for routes pending from teammates
 const JobsPlaceholder = () => (
   <div style={{ padding: "3rem", textAlign: "center" }}>
     <h2>Jobs Page</h2>
@@ -34,11 +35,13 @@ function App() {
 
           <Route path="/get-help" element={<GetHelpPage />} />
 
+          {/* Organisations Page */}
           <Route
             path="/organisations"
             element={<OrganisationsPage />}
           />
 
+          {/* Logistics Dashboard */}
           <Route
             path="/logistics"
             element={<LogisticsPage />}
