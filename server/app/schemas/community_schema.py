@@ -23,11 +23,10 @@ class CommunityUpdateSchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
 		model = Community
 		load_instance = False
-		partial = True
 		fields = ("name", "description", "category", "location")
 
 
 community_schema = CommunitySchema()
 communities_schema = CommunitySchema(many=True)
 community_create_schema = CommunityCreateSchema()
-community_update_schema = CommunityUpdateSchema()
+community_update_schema = CommunityUpdateSchema(partial=True)
