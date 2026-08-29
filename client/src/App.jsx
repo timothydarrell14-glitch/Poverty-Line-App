@@ -4,6 +4,7 @@ import HomePage from "./Homepage";
 import GetHelpPage from "./pages/GetHelpPage";
 import OrganisationsPage from "./pages/OrganisationsPage";
 import LogisticsPage from "./pages/LogisticsPage";
+import JobsPage from "./pages/JobsPage";
 
 import "./App.css";
 
@@ -44,7 +45,7 @@ function App() {
           {/* Jobs */}
           <Route
             path="/jobs"
-            element={<JobsPlaceholder />}
+            element={<JobsPage />}
           />
 
           {/* Community */}
