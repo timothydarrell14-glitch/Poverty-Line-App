@@ -4,20 +4,11 @@ import HomePage from "./Homepage";
 import GetHelpPage from "./pages/GetHelpPage";
 import OrganisationsPage from "./pages/OrganisationsPage";
 import LogisticsPage from "./pages/LogisticsPage";
+import JobsPage from "./pages/JobsPage";
 
 import "./App.css";
 
-// Fallback placeholder views for routes pending from teammates
-const JobsPlaceholder = () => (
-  <div style={{ padding: "3rem", textAlign: "center" }}>
-    <h2>Jobs Page</h2>
-    <p>This page is currently under development by the team.</p>
-    <Link to="/get-help" style={{ color: "#0d6e6e" }}>
-      &larr; Back to Get Help
-    </Link>
-  </div>
-);
-
+// Fallback placeholder view pending from teammates
 const CommunityPlaceholder = () => (
   <div style={{ padding: "3rem", textAlign: "center" }}>
     <h2>Community Forum</h2>
@@ -54,7 +45,7 @@ function App() {
           {/* Jobs */}
           <Route
             path="/jobs"
-            element={<JobsPlaceholder />}
+            element={<JobsPage />}
           />
 
           {/* Community */}

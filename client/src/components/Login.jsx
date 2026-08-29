@@ -4,8 +4,9 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState(() => localStorage.getItem("povertyLineSavedEmail") || "");
+  const [password, setPassword] = useState(() => localStorage.getItem("povertyLineSavedPassword") || "");
+  const [savePassword, setSavePassword] = useState(() => localStorage.getItem("povertyLineRememberMe") === "true");
   const [error, setError] = useState("");
 
   const handleSubmit = (event) => {
@@ -16,9 +17,17 @@ const Login = () => {
       return;
     }
 
-    // Temporary authentication until the backend login is connected.
-    localStorage.setItem("isAuthenticated", "true");
+    if (savePassword) {
+      localStorage.setItem("povertyLineSavedEmail", email);
+      localStorage.setItem("povertyLineSavedPassword", password);
+      localStorage.setItem("povertyLineRememberMe", "true");
+    } else {
+      localStorage.removeItem("povertyLineSavedEmail");
+      localStorage.removeItem("povertyLineSavedPassword");
+      localStorage.removeItem("povertyLineRememberMe");
+    }
 
+    localStorage.setItem("isAuthenticated", "true");
     navigate("/logistics");
   };
 
@@ -48,6 +57,15 @@ const Login = () => {
             onChange={(event) => setPassword(event.target.value)}
             placeholder="Enter your password"
           />
+
+          <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.75rem" }}>
+            <input
+              type="checkbox"
+              checked={savePassword}
+              onChange={(event) => setSavePassword(event.target.checked)}
+            />
+            Save password on this device
+          </label>
 
           {error && <p className="login-error">{error}</p>}
 
