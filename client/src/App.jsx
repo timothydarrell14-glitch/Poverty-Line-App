@@ -1,38 +1,35 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import HomePage from "./Homepage";
 import GetHelpPage from "./pages/GetHelpPage";
 import CommunityPage from "./pages/CommunityPage";
 import OrganisationsPage from "./pages/OrganisationsPage";
-import "./App.css";
+import LogisticsPage from "./pages/LogisticsPage";
+import JobsPage from "./pages/JobsPage";
 
-// Fallback placeholder views for routes pending from teammates
-const JobsPlaceholder = () => (
-  <div style={{ padding: "3rem", textAlign: "center" }}>
-    <h2>Jobs Page</h2>
-    <p>This page is currently under development by the team.</p>
-    <Link to="/get-help" style={{ color: "#0d6e6e" }}>
-      &larr; Back to Get Help
-    </Link>
-  </div>
-);
+import "./App.css";
 
 function App() {
   return (
     <Router>
       <main>
         <Routes>
+          {/* Home */}
           <Route path="/" element={<HomePage />} />
 
+          {/* Get Help */}
           <Route path="/get-help" element={<GetHelpPage />} />
 
           {/* Organisations Page */}
-          <Route
-            path="/organisations"
-            element={<OrganisationsPage />}
-          />
+          <Route path="/organisations" element={<OrganisationsPage />} />
 
-          <Route path="/jobs" element={<JobsPlaceholder />} />
+          {/* Logistics Page */}
+          <Route path="/logistics" element={<LogisticsPage />} />
 
+          {/* Jobs */}
+          <Route path="/jobs" element={<JobsPage />} />
+
+          {/* Community */}
           <Route path="/community" element={<CommunityPage />} />
         </Routes>
       </main>
