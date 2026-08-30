@@ -230,7 +230,7 @@ export default function CommunityPage() {
   return (
     <div className="community-page-wrapper">
       {/* Site Navbar */}
-      <Navbar activeTab="community" />
+      <Navbar activeTab="get-help" />
 
       {/* Main Grid Container */}
       <div className="community-grid-container">

@@ -16,12 +16,10 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate, onOpenLogin }) =
   const items = [
     ['/', 'home', 'Home'],
     ['/get-help', 'get-help', 'Get Help'],
-    ['/community', 'community', 'Community'],
     ['/donors', 'donors', 'Donors'],
     ['/organisations', 'organisations', 'Organisations'],
     ['/contact', 'contact', 'Contact Us'],
   ];
-
 
   const handleSelect = (path, id) => {
     setOpen(false);
@@ -37,6 +35,9 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate, onOpenLogin }) =
   const isTabActive = (path, id) => {
     if (location && location.pathname === path) return true;
     if (activeTab === id) return true;
+    if (id === 'get-help' && (location?.pathname === '/community' || activeTab === 'community')) {
+      return true;
+    }
     return false;
   };
 
