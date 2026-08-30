@@ -1,18 +1,12 @@
 import { useMemo, useState } from "react";
 import {
-  FiBell,
   FiCheckCircle,
   FiClock,
-  FiHelpCircle,
-  FiLogOut,
   FiMinus,
-  FiMoon,
   FiPlus,
-  FiSearch,
   FiTruck,
-  FiUser,
 } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import AdminTopbar from "../../components/Admin/AdminTopbar";
 import ComingSoon from "../../components/Admin/ComingSoon";
 import SideBar from "../../components/Admin/SideBar";
 import "../../styles/Admin/DeliveriesPage.css";
@@ -94,68 +88,7 @@ function Deliveries() {
 
   return (
     <div className="admin-deliveries">
-      <header className="admin-deliveries__topbar">
-        <Link className="admin-deliveries__brand" to="/admin">
-          Poverty Line
-        </Link>
-        <div className="admin-deliveries__topbar-content">
-          <label
-            className="admin-deliveries__global-search"
-            htmlFor="delivery-search"
-          >
-            <FiSearch aria-hidden="true" />
-            <input
-              id="delivery-search"
-              type="search"
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search deliveries..."
-            />
-          </label>
-          <div className="admin-deliveries__topbar-actions">
-            <button
-              className="tooltip"
-              type="button"
-              aria-label="Notifications"
-              data-tooltip="Notifications"
-            >
-              <FiBell aria-hidden="true" />
-            </button>
-            <button
-              className="tooltip"
-              type="button"
-              aria-label="Help"
-              data-tooltip="Help"
-            >
-              <FiHelpCircle aria-hidden="true" />
-            </button>
-            <button
-              className="tooltip"
-              type="button"
-              aria-label="Account"
-              data-tooltip="Account"
-            >
-              <FiUser aria-hidden="true" />
-            </button>
-            <button
-              className="tooltip"
-              type="button"
-              aria-label="Theme toggle"
-              data-tooltip="Theme toggle"
-            >
-              <FiMoon aria-hidden="true" />
-            </button>
-            <button
-              className="admin-deliveries__logout tooltip"
-              type="button"
-              aria-label="Logout"
-              data-tooltip="Logout"
-            >
-              <FiLogOut aria-hidden="true" />
-            </button>
-          </div>
-        </div>
-      </header>
+      <AdminTopbar pageClass="admin-deliveries" searchId="delivery-search" placeholder="Search deliveries..." searchTerm={searchTerm} onSearchChange={(event) => setSearchTerm(event.target.value)} />
       <div className="admin-deliveries__body">
         <SideBar />
         <main className="admin-deliveries__main">

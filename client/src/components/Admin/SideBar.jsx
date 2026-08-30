@@ -11,7 +11,8 @@ import {
   FiTruck,
   FiUsers,
 } from "react-icons/fi";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAdminSession } from "../AdminSession";
 import "../../styles/Admin/SideBar.css";
 
 const navigationItems = [
@@ -25,6 +26,8 @@ const navigationItems = [
 
 function SideBar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { user } = useAdminSession();
+  const navigate = useNavigate();
 
   return (
     <aside
@@ -50,15 +53,15 @@ function SideBar() {
           <img
             className="admin-sidebar__avatar"
             src="https://i.pravatar.cc/96?img=12"
-            alt="Admin user"
+            alt=""
           />
           <div>
-            <p className="admin-sidebar__name">Timothy N. Darrell</p>
-            <p className="admin-sidebar__role">Admin</p>
+            <p className="admin-sidebar__name">{user?.name}</p>
+            <p className="admin-sidebar__role">{user?.role}</p>
           </div>
         </div>
 
-        <button className="admin-sidebar__new-program" type="button">
+        <button className="admin-sidebar__new-program" type="button" onClick={() => navigate("/admin/programs")}>
           <FiPlus aria-hidden="true" />
           <span>New Program</span>
         </button>

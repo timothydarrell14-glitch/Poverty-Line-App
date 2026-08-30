@@ -1,13 +1,6 @@
 import { useMemo, useState } from "react";
-import {
-  FiBell,
-  FiHelpCircle,
-  FiLogOut,
-  FiMoon,
-  FiSearch,
-  FiUser,
-} from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { FiSearch } from "react-icons/fi";
+import AdminTopbar from "../../components/Admin/AdminTopbar";
 import SideBar from "../../components/Admin/SideBar";
 import ComingSoon from "../../components/Admin/ComingSoon";
 import "../../styles/Admin/ChatsPage.css";
@@ -64,6 +57,7 @@ function Chats() {
   const [showPreview, setShowPreview] = useState(false);
   const [activeFilter, setActiveFilter] = useState("All Active");
   const [selectedConversationId, setSelectedConversationId] = useState(conversations[0].id);
+  const [searchTerm, setSearchTerm] = useState("");
   const visibleConversations = useMemo(() => {
     if (activeFilter === "Partners") {
       return conversations.filter((conversation) => conversation.role === "Partner");
@@ -83,43 +77,7 @@ function Chats() {
 
   return (
     <div className="admin-chats">
-      <header className="admin-chats__topbar">
-        <Link className="admin-chats__brand" to="/admin">
-          Poverty Line
-        </Link>
-        <div className="admin-chats__topbar-content">
-          <label className="admin-chats__global-search" htmlFor="chats-search">
-            <FiSearch aria-hidden="true" />
-            <input
-              id="chats-search"
-              type="search"
-              placeholder="Search chats..."
-            />
-          </label>
-          <div className="admin-chats__topbar-actions">
-            <button className="tooltip" type="button" aria-label="Notifications" data-tooltip="Notifications">
-              <FiBell aria-hidden="true" />
-            </button>
-            <button className="tooltip" type="button" aria-label="Help" data-tooltip="Help">
-              <FiHelpCircle aria-hidden="true" />
-            </button>
-            <button className="tooltip" type="button" aria-label="Account" data-tooltip="Account">
-              <FiUser aria-hidden="true" />
-            </button>
-            <button className="tooltip" type="button" aria-label="Theme toggle" data-tooltip="Theme toggle">
-              <FiMoon aria-hidden="true" />
-            </button>
-            <button
-              className="admin-chats__logout tooltip"
-              type="button"
-              aria-label="Logout"
-              data-tooltip="Logout"
-            >
-              <FiLogOut aria-hidden="true" />
-            </button>
-          </div>
-        </div>
-      </header>
+      <AdminTopbar pageClass="admin-chats" searchId="chats-search" placeholder="Search chats..." searchTerm={searchTerm} onSearchChange={(event) => setSearchTerm(event.target.value)} />
 
       <div className="admin-chats__body">
         <SideBar />

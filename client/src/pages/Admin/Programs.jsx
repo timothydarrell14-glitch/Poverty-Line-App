@@ -1,16 +1,10 @@
 import { useMemo, useState } from "react";
 import {
-  FiBell,
   FiChevronRight,
-  FiHelpCircle,
-  FiLogOut,
-  FiMoon,
   FiPlus,
-  FiSearch,
-  FiUser,
   FiList,
 } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import AdminTopbar from "../../components/Admin/AdminTopbar";
 import SideBar from "../../components/Admin/SideBar";
 import "../../styles/Admin/ProgramsPage.css";
 
@@ -67,45 +61,7 @@ function Programs() {
 
   return (
     <div className="admin-programs">
-      <header className="admin-programs__topbar">
-        <Link className="admin-programs__brand" to="/admin">
-          Poverty Line
-        </Link>
-        <div className="admin-programs__topbar-content">
-          <label className="admin-programs__global-search" htmlFor="program-search">
-            <FiSearch aria-hidden="true" />
-            <input
-              id="program-search"
-              type="search"
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search programs..."
-            />
-          </label>
-          <div className="admin-programs__topbar-actions">
-            <button className="tooltip" type="button" aria-label="Notifications" data-tooltip="Notifications">
-              <FiBell aria-hidden="true" />
-            </button>
-            <button className="tooltip" type="button" aria-label="Help" data-tooltip="Help">
-              <FiHelpCircle aria-hidden="true" />
-            </button>
-            <button className="tooltip" type="button" aria-label="Account" data-tooltip="Account">
-              <FiUser aria-hidden="true" />
-            </button>
-            <button className="tooltip" type="button" aria-label="Theme toggle" data-tooltip="Theme toggle">
-              <FiMoon aria-hidden="true" />
-            </button>
-            <button
-              className="admin-programs__logout tooltip"
-              type="button"
-              aria-label="Logout"
-              data-tooltip="Logout"
-            >
-              <FiLogOut aria-hidden="true" />
-            </button>
-          </div>
-        </div>
-      </header>
+      <AdminTopbar pageClass="admin-programs" searchId="program-search" placeholder="Search programs..." searchTerm={searchTerm} onSearchChange={(event) => setSearchTerm(event.target.value)} />
 
       <div className="admin-programs__body">
         <SideBar />

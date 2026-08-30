@@ -1,46 +1,15 @@
-import { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { isAdmin } from "../utils/authorization";
-
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "";
+import { AdminSessionProvider, useAdminSession } from "./AdminSession";
 
 function AdminRoute() {
-  const [access, setAccess] = useState(() =>
-    localStorage.getItem("accessToken") ? "checking" : "denied",
-  );
+  return <AdminSessionProvider><AdminAccess /></AdminSessionProvider>;
+}
+
+function AdminAccess() {
+  const { status } = useAdminSession();
   const location = useLocation();
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const token = localStorage.getItem("accessToken");
-
-    if (!token) return () => controller.abort();
-
-    async function checkAccess() {
-      try {
-        const response = await fetch(`${apiBaseUrl}/api/auth/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          setAccess("denied");
-          return;
-        }
-
-        const { user } = await response.json();
-        setAccess(isAdmin(user.role) ? "granted" : "denied");
-      } catch (error) {
-        if (error.name !== "AbortError") setAccess("denied");
-      }
-    }
-
-    checkAccess();
-    return () => controller.abort();
-  }, []);
-
-  if (access === "checking") return <p>Checking account access…</p>;
-  if (access === "denied") {
+  if (status === "checking") return <p>Checking account access…</p>;
+  if (status === "denied") {
     return <Navigate replace to="/access-denied" state={{ from: location.pathname }} />;
   }
 

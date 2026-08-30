@@ -8,6 +8,11 @@ html {
   background: #f5f7fb;
 }
 
+html[data-theme="dark"] {
+  background: #17242a;
+  color-scheme: dark;
+}
+
 body {
   margin: 0;
   min-width: 320px;
@@ -15,6 +20,29 @@ body {
 
 #root {
   width: 100%;
+}
+
+.admin-topbar__notice {
+  background: #17242a;
+  border: 0;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  margin: 0;
+  padding: 8px 12px;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  z-index: 30;
+}
+
+.sr-only {
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  position: absolute;
+  width: 1px;
 }
 
 .tooltip {
