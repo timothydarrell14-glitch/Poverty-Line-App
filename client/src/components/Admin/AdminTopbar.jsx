@@ -3,7 +3,7 @@ import { FiBell, FiHelpCircle, FiLogOut, FiMoon, FiSearch, FiSun, FiUser } from 
 import { Link, useNavigate } from "react-router-dom";
 import { useAdminSession } from "../AdminSession";
 
-function AdminTopbar({ pageClass, searchId, placeholder, searchTerm = "", onSearchChange, showNotificationDot = false }) {
+function AdminTopbar({ pageClass, searchClass = `${pageClass}__global-search`, searchId, placeholder, searchTerm = "", onSearchChange, showNotificationDot = false }) {
   const [notice, setNotice] = useState("");
   const { user, theme, toggleTheme, logout } = useAdminSession();
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ function AdminTopbar({ pageClass, searchId, placeholder, searchTerm = "", onSear
     <header className={`${pageClass}__topbar`}>
       <Link className={`${pageClass}__brand`} to="/admin">Poverty Line</Link>
       <div className={`${pageClass}__topbar-content`}>
-        <label className={`${pageClass}__global-search`} htmlFor={searchId}>
+        <label className={searchClass} htmlFor={searchId}>
           <FiSearch aria-hidden="true" />
           <input id={searchId} type="search" value={searchTerm} onChange={onSearchChange} placeholder={placeholder} />
         </label>

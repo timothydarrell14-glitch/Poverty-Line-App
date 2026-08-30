@@ -47,6 +47,18 @@ export function AdminSessionProvider({ children }) {
       setUser(null);
       setStatus("denied");
     },
+    updateUser: async (profile) => {
+      const token = localStorage.getItem("accessToken");
+      const response = await fetch(`${apiBaseUrl}/api/auth/me`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify(profile),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.message ?? "Could not update profile.");
+      setUser(payload.user);
+      return payload.user;
+    },
   };
 
   return <AdminSessionContext.Provider value={value}>{children}</AdminSessionContext.Provider>;

@@ -344,11 +344,55 @@
   font-size: 12px;
   text-decoration: none;
 }
+.admin-home__view-all {
+  background: transparent;
+  border: 0;
+  color: #006d78;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  padding: 0;
+}
 .admin-home__activity-list {
   list-style: none;
   margin: 23px 0 0;
   padding: 0;
 }
+.admin-home__empty-state {
+  color: #4c585e;
+  font-size: 14px;
+  list-style: none;
+  padding: 18px 0;
+}
+.admin-home__modal-backdrop {
+  align-items: center;
+  background: rgb(12 26 32 / 55%);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 24px;
+  position: fixed;
+  z-index: 40;
+}
+.admin-home__profile-form {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 18px 45px rgb(0 0 0 / 22%);
+  display: grid;
+  gap: 14px;
+  max-width: 430px;
+  padding: 24px;
+  width: 100%;
+}
+.admin-home__profile-form h2,
+.admin-home__profile-form p { margin: 0; }
+.admin-home__profile-form label { color: #28383e; display: grid; font-size: 14px; gap: 6px; }
+.admin-home__profile-form input { border: 1px solid #aab8bd; border-radius: 5px; font: inherit; padding: 9px; }
+.admin-home__form-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.admin-home__form-actions button { border: 0; border-radius: 5px; cursor: pointer; font: inherit; padding: 9px 13px; }
+.admin-home__form-actions button[type="submit"] { background: #00707b; color: #fff; }
+.admin-home__form-actions button[type="button"] { background: #e8eef0; color: #1b282d; }
+.admin-home__form-error { color: #b62020; font-size: 13px; }
 .admin-home__activity {
   display: grid;
   gap: 13px;

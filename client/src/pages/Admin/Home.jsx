@@ -7,9 +7,10 @@ import {
   FiUser,
   FiUsers,
 } from "react-icons/fi";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminTopbar from "../../components/Admin/AdminTopbar";
+import { useAdminSession } from "../../components/AdminSession";
 import SideBar from "../../components/Admin/SideBar"
 import "../../styles/Admin/Home.css";
 
@@ -44,11 +45,43 @@ const activities = [
 function Home() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [showAllActivities, setShowAllActivities] = useState(false);
+  const [profileError, setProfileError] = useState("");
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const { user, updateUser } = useAdminSession();
+  const visibleActivities = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    const matchingActivities = activities.filter((activity) =>
+      [activity.title, activity.description, ...(activity.tags ?? [])].join(" ").toLowerCase().includes(term),
+    );
+    return (showAllActivities ? matchingActivities : matchingActivities.slice(0, 2));
+  }, [searchTerm, showAllActivities]);
+
+  async function handleProfileSave(event) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    setProfileError("");
+    setIsSavingProfile(true);
+    try {
+      await updateUser({
+        first_name: form.get("firstName"),
+        last_name: form.get("lastName"),
+        email: form.get("email"),
+      });
+      setIsEditingProfile(false);
+    } catch (error) {
+      setProfileError(error.message);
+    } finally {
+      setIsSavingProfile(false);
+    }
+  }
 
   return (
     <div className="admin-home">
       <AdminTopbar
         pageClass="admin-home"
+        searchClass="admin-home__search"
         searchId="admin-search"
         placeholder="Search..."
         searchTerm={searchTerm}
@@ -75,10 +108,10 @@ function Home() {
                 src="https://i.pravatar.cc/144?img=12"
               />
               <div className="admin-home__profile-copy">
-                <h1 id="admin-profile-name">Timothy Darrell</h1>
-                <p>System Administrator</p>
+                <h1 id="admin-profile-name">{user?.name}</h1>
+                <p>{user?.role}</p>
               </div>
-              <button className="admin-home__edit-profile" type="button">
+              <button className="admin-home__edit-profile" type="button" onClick={() => setIsEditingProfile(true)}>
                 <FiEdit2 aria-hidden="true" />
                 <span>Edit Profile</span>
               </button>
@@ -115,20 +148,20 @@ function Home() {
               >
                 <h2 id="quick-actions-heading">Quick Actions</h2>
                 <div className="admin-home__quick-action-list">
-                  <button type="button">
+                  {!searchTerm || "new program".includes(searchTerm.toLowerCase()) ? <button type="button" onClick={() => navigate("/admin/programs")}>
                     <span className="admin-home__action-icon admin-home__action-icon--teal">
                       <FiFileText aria-hidden="true" />
                     </span>
                     <span>New Program</span>
                     <FiChevronRight aria-hidden="true" />
-                  </button>
-                  <button type="button" onClick={() => navigate("/admin/chats")}>
+                  </button> : null}
+                  {!searchTerm || "view chats".includes(searchTerm.toLowerCase()) ? <button type="button" onClick={() => navigate("/admin/chats")}>
                     <span className="admin-home__action-icon admin-home__action-icon--green">
                       <FiMessageSquare aria-hidden="true" />
                     </span>
                     <span>View Chats</span>
                     <FiChevronRight aria-hidden="true" />
-                  </button>
+                  </button> : null}
                 </div>
               </section>
             </div>
@@ -139,11 +172,13 @@ function Home() {
             >
               <div className="admin-home__activities-heading">
                 <h2 id="recent-activity-heading">Recent Activity</h2>
-                <a href="#all-activity">View All</a>
+                <button className="admin-home__view-all" type="button" onClick={() => setShowAllActivities((showAll) => !showAll)}>
+                  {showAllActivities ? "Show Less" : "View All"}
+                </button>
               </div>
               <div className="admin-home__panel-rule" />
               <ol className="admin-home__activity-list">
-                {activities.map(
+                {visibleActivities.length ? visibleActivities.map(
                   ({ type, title, time, description, icon: Icon, tags }) => (
                     <li className="admin-home__activity" key={title}>
                       <span
@@ -167,13 +202,28 @@ function Home() {
                       </article>
                     </li>
                   ),
-                )}
+                ) : <li className="admin-home__empty-state">No dashboard items match “{searchTerm}”.</li>}
               </ol>
             </section>
           </div>
         </main>
         </div>
       </div>
+      {isEditingProfile && (
+        <div className="admin-home__modal-backdrop" role="presentation">
+          <form className="admin-home__profile-form" onSubmit={handleProfileSave}>
+            <h2>Edit Profile</h2>
+            <label>First name<input name="firstName" defaultValue={user?.name?.split(" ")[0] ?? ""} required /></label>
+            <label>Last name<input name="lastName" defaultValue={user?.name?.split(" ").slice(1).join(" ") ?? ""} required /></label>
+            <label>Email<input name="email" type="email" defaultValue={user?.email ?? ""} required /></label>
+            {profileError && <p className="admin-home__form-error" role="alert">{profileError}</p>}
+            <div className="admin-home__form-actions">
+              <button type="button" onClick={() => setIsEditingProfile(false)}>Cancel</button>
+              <button type="submit" disabled={isSavingProfile}>{isSavingProfile ? "Saving…" : "Save changes"}</button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 }
