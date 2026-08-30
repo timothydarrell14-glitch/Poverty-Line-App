@@ -30,3 +30,47 @@ def score_education(answer):
 	if answer == "tertiary":
 		return 0.0
 	return 0.5
+
+
+
+
+def score_employment(answer):
+	answer = (answer or "").strip().lower()
+	if answer == "no":
+		return 1.0
+	if answer == "yes":
+		return 0.0
+	return 0.5
+
+
+def score_dependents(answer):
+	try:
+		dependents = int(answer)
+	except (TypeError, ValueError):
+		return 0.5
+
+	if dependents <= 1:
+		return 0.0
+	if dependents <= 3:
+		return 0.3
+	if dependents <= 5:
+		return 0.6
+	return 1.0
+
+
+def score_water(answer):
+	answer = (answer or "").strip().lower()
+	if answer == "no":
+		return 1.0
+	if answer == "yes":
+		return 0.0
+	return 0.5
+
+
+def score_housing(answer):
+	answer = (answer or "").strip().lower()
+	if answer == "rent":
+		return 0.6
+	if answer == "own":
+		return 0.0
+	return 0.3
