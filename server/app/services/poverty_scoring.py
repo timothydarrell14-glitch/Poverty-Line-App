@@ -74,3 +74,22 @@ def score_housing(answer):
 	if answer == "own":
 		return 0.0
 	return 0.3
+
+
+
+QUESTION_SCORERS = {
+	INCOME_QUESTION: score_income,
+	EDUCATION_QUESTION: score_education,
+	EMPLOYMENT_QUESTION: score_employment,
+	DEPENDENTS_QUESTION: score_dependents,
+	WATER_QUESTION: score_water,
+	HOUSING_QUESTION: score_housing,
+}
+
+
+def classify_score(total_score):
+	if total_score >= 60:
+		return "Extreme Poverty"
+	if total_score >= 30:
+		return "Moderate Poverty"
+	return "Low Poverty Risk"
