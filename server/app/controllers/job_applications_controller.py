@@ -4,10 +4,12 @@ from marshmallow import ValidationError
 
 from app.extensions import db
 from app.models.job_applications import JobApplication
+from app.models.users import User
 from app.schemas.job_application_schema import (
 	job_application_schema,
 	job_applications_schema,
 	job_application_create_schema,
+	job_application_status_update_schema,
 )
 
 job_applications_bp = Blueprint("job_applications", __name__, url_prefix="/job-applications")
@@ -88,3 +90,25 @@ def withdraw_job_application(application_id):
 	db.session.commit()
 
 	return "", 204
+
+
+@job_applications_bp.route("/<int:application_id>/status", methods=["PATCH"])
+@jwt_required()
+def update_job_application_status(application_id):
+	current_user_id = int(get_jwt_identity())
+	current_user = User.query.get_or_404(current_user_id)
+
+	if current_user.role != "admin":
+		return jsonify({"error": "Admin access required"}), 403
+
+	application = JobApplication.query.get_or_404(application_id)
+
+	try:
+		data = job_application_status_update_schema.load(request.get_json())
+	except ValidationError as err:
+		return jsonify(err.messages), 422
+
+	application.status = data["status"]
+	db.session.commit()
+
+	return jsonify(job_application_schema.dump(application)), 200
