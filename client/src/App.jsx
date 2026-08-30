@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import HomePage from "./Homepage";
 import GetHelpPage from "./pages/GetHelpPage";
 import OrganisationsPage from "./pages/OrganisationsPage";
+import DonorsPage from "./pages/DonorsPage";
 import LogisticsPage from "./pages/LogisticsPage";
 import JobsPage from "./pages/JobsPage";
 
@@ -36,6 +37,9 @@ function App() {
             element={<OrganisationsPage />}
           />
 
+          <Route path="/donors" element={<DonorsPage />} />
+
+          <Route path="/jobs" element={<JobsPlaceholder />} />
           {/* Logistics Page */}
           <Route
             path="/logistics"
