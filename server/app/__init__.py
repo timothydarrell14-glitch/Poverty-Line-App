@@ -1,11 +1,12 @@
 import os
+from pathlib import Path
 from flask import Flask, jsonify
 from dotenv import load_dotenv
 
 from app.extensions import db, migrate, ma, cors, jwt
 import app.models
 
-load_dotenv()
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 
 def create_app():
@@ -14,7 +15,7 @@ def create_app():
 
     # Configure app settings
     app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-key")
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///app.db")
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY", "dev-jwt-secret")
 
@@ -29,8 +30,8 @@ def create_app():
     def home():
         return jsonify({"message": "Welcome to the BACKEND API!"})
 
-    # Register blueprints/routes here as they're built
-    # from app.routes.main_routes import main_bp
-    # app.register_blueprint(main_bp)
+    from app.routes.auth_routes import auth_bp
+
+    app.register_blueprint(auth_bp)
 
     return app
