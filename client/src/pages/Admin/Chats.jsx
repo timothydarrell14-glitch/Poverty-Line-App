@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import AdminTopbar from "../../components/Admin/AdminTopbar";
 import SideBar from "../../components/Admin/SideBar";
-import ComingSoon from "../../components/Admin/ComingSoon";
 import "../../styles/Admin/ChatsPage.css";
 
 const conversations = [
@@ -54,7 +53,6 @@ const conversations = [
 const filters = ["All Active", "Field Agents", "Partners"];
 
 function Chats() {
-  const [showPreview, setShowPreview] = useState(false);
   const [activeFilter, setActiveFilter] = useState("All Active");
   const [selectedConversationId, setSelectedConversationId] = useState(conversations[0].id);
   const [searchTerm, setSearchTerm] = useState("");
@@ -70,10 +68,6 @@ function Chats() {
   const selectedConversation = conversations.find(
     (conversation) => conversation.id === selectedConversationId,
   ) ?? conversations[0];
-
-  if (!showPreview) {
-    return <ComingSoon feature="Chats" onPreview={() => setShowPreview(true)} />;
-  }
 
   return (
     <div className="admin-chats">

@@ -7,7 +7,6 @@ import {
   FiTruck,
 } from "react-icons/fi";
 import AdminTopbar from "../../components/Admin/AdminTopbar";
-import ComingSoon from "../../components/Admin/ComingSoon";
 import SideBar from "../../components/Admin/SideBar";
 import "../../styles/Admin/DeliveriesPage.css";
 
@@ -52,7 +51,6 @@ const initialDeliveries = [
 const filters = ["All", "In Transit", "Delivered", "Delayed"];
 
 function Deliveries() {
-  const [showPreview, setShowPreview] = useState(false);
   const [deliveries, setDeliveries] = useState(initialDeliveries);
   const [activeFilter, setActiveFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
@@ -80,10 +78,6 @@ function Deliveries() {
     setActiveFilter("All");
     setSearchTerm("");
     setSelectedId(newDelivery.id);
-  }
-
-  if (!showPreview) {
-    return <ComingSoon feature="Deliveries" onPreview={() => setShowPreview(true)} />;
   }
 
   return (

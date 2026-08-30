@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash
 
 from app.extensions import db
 from app.models.users import User
+from app.models.programs import Program
 
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
@@ -113,3 +114,20 @@ def delete_user(user_id):
     if user.user_id == admin.user_id: return jsonify({"message": "You cannot delete your own account."}), 400
     db.session.delete(user); db.session.commit()
     return "", 204
+
+@auth_bp.get("/programs")
+@jwt_required()
+def list_programs():
+    if not admin_user(): return jsonify({"message": "Admin access required."}), 403
+    return jsonify({"programs": [{"id": p.program_id, "title": p.name, "description": p.description or "No description provided.", "status": p.status or "Draft", "statusType": (p.status or "draft").lower().replace(" ", "-"), "location": p.location} for p in Program.query.order_by(Program.program_id.desc()).all()]})
+
+@auth_bp.patch("/programs/<int:program_id>")
+@jwt_required()
+def update_program(program_id):
+    if not admin_user(): return jsonify({"message": "Admin access required."}), 403
+    program = db.session.get(Program, program_id)
+    if not program: return jsonify({"message": "Program not found."}), 404
+    data = request.get_json(silent=True) or {}
+    if "status" in data: program.status = data["status"]
+    db.session.commit()
+    return jsonify({"program": {"id": program.program_id, "title": program.name, "description": program.description or "No description provided.", "status": program.status or "Draft", "statusType": (program.status or "draft").lower().replace(" ", "-"), "location": program.location}})

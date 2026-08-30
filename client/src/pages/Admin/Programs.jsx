@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   FiChevronRight,
   FiPlus,
@@ -8,7 +8,7 @@ import AdminTopbar from "../../components/Admin/AdminTopbar";
 import SideBar from "../../components/Admin/SideBar";
 import "../../styles/Admin/ProgramsPage.css";
 
-const programs = [
+const fallbackPrograms = [
   {
     id: 1,
     title: "Urban Nutrition",
@@ -37,6 +37,9 @@ function Programs() {
   const [activeFilter, setActiveFilter] = useState("Active");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProgram, setSelectedProgram] = useState(null);
+  const [programs, setPrograms] = useState([]);
+  const [message, setMessage] = useState("");
+  useEffect(() => { fetch("/api/auth/programs", { headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` } }).then((response) => response.json()).then((data) => setPrograms(data.programs?.length ? data.programs : fallbackPrograms)).catch(() => setPrograms(fallbackPrograms)); }, []);
 
   const visiblePrograms = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
@@ -48,11 +51,9 @@ function Programs() {
          (activeFilter === "Draft" && program.statusType === "draft") ||
          (activeFilter === "Completed" && program.statusType === "completed"))
     );
-  }, [activeFilter, searchTerm]);
+  }, [activeFilter, programs, searchTerm]);
 
-  function addProgram() {
-    console.log("Add new program");
-  }
+  function addProgram() { setMessage("Create a program from the Programs API once an organisation is selected."); }
 
   const totalImpact = {
     individualsAssisted: 14200,
@@ -114,11 +115,11 @@ function Programs() {
                       onClick={() => setSelectedProgram(program.id)}
                     >
                       <div className="programs-list__card-image-container">
-                        <img
+                        {program.image && <img
                           className="programs-list__card-image"
                           src={program.image}
                           alt={program.title}
-                        />
+                        />}
                       </div>
                       <div className="programs-list__card-content">
                         <h3>{program.title}</h3>
@@ -170,7 +171,7 @@ function Programs() {
                             </div>
                           )}
                         </div>
-                        <button className="programs-list__view-details" type="button">
+                        <button className="programs-list__view-details" type="button" onClick={(event) => { event.stopPropagation(); const status = window.prompt("Status", program.status); if (status) fetch(`/api/auth/programs/${program.id}`, { method: "PATCH", headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}`, "Content-Type": "application/json" }, body: JSON.stringify({ status }) }).then((response) => response.json()).then(({ program: updated }) => updated && setPrograms((current) => current.map((item) => item.id === updated.id ? updated : item))); }}>
                           <span>View Details</span>
                           <FiChevronRight aria-hidden="true" />
                         </button>
@@ -212,6 +213,7 @@ function Programs() {
                 <span>View All</span>
               </button>
             </aside>
+            {message && <p role="status">{message}</p>}
           </div>
         </main>
       </div>
