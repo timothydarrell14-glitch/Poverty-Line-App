@@ -94,7 +94,7 @@ function Settings() {
   };
 
   const handleSave = () => {
-    console.log("Saving settings...", { orgDetails, preferences, permissions });
+    localStorage.setItem("adminSettings", JSON.stringify({ orgDetails, preferences, permissions }));
     setSaveStatus("Changes saved");
   };
 

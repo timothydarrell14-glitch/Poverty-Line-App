@@ -53,21 +53,29 @@ const conversations = [
 const filters = ["All Active", "Field Agents", "Partners"];
 
 function Chats() {
+  const [chatData, setChatData] = useState(conversations);
   const [activeFilter, setActiveFilter] = useState("All Active");
   const [selectedConversationId, setSelectedConversationId] = useState(conversations[0].id);
   const [searchTerm, setSearchTerm] = useState("");
+  const [draft, setDraft] = useState("");
   const visibleConversations = useMemo(() => {
     if (activeFilter === "Partners") {
-      return conversations.filter((conversation) => conversation.role === "Partner");
+      return chatData.filter((conversation) => conversation.role === "Partner");
     }
     if (activeFilter === "Field Agents") {
-      return conversations.filter((conversation) => conversation.role !== "Partner");
+      return chatData.filter((conversation) => conversation.role !== "Partner");
     }
-    return conversations;
-  }, [activeFilter]);
-  const selectedConversation = conversations.find(
+    return chatData;
+  }, [activeFilter, chatData]);
+  const selectedConversation = chatData.find(
     (conversation) => conversation.id === selectedConversationId,
-  ) ?? conversations[0];
+  ) ?? chatData[0];
+  function sendMessage() {
+    const text = draft.trim();
+    if (!text) return;
+    setChatData((current) => current.map((conversation) => conversation.id === selectedConversation.id ? { ...conversation, lastMessage: text, time: "Just now", messages: [...conversation.messages, { direction: "sent", text, time: "Just now" }] } : conversation));
+    setDraft("");
+  }
 
   return (
     <div className="admin-chats">
@@ -190,8 +198,11 @@ function Chats() {
                 <input
                   type="text"
                   placeholder="Type your message..."
+                  value={draft}
+                  onChange={(event) => setDraft(event.target.value)}
+                  onKeyDown={(event) => { if (event.key === "Enter") sendMessage(); }}
                 />
-                <button className="chat-messages__send-button" type="button" aria-label="Send message">
+                <button className="chat-messages__send-button" type="button" aria-label="Send message" onClick={sendMessage}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13"/>
                   </svg>
