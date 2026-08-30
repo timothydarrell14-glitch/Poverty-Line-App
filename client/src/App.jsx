@@ -33,7 +33,7 @@ function App() {
 
           <Route path="/jobs" element={<JobsPlaceholder />} />
 
-          <Route path="/community" element={<CommunityPlaceholder />} />
+          <Route path="/community" element={<CommunityPage />} />
         </Routes>
       </main>
     </Router>
