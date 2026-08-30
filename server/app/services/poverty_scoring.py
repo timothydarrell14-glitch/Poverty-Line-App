@@ -93,3 +93,29 @@ def classify_score(total_score):
 	if total_score >= 30:
 		return "Moderate Poverty"
 	return "Low Poverty Risk"
+
+
+
+
+def calculate_poverty_score(user, responses, questions_by_id):
+	total_score = 0.0
+
+	for response in responses:
+		question = questions_by_id.get(response.question_id)
+		if question is None:
+			continue
+
+		scorer = QUESTION_SCORERS.get(question.question_text)
+		if scorer is None:
+			severity = 0.5
+		else:
+			severity = scorer(response.answer)
+
+		total_score += severity * float(question.weight)
+
+	classification = classify_score(total_score)
+
+	user.poverty_score = round(total_score, 2)
+	user.poverty_classification = classification
+
+	return user
