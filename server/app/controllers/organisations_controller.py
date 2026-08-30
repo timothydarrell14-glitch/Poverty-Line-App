@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from app.models.users import User
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from marshmallow import ValidationError
 
@@ -116,3 +117,20 @@ def delete_organisation(organisation_id):
 	db.session.delete(organisation)
 	db.session.commit()
 	return "", 204
+
+
+
+@organisations_bp.route("/<int:organisation_id>/verify", methods=["PATCH"])
+@jwt_required()
+def verify_organisation(organisation_id):
+	current_user_id = int(get_jwt_identity())
+	current_user = User.query.get_or_404(current_user_id)
+
+	if current_user.role != "admin":
+		return jsonify({"error": "Admin access required"}), 403
+
+	organisation = Organisation.query.get_or_404(organisation_id)
+	organisation.verified = True
+	db.session.commit()
+
+	return jsonify(organisation_schema.dump(organisation)), 200
