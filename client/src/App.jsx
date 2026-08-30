@@ -2,6 +2,7 @@ import './App.css'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import AdminRoute from './components/AdminRoute'
 import AccessDeniedPage from './pages/AccessDeniedPage'
+import LoginPage from './pages/LoginPage'
 import Chats from './pages/Admin/Chats'
 import Deliveries from './pages/Admin/Deliveries'
 import Home from './pages/Admin/Home'
@@ -12,7 +13,8 @@ import Users from './pages/Admin/Users'
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate replace to="/admin" />} />
+      <Route path="/" element={<Navigate replace to="/login" />} />
+      <Route path="/login" element={<LoginPage />} />
       <Route path="/access-denied" element={<AccessDeniedPage />} />
       <Route element={<AdminRoute />}>
         <Route path="/admin" element={<Home />} />

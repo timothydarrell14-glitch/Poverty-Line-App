@@ -42,10 +42,18 @@ export function AdminSessionProvider({ children }) {
   const value = {
     status, user, theme,
     toggleTheme: () => setTheme((current) => current === "dark" ? "light" : "dark"),
-    logout: () => {
-      localStorage.removeItem("accessToken");
-      setUser(null);
-      setStatus("denied");
+    logout: async () => {
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        try {
+          await fetch(`${apiBaseUrl}/api/auth/logout`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+        } catch (error) {
+          // Ignore logout API failures and clear local session anyway.
+        }
+      }
     },
     updateUser: async (profile) => {
       const token = localStorage.getItem("accessToken");

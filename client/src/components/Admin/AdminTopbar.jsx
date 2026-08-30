@@ -9,9 +9,9 @@ function AdminTopbar({ pageClass, searchClass = `${pageClass}__global-search`, s
   const navigate = useNavigate();
   const dismissNotice = () => setNotice("");
 
-  function handleLogout() {
-    logout();
-    navigate("/access-denied", { replace: true });
+  async function handleLogout() {
+    await logout();
+    navigate("/login", { replace: true });
   }
 
   return (

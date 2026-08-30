@@ -32,14 +32,25 @@ const fallbackPrograms = [
 ];
 
 const filters = ["Active", "Draft", "Completed"];
+const emptyProgramForm = { name: "", description: "", organisation_id: "", status: "Draft", location: "" };
 
 function Programs() {
   const [activeFilter, setActiveFilter] = useState("Active");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [programs, setPrograms] = useState([]);
+  const [organisations, setOrganisations] = useState([]);
   const [message, setMessage] = useState("");
-  useEffect(() => { fetch("/api/auth/programs", { headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` } }).then((response) => response.json()).then((data) => setPrograms(data.programs?.length ? data.programs : fallbackPrograms)).catch(() => setPrograms(fallbackPrograms)); }, []);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [programForm, setProgramForm] = useState(emptyProgramForm);
+  const [statusProgram, setStatusProgram] = useState(null);
+  const [statusDraft, setStatusDraft] = useState("Draft");
+  const token = localStorage.getItem("accessToken");
+
+  useEffect(() => {
+    fetch("/api/auth/programs", { headers: { Authorization: `Bearer ${token}` } }).then((response) => response.json()).then((data) => setPrograms(data.programs?.length ? data.programs : fallbackPrograms)).catch(() => setPrograms(fallbackPrograms));
+    fetch("/api/auth/organisations", { headers: { Authorization: `Bearer ${token}` } }).then((response) => response.json()).then((data) => setOrganisations(data.organisations ?? [])).catch(() => setOrganisations([]));
+  }, [token]);
 
   const visiblePrograms = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
@@ -53,7 +64,34 @@ function Programs() {
     );
   }, [activeFilter, programs, searchTerm]);
 
-  function addProgram() { setMessage("Create a program from the Programs API once an organisation is selected."); }
+  async function submitProgram(event) {
+    event.preventDefault();
+    const response = await fetch("/api/auth/programs", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify(programForm),
+    });
+    const data = await response.json();
+    if (!response.ok) return setMessage(data.message || "Could not create program.");
+    setPrograms((current) => [data.program, ...current]);
+    setMessage("Program created.");
+    setShowCreateForm(false);
+    setProgramForm(emptyProgramForm);
+  }
+
+  async function updateStatus() {
+    if (!statusProgram) return;
+    const response = await fetch(`/api/auth/programs/${statusProgram.id}`, {
+      method: "PATCH",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ status: statusDraft }),
+    });
+    const data = await response.json();
+    if (!response.ok) return setMessage(data.message || "Could not update program status.");
+    setPrograms((current) => current.map((item) => item.id === statusProgram.id ? data.program : item));
+    setStatusProgram(null);
+    setMessage("Status updated.");
+  }
 
   const totalImpact = {
     individualsAssisted: 14200,
@@ -75,7 +113,7 @@ function Programs() {
             <button
               className="admin-programs__add-button"
               type="button"
-              onClick={addProgram}
+              onClick={() => setShowCreateForm(true)}
             >
               <FiPlus aria-hidden="true" />
               <span>New Program</span>
@@ -171,7 +209,7 @@ function Programs() {
                             </div>
                           )}
                         </div>
-                        <button className="programs-list__view-details" type="button" onClick={(event) => { event.stopPropagation(); const status = window.prompt("Status", program.status); if (status) fetch(`/api/auth/programs/${program.id}`, { method: "PATCH", headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}`, "Content-Type": "application/json" }, body: JSON.stringify({ status }) }).then((response) => response.json()).then(({ program: updated }) => updated && setPrograms((current) => current.map((item) => item.id === updated.id ? updated : item))); }}>
+                        <button className="programs-list__view-details" type="button" onClick={(event) => { event.stopPropagation(); setStatusProgram(program); setStatusDraft(program.status || "Draft"); }}>
                           <span>View Details</span>
                           <FiChevronRight aria-hidden="true" />
                         </button>
@@ -217,6 +255,52 @@ function Programs() {
           </div>
         </main>
       </div>
+
+      {showCreateForm && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.5)", display: "grid", placeItems: "center", zIndex: 30 }}>
+          <form onSubmit={submitProgram} style={{ width: 440, background: "#fff", borderRadius: 14, padding: 24, boxShadow: "0 24px 60px rgba(15,23,42,0.22)" }}>
+            <h2 style={{ marginTop: 0 }}>Create program</h2>
+            <div style={{ display: "grid", gap: 12 }}>
+              <input value={programForm.name} onChange={(event) => setProgramForm((current) => ({ ...current, name: event.target.value }))} placeholder="Program name" required />
+              <textarea value={programForm.description} onChange={(event) => setProgramForm((current) => ({ ...current, description: event.target.value }))} placeholder="Description" rows={4} />
+              <select value={programForm.organisation_id} onChange={(event) => setProgramForm((current) => ({ ...current, organisation_id: event.target.value }))} required>
+                <option value="">Select organisation</option>
+                {organisations.map((organisation) => (
+                  <option key={organisation.id} value={organisation.id}>{organisation.name}</option>
+                ))}
+              </select>
+              <input value={programForm.location} onChange={(event) => setProgramForm((current) => ({ ...current, location: event.target.value }))} placeholder="Location" />
+              <select value={programForm.status} onChange={(event) => setProgramForm((current) => ({ ...current, status: event.target.value }))}>
+                <option value="Draft">Draft</option>
+                <option value="Active">Active</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 20 }}>
+              <button type="button" onClick={() => { setShowCreateForm(false); setProgramForm(emptyProgramForm); }}>Cancel</button>
+              <button type="submit">Save Program</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {statusProgram && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.5)", display: "grid", placeItems: "center", zIndex: 30 }}>
+          <div style={{ width: 360, background: "#fff", borderRadius: 14, padding: 24, boxShadow: "0 24px 60px rgba(15,23,42,0.22)" }}>
+            <h2 style={{ marginTop: 0 }}>Update status</h2>
+            <p>{statusProgram.title}</p>
+            <select value={statusDraft} onChange={(event) => setStatusDraft(event.target.value)}>
+              <option value="Draft">Draft</option>
+              <option value="Active">Active</option>
+              <option value="Completed">Completed</option>
+            </select>
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 20 }}>
+              <button type="button" onClick={() => setStatusProgram(null)}>Close</button>
+              <button type="button" onClick={updateStatus}>Save</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

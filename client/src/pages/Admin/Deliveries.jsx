@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   FiCheckCircle,
   FiClock,
@@ -56,6 +56,25 @@ function Deliveries() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedId, setSelectedId] = useState(initialDeliveries[0].id);
   const [isZoomed, setIsZoomed] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    fetch("/api/auth/deliveries", { headers: { Authorization: `Bearer ${token}` } })
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => {
+        if (!data?.deliveries?.length) return;
+        setDeliveries(data.deliveries.map((delivery) => ({
+          id: delivery.id,
+          destination: delivery.destination,
+          status: delivery.status,
+          updated: delivery.updated,
+          marker: delivery.marker || "delivery-map__marker--new",
+        })));
+        setSelectedId((current) => current || data.deliveries[0]?.id || initialDeliveries[0].id);
+      })
+      .catch(() => undefined);
+  }, []);
+
   const visibleDeliveries = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     return deliveries.filter(

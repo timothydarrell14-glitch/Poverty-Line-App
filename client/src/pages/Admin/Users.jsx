@@ -10,12 +10,25 @@ import AdminTopbar from "../../components/Admin/AdminTopbar";
 import SideBar from "../../components/Admin/SideBar";
 import "../../styles/Admin/UsersPage.css";
 
+const defaultUserDraft = {
+  first_name: "",
+  last_name: "",
+  email: "",
+  role: "Field Agent",
+  password: "",
+};
+
 function Users() {
   const [searchTerm, setSearchTerm] = useState("");
   const [users, setUsers] = useState([]);
   const [roleFilter, setRoleFilter] = useState("All Roles");
   const [page, setPage] = useState(0);
   const [message, setMessage] = useState("");
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [userDraft, setUserDraft] = useState(defaultUserDraft);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [manageAction, setManageAction] = useState("role");
+  const [newRole, setNewRole] = useState("Field Agent");
   const token = localStorage.getItem("accessToken");
   const loadUsers = () => fetch("/api/auth/users", { headers: { Authorization: `Bearer ${token}` } }).then((response) => response.json()).then((data) => setUsers(data.users ?? []));
   // The access token is read once when this protected page mounts.
@@ -23,19 +36,46 @@ function Users() {
   useEffect(() => { loadUsers().catch(() => setMessage("Could not load users.")); }, []);
   const filteredUsers = useMemo(() => users.filter((user) => (roleFilter === "All Roles" || user.role === roleFilter) && `${user.name} ${user.email}`.toLowerCase().includes(searchTerm.toLowerCase())), [users, roleFilter, searchTerm]);
   const pageSize = 5; const pageUsers = filteredUsers.slice(page * pageSize, (page + 1) * pageSize);
-  async function createUser() {
-    const name = window.prompt("Full name:"); const email = window.prompt("Email:"); const role = window.prompt("Role (Admin, Field Agent, or Partner):", "Field Agent"); const password = window.prompt("Temporary password:");
-    if (!name || !email || !role || !password) return;
-    const [first_name, ...last] = name.trim().split(/\s+/);
-    const response = await fetch("/api/auth/users", { method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify({ first_name, last_name: last.join(" ") || "User", email, role, password }) });
-    const data = await response.json(); if (!response.ok) return setMessage(data.message); setUsers((current) => [data.user, ...current]); setMessage("User created.");
+
+  async function createUser(event) {
+    event.preventDefault();
+    const { first_name, last_name, email, role, password } = userDraft;
+    if (!first_name || !last_name || !email || !role || !password) {
+      setMessage("Complete all user fields before saving.");
+      return;
+    }
+    const response = await fetch("/api/auth/users", { method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify({ first_name, last_name, email, role, password }) });
+    const data = await response.json();
+    if (!response.ok) return setMessage(data.message || "Could not create user.");
+    setUsers((current) => [data.user, ...current]);
+    setMessage("User created.");
+    setUserDraft(defaultUserDraft);
+    setShowCreateForm(false);
   }
-  async function manageUser(user) {
-    const action = window.prompt("Enter: role, status, or delete"); if (!action) return;
-    if (action === "delete" && window.confirm(`Delete ${user.name}?`)) { await fetch(`/api/auth/users/${user.id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }); return loadUsers(); }
-    const body = action === "role" ? { role: window.prompt("New role:", user.role) } : action === "status" ? { is_active: user.status !== "Active" } : null;
-    if (!body || Object.values(body).some((value) => value === null)) return;
-    const response = await fetch(`/api/auth/users/${user.id}`, { method: "PATCH", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify(body) }); const data = await response.json(); if (response.ok) setUsers((current) => current.map((item) => item.id === user.id ? data.user : item)); else setMessage(data.message);
+
+  async function manageUser() {
+    if (!selectedUser) return;
+    const body = manageAction === "role" ? { role: newRole } : manageAction === "status" ? { is_active: selectedUser.status !== "Active" } : null;
+    if (!body) {
+      const response = await fetch(`/api/auth/users/${selectedUser.id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        setMessage(data.message || "Could not delete user.");
+        return;
+      }
+      setMessage("User deleted.");
+      setSelectedUser(null);
+      return loadUsers();
+    }
+    const response = await fetch(`/api/auth/users/${selectedUser.id}`, { method: "PATCH", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const data = await response.json();
+    if (response.ok) {
+      setUsers((current) => current.map((item) => item.id === selectedUser.id ? data.user : item));
+      setSelectedUser(null);
+      setMessage("User updated.");
+    } else {
+      setMessage(data.message || "Could not update user.");
+    }
   }
   return (
     <div className="admin-users">
@@ -49,7 +89,7 @@ function Users() {
               <h1>Users Management</h1>
               <p>Manage administrators, field agents, and partners.</p>
             </div>
-            <button className="admin-users__add-button" type="button" onClick={createUser}>
+            <button className="admin-users__add-button" type="button" onClick={() => setShowCreateForm(true)}>
               <FiUserPlus aria-hidden="true" />
               <span>Add New User</span>
             </button>
@@ -133,7 +173,11 @@ function Users() {
                           type="button"
                           aria-label={`Actions for ${user.name}`}
                           data-tooltip={`Actions for ${user.name}`}
-                          onClick={() => manageUser(user)}
+                          onClick={() => {
+                            setSelectedUser(user);
+                            setNewRole(user.role);
+                            setManageAction("role");
+                          }}
                         >
                           <FiMoreVertical aria-hidden="true" />
                         </button>
@@ -157,6 +201,57 @@ function Users() {
           </section>
         </main>
       </div>
+
+      {showCreateForm && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.5)", display: "grid", placeItems: "center", zIndex: 30 }}>
+          <form onSubmit={createUser} style={{ width: 420, background: "#fff", borderRadius: 14, padding: 24, boxShadow: "0 24px 60px rgba(15,23,42,0.22)" }}>
+            <h2 style={{ marginTop: 0 }}>Create user</h2>
+            <div style={{ display: "grid", gap: 12 }}>
+              <input value={userDraft.first_name} onChange={(event) => setUserDraft((current) => ({ ...current, first_name: event.target.value }))} placeholder="First name" required />
+              <input value={userDraft.last_name} onChange={(event) => setUserDraft((current) => ({ ...current, last_name: event.target.value }))} placeholder="Last name" required />
+              <input type="email" value={userDraft.email} onChange={(event) => setUserDraft((current) => ({ ...current, email: event.target.value }))} placeholder="Email" required />
+              <select value={userDraft.role} onChange={(event) => setUserDraft((current) => ({ ...current, role: event.target.value }))}>
+                <option value="Admin">Admin</option>
+                <option value="Field Agent">Field Agent</option>
+                <option value="Partner">Partner</option>
+              </select>
+              <input type="password" value={userDraft.password} onChange={(event) => setUserDraft((current) => ({ ...current, password: event.target.value }))} placeholder="Temporary password" required />
+            </div>
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 20 }}>
+              <button type="button" onClick={() => { setShowCreateForm(false); setUserDraft(defaultUserDraft); }}>Cancel</button>
+              <button type="submit">Save User</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {selectedUser && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.5)", display: "grid", placeItems: "center", zIndex: 30 }}>
+          <div style={{ width: 420, background: "#fff", borderRadius: 14, padding: 24, boxShadow: "0 24px 60px rgba(15,23,42,0.22)" }}>
+            <h2 style={{ marginTop: 0 }}>Manage {selectedUser.name}</h2>
+            <div style={{ display: "grid", gap: 12 }}>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button type="button" onClick={() => setManageAction("role")}>Change role</button>
+                <button type="button" onClick={() => setManageAction("status")}>Toggle status</button>
+                <button type="button" onClick={() => setManageAction("delete")}>Delete</button>
+              </div>
+              {manageAction === "role" && (
+                <select value={newRole} onChange={(event) => setNewRole(event.target.value)}>
+                  <option value="Admin">Admin</option>
+                  <option value="Field Agent">Field Agent</option>
+                  <option value="Partner">Partner</option>
+                </select>
+              )}
+              {manageAction === "status" && <p>Set to {selectedUser.status === "Active" ? "Inactive" : "Active"}.</p>}
+              {manageAction === "delete" && <p>Delete this user permanently?</p>}
+            </div>
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 20 }}>
+              <button type="button" onClick={() => setSelectedUser(null)}>Close</button>
+              <button type="button" onClick={manageUser}>{manageAction === "delete" ? "Confirm delete" : "Save changes"}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

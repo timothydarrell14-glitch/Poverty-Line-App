@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FiBell,
   FiChevronDown,
@@ -80,6 +80,21 @@ function Settings() {
   });
   const [saveStatus, setSaveStatus] = useState("");
 
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    fetch("/api/auth/settings", { headers: { Authorization: `Bearer ${token}` } })
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => {
+        if (!data?.settings) return;
+        const generalSettings = data.settings.filter((setting) => setting.category === "general");
+        const next = Object.fromEntries(generalSettings.map((setting) => [setting.key, setting.value]));
+        if (next.orgName || next.supportEmail || next.publicDescription) {
+          setOrgDetails((current) => ({ ...current, orgName: next.orgName ?? current.orgName, supportEmail: next.supportEmail ?? current.supportEmail, publicDescription: next.publicDescription ?? current.publicDescription }));
+        }
+      })
+      .catch(() => undefined);
+  }, []);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setOrgDetails((prev) => ({ ...prev, [name]: value }));
@@ -93,7 +108,22 @@ function Settings() {
     setPermissions((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    const token = localStorage.getItem("accessToken");
+    const payload = [
+      { key: "orgName", value: orgDetails.orgName, category: "general" },
+      { key: "supportEmail", value: orgDetails.supportEmail, category: "general" },
+      { key: "publicDescription", value: orgDetails.publicDescription, category: "general" },
+      { key: "communicationPreferences", value: JSON.stringify(preferences), category: "notifications" },
+      { key: "systemPermissions", value: JSON.stringify(permissions), category: "security" },
+    ];
+
+    await Promise.all(payload.map((setting) => fetch("/api/auth/settings", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify(setting),
+    })));
+
     localStorage.setItem("adminSettings", JSON.stringify({ orgDetails, preferences, permissions }));
     setSaveStatus("Changes saved");
   };

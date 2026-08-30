@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import AdminTopbar from "../../components/Admin/AdminTopbar";
 import SideBar from "../../components/Admin/SideBar";
@@ -58,6 +58,30 @@ function Chats() {
   const [selectedConversationId, setSelectedConversationId] = useState(conversations[0].id);
   const [searchTerm, setSearchTerm] = useState("");
   const [draft, setDraft] = useState("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    fetch("/api/auth/chats", { headers: { Authorization: `Bearer ${token}` } })
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => {
+        if (!data?.chats?.length) return;
+        const normalized = data.chats.map((chat) => ({
+          id: chat.id,
+          name: chat.name,
+          role: chat.role,
+          lastMessage: chat.lastMessage,
+          time: chat.time,
+          status: chat.status,
+          unread: chat.unread ?? 0,
+          messages: [{ direction: "received", text: chat.lastMessage, time: chat.time }],
+          initials: chat.name.split(" ").map((part) => part[0]).slice(0, 2).join(""),
+        }));
+        setChatData(normalized);
+        setSelectedConversationId((current) => current ?? normalized[0]?.id ?? conversations[0].id);
+      })
+      .catch(() => undefined);
+  }, []);
+
   const visibleConversations = useMemo(() => {
     if (activeFilter === "Partners") {
       return chatData.filter((conversation) => conversation.role === "Partner");
