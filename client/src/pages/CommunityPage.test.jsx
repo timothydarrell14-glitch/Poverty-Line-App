@@ -36,7 +36,7 @@ describe('CommunityPage Component', () => {
     ]
 
     globalThis.fetch = vi.fn().mockImplementation((url) => {
-      if (url === '/api/communities') {
+      if (url.endsWith('/api/communities')) {
         return Promise.resolve({
           ok: true,
           json: () => Promise.resolve({ communities: mockCommunities }),

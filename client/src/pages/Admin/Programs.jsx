@@ -6,6 +6,7 @@ import {
 } from "react-icons/fi";
 import AdminTopbar from "../../components/Admin/AdminTopbar";
 import SideBar from "../../components/Admin/SideBar";
+import { apiUrl } from "../../api/client";
 import "../../styles/Admin/ProgramsPage.css";
 
 const fallbackPrograms = [
@@ -48,8 +49,8 @@ function Programs() {
   const token = localStorage.getItem("accessToken");
 
   useEffect(() => {
-    fetch("/api/auth/programs", { headers: { Authorization: `Bearer ${token}` } }).then((response) => response.json()).then((data) => setPrograms(data.programs?.length ? data.programs : fallbackPrograms)).catch(() => setPrograms(fallbackPrograms));
-    fetch("/api/auth/organisations", { headers: { Authorization: `Bearer ${token}` } }).then((response) => response.json()).then((data) => setOrganisations(data.organisations ?? [])).catch(() => setOrganisations([]));
+    fetch(apiUrl("/api/auth/programs"), { headers: { Authorization: `Bearer ${token}` } }).then((response) => response.json()).then((data) => setPrograms(data.programs?.length ? data.programs : fallbackPrograms)).catch(() => setPrograms(fallbackPrograms));
+    fetch(apiUrl("/api/auth/organisations"), { headers: { Authorization: `Bearer ${token}` } }).then((response) => response.json()).then((data) => setOrganisations(data.organisations ?? [])).catch(() => setOrganisations([]));
   }, [token]);
 
   const visiblePrograms = useMemo(() => {
@@ -66,7 +67,7 @@ function Programs() {
 
   async function submitProgram(event) {
     event.preventDefault();
-    const response = await fetch("/api/auth/programs", {
+    const response = await fetch(apiUrl("/api/auth/programs"), {
       method: "POST",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify(programForm),
@@ -81,7 +82,7 @@ function Programs() {
 
   async function updateStatus() {
     if (!statusProgram) return;
-    const response = await fetch(`/api/auth/programs/${statusProgram.id}`, {
+    const response = await fetch(apiUrl(`/api/auth/programs/${statusProgram.id}`), {
       method: "PATCH",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify({ status: statusDraft }),

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
+import { apiUrl } from "../api/client";
 import "../styles/Community.css";
 
 const CATEGORY_ICONS = {
@@ -52,7 +53,7 @@ export default function CommunityPage() {
   // Fetch all available channels
   const refreshChannels = async () => {
     try {
-      const res = await fetch("/api/communities");
+      const res = await fetch(apiUrl("/api/communities"));
       if (res.ok) {
         const data = await res.json();
         setChannels(data.communities || []);
@@ -66,7 +67,7 @@ export default function CommunityPage() {
     let isMounted = true;
     const loadInitialChannels = async () => {
       try {
-        const res = await fetch("/api/communities");
+        const res = await fetch(apiUrl("/api/communities"));
         if (!res.ok) throw new Error("Failed to fetch communities");
         const data = await res.json();
         const list = data.communities || [];
@@ -96,14 +97,14 @@ export default function CommunityPage() {
       setPostsLoading(true);
       try {
         // Fetch specific channel metadata
-        const metaRes = await fetch(`/api/communities/${activeChannelId}`);
+        const metaRes = await fetch(apiUrl(`/api/communities/${activeChannelId}`));
         if (metaRes.ok) {
           const meta = await metaRes.json();
           setActiveChannel(meta);
         }
 
         // Fetch posts
-        const postsRes = await fetch(`/api/communities/${activeChannelId}/posts`);
+        const postsRes = await fetch(apiUrl(`/api/communities/${activeChannelId}/posts`));
         if (postsRes.ok) {
           const postsData = await postsRes.json();
           setPosts(postsData.posts || []);
@@ -145,7 +146,7 @@ export default function CommunityPage() {
 
     try {
       // 2. Perform API POST request
-      const res = await fetch(`/api/communities/${activeChannelId}/posts`, {
+      const res = await fetch(apiUrl(`/api/communities/${activeChannelId}/posts`), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content: text }),
@@ -176,7 +177,7 @@ export default function CommunityPage() {
 
     try {
       setCreating(true);
-      const res = await fetch("/api/communities", {
+      const res = await fetch(apiUrl("/api/communities"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

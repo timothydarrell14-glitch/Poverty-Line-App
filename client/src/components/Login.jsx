@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiUrl } from "../api/client";
 import "../styles/Auth.css";
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
 const Login = ({ isOpen, onClose, onShowSignup, onAuthenticated }) => {
   const navigate = useNavigate();
@@ -28,7 +27,7 @@ const Login = ({ isOpen, onClose, onShowSignup, onAuthenticated }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/users/login`, {
+      const response = await fetch(apiUrl("/users/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

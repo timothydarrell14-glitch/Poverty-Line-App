@@ -8,6 +8,7 @@ import {
 } from "react-icons/fi";
 import AdminTopbar from "../../components/Admin/AdminTopbar";
 import SideBar from "../../components/Admin/SideBar";
+import { apiUrl } from "../../api/client";
 import "../../styles/Admin/UsersPage.css";
 
 const defaultUserDraft = {
@@ -30,7 +31,7 @@ function Users() {
   const [manageAction, setManageAction] = useState("role");
   const [newRole, setNewRole] = useState("Field Agent");
   const token = localStorage.getItem("accessToken");
-  const loadUsers = () => fetch("/api/auth/users", { headers: { Authorization: `Bearer ${token}` } }).then((response) => response.json()).then((data) => setUsers(data.users ?? []));
+  const loadUsers = () => fetch(apiUrl("/api/auth/users"), { headers: { Authorization: `Bearer ${token}` } }).then((response) => response.json()).then((data) => setUsers(data.users ?? []));
   // The access token is read once when this protected page mounts.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadUsers().catch(() => setMessage("Could not load users.")); }, []);
@@ -44,7 +45,7 @@ function Users() {
       setMessage("Complete all user fields before saving.");
       return;
     }
-    const response = await fetch("/api/auth/users", { method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify({ first_name, last_name, email, role, password }) });
+    const response = await fetch(apiUrl("/api/auth/users"), { method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify({ first_name, last_name, email, role, password }) });
     const data = await response.json();
     if (!response.ok) return setMessage(data.message || "Could not create user.");
     setUsers((current) => [data.user, ...current]);
@@ -57,7 +58,7 @@ function Users() {
     if (!selectedUser) return;
     const body = manageAction === "role" ? { role: newRole } : manageAction === "status" ? { is_active: selectedUser.status !== "Active" } : null;
     if (!body) {
-      const response = await fetch(`/api/auth/users/${selectedUser.id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+      const response = await fetch(apiUrl(`/api/auth/users/${selectedUser.id}`), { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
         setMessage(data.message || "Could not delete user.");
@@ -67,7 +68,7 @@ function Users() {
       setSelectedUser(null);
       return loadUsers();
     }
-    const response = await fetch(`/api/auth/users/${selectedUser.id}`, { method: "PATCH", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const response = await fetch(apiUrl(`/api/auth/users/${selectedUser.id}`), { method: "PATCH", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify(body) });
     const data = await response.json();
     if (response.ok) {
       setUsers((current) => current.map((item) => item.id === selectedUser.id ? data.user : item));

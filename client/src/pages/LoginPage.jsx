@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiUrl } from "../api/client";
 
 function LoginPage() {
   const [error, setError] = useState("");
@@ -9,7 +10,7 @@ function LoginPage() {
     event.preventDefault(); setError(""); setIsSubmitting(true);
     const form = new FormData(event.currentTarget);
     try {
-      const response = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: form.get("email"), password: form.get("password") }) });
+      const response = await fetch(apiUrl("/api/auth/login"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: form.get("email"), password: form.get("password") }) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.message);
       localStorage.setItem("accessToken", data.access_token);

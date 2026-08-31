@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import AdminTopbar from "../../components/Admin/AdminTopbar";
 import SideBar from "../../components/Admin/SideBar";
+import { apiUrl } from "../../api/client";
 import "../../styles/Admin/ChatsPage.css";
 
 const conversations = [
@@ -61,7 +62,7 @@ function Chats() {
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    fetch("/api/auth/chats", { headers: { Authorization: `Bearer ${token}` } })
+    fetch(apiUrl("/api/auth/chats"), { headers: { Authorization: `Bearer ${token}` } })
       .then((response) => response.ok ? response.json() : null)
       .then((data) => {
         if (!data?.chats?.length) return;
