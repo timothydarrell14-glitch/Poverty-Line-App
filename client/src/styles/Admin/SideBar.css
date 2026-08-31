@@ -1,0 +1,213 @@
+.admin-sidebar {
+  --sidebar-ink: #10282d;
+  --sidebar-muted: #4f6066;
+  --sidebar-border: #ccd5da;
+  --sidebar-teal: #006c78;
+  --sidebar-panel: #f2f5f8;
+  background: #f4f7f9;
+  border: 1px solid var(--sidebar-border);
+  border-radius: 14px;
+  box-sizing: border-box;
+  color: var(--sidebar-ink);
+  display: flex;
+  align-self: flex-start;
+  flex: 0 0 224px;
+  flex-direction: column;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  height: auto;
+  min-height: 0;
+  margin: 16px 0 16px 16px;
+  padding: 22px 20px 18px;
+  text-align: left;
+}
+
+.admin-sidebar__content {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-sidebar__collapse-button {
+  align-self: flex-end;
+  background: transparent;
+  border: 0;
+  color: var(--sidebar-muted);
+  cursor: pointer;
+  display: grid;
+  margin: -4px -4px 10px 0;
+  padding: 4px;
+  place-items: center;
+}
+
+.admin-sidebar__collapse-button svg {
+  height: 18px;
+  width: 18px;
+}
+
+.admin-sidebar__identity {
+  align-items: center;
+  background: #dce6ea;
+  border: 1px solid #c6d4d9;
+  border-radius: 6px;
+  display: flex;
+  gap: 12px;
+  margin: 0 0 24px;
+  padding: 12px;
+}
+
+.admin-sidebar__avatar {
+  border: 1px solid #d0d9dc;
+  border-radius: 50%;
+  height: 36px;
+  object-fit: cover;
+  width: 36px;
+}
+
+.admin-sidebar__name,
+.admin-sidebar__role {
+  margin: 0;
+}
+
+.admin-sidebar__name {
+  color: var(--sidebar-ink);
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.admin-sidebar__role {
+  color: #202c30;
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.admin-sidebar__new-program {
+  align-items: center;
+  background: var(--sidebar-teal);
+  border: 0;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  font-size: 13px;
+  gap: 8px;
+  justify-content: center;
+  letter-spacing: 0;
+  min-height: 42px;
+  padding: 9px 14px;
+}
+
+.admin-sidebar__new-program svg {
+  height: 16px;
+  width: 16px;
+}
+
+.admin-sidebar__nav {
+  margin-top: 25px;
+}
+
+.admin-sidebar__nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-sidebar__nav li + li {
+  margin-top: 7px;
+}
+
+.admin-sidebar__link {
+  align-items: center;
+  border-radius: 5px;
+  color: var(--sidebar-ink);
+  display: flex;
+  font-size: 13px;
+  gap: 11px;
+  line-height: 1;
+  min-height: 38px;
+  padding: 6px 11px;
+  text-decoration: none;
+}
+
+.admin-sidebar__link svg {
+  flex: 0 0 auto;
+  height: 16px;
+  width: 16px;
+}
+
+.admin-sidebar__link:hover {
+  background: #e5edf0;
+}
+
+.admin-sidebar__link--active {
+  background: #dbe4e8;
+  box-shadow: inset -3px 0 0 var(--sidebar-teal);
+  color: #006578;
+}
+
+.admin-sidebar--collapsed {
+  flex-basis: 72px;
+  padding-inline: 12px;
+}
+
+.admin-sidebar--collapsed .admin-sidebar__collapse-button {
+  align-self: center;
+  margin-right: 0;
+}
+
+.admin-sidebar--collapsed .admin-sidebar__identity {
+  display: none;
+}
+
+.admin-sidebar--collapsed .admin-sidebar__new-program {
+  padding: 9px;
+}
+
+.admin-sidebar--collapsed .admin-sidebar__new-program span,
+.admin-sidebar--collapsed .admin-sidebar__link span,
+.admin-sidebar--collapsed .admin-sidebar__active-arrow {
+  display: none;
+}
+
+.admin-sidebar--collapsed .admin-sidebar__link {
+  justify-content: center;
+  padding-inline: 6px;
+}
+
+.admin-sidebar--collapsed .admin-sidebar__link.tooltip::after,
+.admin-sidebar__collapse-button.tooltip::after {
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
+.admin-sidebar--collapsed .admin-sidebar__link.tooltip:hover::after,
+.admin-sidebar--collapsed .admin-sidebar__link.tooltip:focus-visible::after,
+.admin-sidebar__collapse-button.tooltip:hover::after,
+.admin-sidebar__collapse-button.tooltip:focus-visible::after {
+  transform: translate(0, -50%);
+}
+
+.admin-sidebar__active-arrow {
+  margin-left: auto;
+  opacity: 0;
+}
+
+@media (max-width: 760px) {
+  .admin-sidebar {
+    flex-basis: auto;
+    min-height: auto;
+    padding: 14px 16px;
+  }
+
+  .admin-sidebar__identity,
+  .admin-sidebar__new-program,
+  .admin-sidebar__nav {
+    display: none;
+  }
+
+  .admin-sidebar__content {
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
