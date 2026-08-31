@@ -29,7 +29,6 @@ def create_admin_user(email="admin@example.com", password="StrongPass123!"):
     db.session.add(user)
     db.session.commit()
     return user
-from app.models.users import User
 
 
 def test_app_exists():
@@ -105,8 +104,14 @@ def test_non_admin_cannot_manage_users_or_programs():
 def test_admin_can_create_program_for_organisation():
     app = build_test_app()
     with app.app_context():
-        create_admin_user()
-        org = Organisation(name="Community Care", organisation_type="Nonprofit", description="Helps families", verified=True)
+        admin = create_admin_user()
+        org = Organisation(
+            name="Community Care",
+            organisation_type="Nonprofit",
+            description="Helps families",
+            verified=True,
+            owner_user_id=admin.user_id,
+        )
         db.session.add(org)
         db.session.commit()
 

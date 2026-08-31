@@ -10,7 +10,6 @@ from app.models.community_posts import CommunityPost
 from app.models.users import User
 from app.schemas.community_schema import (
 	community_schema,
-	communities_schema,
 	community_create_schema,
 	community_update_schema,
 )
