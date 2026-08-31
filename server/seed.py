@@ -602,7 +602,6 @@ def seed_community_memberships(users, communities):
 def run_seed():
     app = create_app()
     with app.app_context():
-        db.create_all()
         clear_data()
 
         users = seed_users()
