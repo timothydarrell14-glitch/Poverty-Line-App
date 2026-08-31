@@ -1,30 +1,56 @@
+
 # Poverty-Line-App
 
-## Local development
+## Backend Setup
 
-1. Create the Flask environment file from the example and adjust the secrets for your machine:
-   - `cd server`
-   - `cp .env.example .env`
-2. Apply database migrations:
-   - `flask db upgrade`
-3. Create the first admin user:
-   - `flask seed-admin`
-4. Start the backend:
-   - `python run.py`
+### Prerequisites
+- Python 3.12+
+- PostgreSQL installed and running
 
-## Production checklist
-
-- Use a real `SECRET_KEY`, `JWT_SECRET_KEY`, and `ADMIN_PASSWORD` in a production environment file.
-- Configure `FRONTEND_URL` or `CORS_ORIGINS` to the exact production client origin; wildcard origins are intentionally disabled.
-- Keep the database connection string in a secure environment variable and run migrations before deployment:
-  - `flask db upgrade`
-
-## Migration command
-
-Use the standard Alembic migration flow when schema changes are needed:
-
+### 1. Create a virtual environment
 ```bash
 cd server
-flask db migrate -m "describe change"
-flask db upgrade
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+### 2. Create your local database
+Open psql as the postgres admin user:
+```bash
+sudo -u postgres psql
+```
+
+Then run:
+```sql
+CREATE DATABASE poverty_line_db;
+CREATE USER poverty_line_user WITH PASSWORD 'changeme123';
+GRANT ALL PRIVILEGES ON DATABASE poverty_line_db TO poverty_line_user;
+\c poverty_line_db
+GRANT ALL ON SCHEMA public TO poverty_line_user;
+\q
+```
+
+### 3. Create your `.env` file
+Create `server/.env` (this file is gitignored, never commit it):
+
+
+### 4. Apply migrations
+```bash
+flask --app run db upgrade
+```
+
+### 5. Seed the database with sample data
+```bash
+python seed.py
+```
+
+### 6. Run the server
+```bash
+flask --app run run
+```
+
+### Running tests
+```bash
+pytest tests -v
 ```
