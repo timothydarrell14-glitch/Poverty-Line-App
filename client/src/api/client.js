@@ -1,9 +1,12 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? "/api";
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
 import { getAccessToken } from "../utils/auth";
+
+export const apiUrl = (path = "") =>
+  `${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 
 export async function apiRequest(path, { method = "GET", body, token } = {}) {
   const accessToken = token ?? getAccessToken();
-  const response = await fetch(`${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`, {
+  const response = await fetch(apiUrl(path), {
     method,
     headers: {
       "Content-Type": "application/json",

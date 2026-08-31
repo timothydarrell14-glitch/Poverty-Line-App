@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiUrl } from "../api/client";
 
 const TalkToSomeone = () => {
   const [activeModal, setActiveModal] = useState(null); // 'callback' | 'chat' | null
@@ -14,7 +15,7 @@ const TalkToSomeone = () => {
     e.preventDefault();
 
     try {
-      await fetch("/api/callbacks", {
+      await fetch(apiUrl("/api/callbacks"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

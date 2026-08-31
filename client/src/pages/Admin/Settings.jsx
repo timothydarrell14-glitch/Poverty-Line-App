@@ -9,6 +9,7 @@ import {
 } from "react-icons/fi";
 import AdminTopbar from "../../components/Admin/AdminTopbar";
 import SideBar from "../../components/Admin/SideBar";
+import { apiUrl } from "../../api/client";
 import "../../styles/Admin/SettingsPage.css";
 
 const settingsTabs = [
@@ -82,7 +83,7 @@ function Settings() {
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    fetch("/api/auth/settings", { headers: { Authorization: `Bearer ${token}` } })
+    fetch(apiUrl("/api/auth/settings"), { headers: { Authorization: `Bearer ${token}` } })
       .then((response) => response.ok ? response.json() : null)
       .then((data) => {
         if (!data?.settings) return;
@@ -118,7 +119,7 @@ function Settings() {
       { key: "systemPermissions", value: JSON.stringify(permissions), category: "security" },
     ];
 
-    await Promise.all(payload.map((setting) => fetch("/api/auth/settings", {
+    await Promise.all(payload.map((setting) => fetch(apiUrl("/api/auth/settings"), {
       method: "POST",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify(setting),

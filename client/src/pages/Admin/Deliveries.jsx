@@ -8,6 +8,7 @@ import {
 } from "react-icons/fi";
 import AdminTopbar from "../../components/Admin/AdminTopbar";
 import SideBar from "../../components/Admin/SideBar";
+import { apiUrl } from "../../api/client";
 import "../../styles/Admin/DeliveriesPage.css";
 
 const initialDeliveries = [
@@ -59,7 +60,7 @@ function Deliveries() {
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    fetch("/api/auth/deliveries", { headers: { Authorization: `Bearer ${token}` } })
+    fetch(apiUrl("/api/auth/deliveries"), { headers: { Authorization: `Bearer ${token}` } })
       .then((response) => response.ok ? response.json() : null)
       .then((data) => {
         if (!data?.deliveries?.length) return;
