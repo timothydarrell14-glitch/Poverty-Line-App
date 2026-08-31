@@ -44,7 +44,7 @@ def current_user_from_token():
         return None
     try:
         user_id = int(identity)
-    except TypeError, ValueError:
+    except (TypeError, ValueError):
         return None
     return db.session.get(User, user_id)
 

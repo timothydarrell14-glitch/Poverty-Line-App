@@ -9,7 +9,7 @@ HOUSING_QUESTION = "Do you own or rent your current home?"
 def score_income(answer):
     try:
         income = float(answer)
-    except TypeError, ValueError:
+    except (TypeError, ValueError):
         return 0.5
 
     if income < 3000:
@@ -44,7 +44,7 @@ def score_employment(answer):
 def score_dependents(answer):
     try:
         dependents = int(answer)
-    except TypeError, ValueError:
+    except (TypeError, ValueError):
         return 0.5
 
     if dependents <= 1:
