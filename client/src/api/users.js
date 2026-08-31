@@ -10,5 +10,6 @@ export const getCurrentUser = () => apiRequest("/users/me");
 export const logoutUser = () => apiRequest("/users/logout", { method: "POST" });
 export const listAdminUsers = (params) => apiRequest(`/users/admin?${queryString(params)}`);
 export const createAdminUser = (user) => apiRequest("/users/admin", { method: "POST", body: user });
+export const getAdminUser = (userId) => apiRequest(`/users/admin/${userId}`);
 export const updateAdminUser = (userId, changes) => apiRequest(`/users/admin/${userId}`, { method: "PATCH", body: changes });
 export const deleteAdminUser = (userId) => apiRequest(`/users/admin/${userId}`, { method: "DELETE" });

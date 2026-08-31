@@ -184,6 +184,7 @@ def create_organisation():
         return jsonify({"message": "Organisation name is required."}), 400
 
     organisation = Organisation(
+        owner_user_id=admin_user().user_id,
         name=name,
         organisation_type=organisation_type,
         description=data.get("description"),
@@ -201,6 +202,56 @@ def create_organisation():
             }
         }
     ), 201
+
+
+@auth_bp.get("/organisations/<int:organisation_id>")
+@admin_required
+def get_organisation(organisation_id):
+    organisation = db.session.get(Organisation, organisation_id)
+    if organisation is None:
+        return jsonify({"message": "Organisation not found."}), 404
+    return jsonify(
+        {
+            "organisation": {
+                "id": organisation.organisation_id,
+                "name": organisation.name,
+                "type": organisation.organisation_type,
+                "location": organisation.location,
+            }
+        }
+    )
+
+
+@auth_bp.patch("/organisations/<int:organisation_id>")
+@admin_required
+def update_organisation(organisation_id):
+    organisation = db.session.get(Organisation, organisation_id)
+    if organisation is None:
+        return jsonify({"message": "Organisation not found."}), 404
+    data = request.get_json(silent=True) or {}
+    for field in ("name", "organisation_type", "description", "location", "verified"):
+        if field in data:
+            setattr(organisation, field, data[field])
+    db.session.commit()
+    return jsonify(
+        {
+            "organisation": {
+                "id": organisation.organisation_id,
+                "name": organisation.name,
+            }
+        }
+    )
+
+
+@auth_bp.delete("/organisations/<int:organisation_id>")
+@admin_required
+def delete_organisation(organisation_id):
+    organisation = db.session.get(Organisation, organisation_id)
+    if organisation is None:
+        return jsonify({"message": "Organisation not found."}), 404
+    db.session.delete(organisation)
+    db.session.commit()
+    return "", 204
 
 
 @auth_bp.get("/users")
@@ -236,6 +287,15 @@ def create_user():
     db.session.add(user)
     db.session.commit()
     return jsonify({"user": serialize_user(user)}), 201
+
+
+@auth_bp.get("/users/<int:user_id>")
+@admin_required
+def get_user(user_id):
+    user = db.session.get(User, user_id)
+    if user is None:
+        return jsonify({"message": "User not found."}), 404
+    return jsonify({"user": serialize_user(user)})
 
 
 @auth_bp.patch("/users/<int:user_id>")
@@ -306,6 +366,15 @@ def create_program():
     return jsonify({"program": serialize_program(program)}), 201
 
 
+@auth_bp.get("/programs/<int:program_id>")
+@admin_required
+def get_program(program_id):
+    program = db.session.get(Program, program_id)
+    if program is None:
+        return jsonify({"message": "Program not found."}), 404
+    return jsonify({"program": serialize_program(program)})
+
+
 @auth_bp.patch("/programs/<int:program_id>")
 @admin_required
 def update_program(program_id):
@@ -323,6 +392,17 @@ def update_program(program_id):
         program.location = data["location"]
     db.session.commit()
     return jsonify({"program": serialize_program(program)})
+
+
+@auth_bp.delete("/programs/<int:program_id>")
+@admin_required
+def delete_program(program_id):
+    program = db.session.get(Program, program_id)
+    if program is None:
+        return jsonify({"message": "Program not found."}), 404
+    db.session.delete(program)
+    db.session.commit()
+    return "", 204
 
 
 @auth_bp.get("/chats")

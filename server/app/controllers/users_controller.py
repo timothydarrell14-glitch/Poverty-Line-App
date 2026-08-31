@@ -103,6 +103,13 @@ def admin_create_user():
     return jsonify(user_schema.dump(user)), 201
 
 
+@users_bp.route("/admin/<int:user_id>", methods=["GET"])
+@admin_required
+def admin_get_user(user_id):
+    """Return one user for administrator management screens."""
+    return jsonify(user_schema.dump(db.get_or_404(User, user_id))), 200
+
+
 @users_bp.route("/admin/<int:user_id>", methods=["PATCH"])
 @admin_required
 def admin_update_user(user_id):

@@ -53,6 +53,31 @@ def admin_create_organisation():
     return jsonify(organisation_schema.dump(organisation)), 201
 
 
+@organisations_bp.route(
+    "/admin/<int:organisation_id>", methods=["GET", "PATCH", "DELETE"]
+)
+@admin_required
+def admin_manage_organisation(organisation_id):
+    """Read, update, or delete an organisation from administrator screens."""
+    organisation = db.session.get(Organisation, organisation_id)
+    if organisation is None:
+        return jsonify({"message": "Organisation not found."}), 404
+    if request.method == "GET":
+        return jsonify(organisation_schema.dump(organisation)), 200
+    if request.method == "DELETE":
+        db.session.delete(organisation)
+        db.session.commit()
+        return "", 204
+    try:
+        data = organisation_update_schema.load(request.get_json())
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+    for key, value in data.items():
+        setattr(organisation, key, value)
+    db.session.commit()
+    return jsonify(organisation_schema.dump(organisation)), 200
+
+
 @organisations_bp.route("", methods=["POST"])
 @jwt_required()
 def create_organisation():

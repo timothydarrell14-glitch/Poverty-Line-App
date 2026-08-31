@@ -6,5 +6,6 @@ const queryString = (params = {}) => new URLSearchParams(
 
 export const listAdminPrograms = (params) => apiRequest(`/programs/admin?${queryString(params)}`);
 export const createAdminProgram = (program) => apiRequest("/programs/admin", { method: "POST", body: program });
+export const getAdminProgram = (programId) => apiRequest(`/programs/admin/${programId}`);
 export const updateAdminProgram = (programId, changes) => apiRequest(`/programs/admin/${programId}`, { method: "PATCH", body: changes });
 export const deleteAdminProgram = (programId) => apiRequest(`/programs/admin/${programId}`, { method: "DELETE" });

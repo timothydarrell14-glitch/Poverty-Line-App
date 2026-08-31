@@ -1,3 +1,4 @@
+import os
 from datetime import date
 
 from werkzeug.security import generate_password_hash
@@ -91,6 +92,17 @@ def seed_users():
             employment_status="Self-employed",
             skills="Fishing, boat repair",
             location="Kisumu",
+        ),
+        User(
+            first_name=os.environ.get("SEED_ADMIN_FIRST_NAME", "Admin"),
+            last_name=os.environ.get("SEED_ADMIN_LAST_NAME", "User"),
+            email=os.environ.get("SEED_ADMIN_EMAIL", "admin@povertyline.app"),
+            password_hash=generate_password_hash(
+                os.environ.get("SEED_ADMIN_PASSWORD", "ChangeMe123!")
+            ),
+            role="admin",
+            is_active=True,
+            location="Nairobi",
         ),
     ]
     db.session.add_all(users)

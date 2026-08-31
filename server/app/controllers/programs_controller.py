@@ -54,13 +54,15 @@ def admin_create_program():
     return jsonify(program_schema.dump(program)), 201
 
 
-@programs_bp.route("/admin/<int:program_id>", methods=["PATCH", "DELETE"])
+@programs_bp.route("/admin/<int:program_id>", methods=["GET", "PATCH", "DELETE"])
 @admin_required
 def admin_manage_program(program_id):
     """Update or delete a program from the administrator frontend."""
     program = db.session.get(Program, program_id)
     if program is None:
         return jsonify({"message": "Program not found."}), 404
+    if request.method == "GET":
+        return jsonify(program_schema.dump(program)), 200
     if request.method == "DELETE":
         db.session.delete(program)
         db.session.commit()
