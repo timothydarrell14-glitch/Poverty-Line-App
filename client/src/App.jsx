@@ -39,7 +39,6 @@ function App() {
 
           <Route path="/donors" element={<DonorsPage />} />
 
-          <Route path="/jobs" element={<JobsPlaceholder />} />
           {/* Logistics Page */}
           <Route
             path="/logistics"

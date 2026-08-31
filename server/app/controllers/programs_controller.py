@@ -4,6 +4,8 @@ from marshmallow import ValidationError
 
 from app.extensions import db
 from app.models.programs import Program
+from app.models.organisations import Organisation
+from app.routes.authorization import admin_required
 from app.schemas.program_schema import (
 	program_schema,
 	programs_schema,
@@ -12,6 +14,53 @@ from app.schemas.program_schema import (
 )
 
 programs_bp = Blueprint("programs", __name__, url_prefix="/programs")
+
+
+@programs_bp.route("/admin", methods=["GET"])
+@admin_required
+def admin_list_programs():
+	"""List programs for the admin frontend with pagination and filters."""
+	page = max(request.args.get("page", 1, type=int), 1)
+	per_page = min(max(request.args.get("per_page", 20, type=int), 1), 100)
+	pagination = Program.list_for_admin(
+		search=request.args.get("search"), status=request.args.get("status"),
+		organisation_id=request.args.get("organisation_id", type=int),
+	).paginate(page=page, per_page=per_page, error_out=False)
+	return jsonify({"programs": programs_schema.dump(pagination.items), "total": pagination.total, "page": pagination.page, "per_page": pagination.per_page, "pages": pagination.pages}), 200
+
+
+@programs_bp.route("/admin", methods=["POST"])
+@admin_required
+def admin_create_program():
+	"""Create a program after confirming its selected organisation exists."""
+	try:
+		data = program_create_schema.load(request.get_json())
+	except ValidationError as err:
+		return jsonify(err.messages), 422
+	if db.session.get(Organisation, data["organisation_id"]) is None:
+		return jsonify({"message": "Organisation not found."}), 404
+	program = Program.create_from_data(data)
+	db.session.add(program); db.session.commit()
+	return jsonify(program_schema.dump(program)), 201
+
+
+@programs_bp.route("/admin/<int:program_id>", methods=["PATCH", "DELETE"])
+@admin_required
+def admin_manage_program(program_id):
+	"""Update or delete a program from the administrator frontend."""
+	program = db.session.get(Program, program_id)
+	if program is None:
+		return jsonify({"message": "Program not found."}), 404
+	if request.method == "DELETE":
+		db.session.delete(program); db.session.commit()
+		return "", 204
+	try:
+		data = program_update_schema.load(request.get_json())
+	except ValidationError as err:
+		return jsonify(err.messages), 422
+	for key, value in data.items(): setattr(program, key, value)
+	db.session.commit()
+	return jsonify(program_schema.dump(program)), 200
 
 
 @programs_bp.route("", methods=["POST"])
