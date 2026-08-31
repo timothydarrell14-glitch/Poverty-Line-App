@@ -57,7 +57,7 @@ const Login = ({ isOpen, onClose, onShowSignup, onAuthenticated }) => {
       }
 
       onClose?.();
-      navigate("/get-help");
+      navigate(data.user?.role?.trim().toLowerCase() === "admin" ? "/admin" : "/get-help");
     } catch (err) {
       setError(err.message || "Unable to log in.");
     } finally {
@@ -70,7 +70,7 @@ const Login = ({ isOpen, onClose, onShowSignup, onAuthenticated }) => {
       <header>
         <div>
           <span className="material-symbols-outlined">lock</span>
-          <h2 id="login-title">Welcome Back</h2>
+          <h2 id="login-title">Sign in to your account</h2>
         </div>
         {onClose && (
           <button type="button" aria-label="Close login" onClick={onClose}>
@@ -80,7 +80,7 @@ const Login = ({ isOpen, onClose, onShowSignup, onAuthenticated }) => {
       </header>
       <form onSubmit={handleSubmit}>
         <label htmlFor="login-email">
-          Email Address
+          Email address
           <input
             id="login-email"
             type="email"
@@ -109,19 +109,19 @@ const Login = ({ isOpen, onClose, onShowSignup, onAuthenticated }) => {
             checked={savePassword}
             onChange={(event) => setSavePassword(event.target.checked)}
           />
-          Save password on this device
+          Remember me on this device
         </label>
 
         {error && <p className="auth-error" role="alert">{error}</p>}
 
         <button className="auth-submit" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Logging in..." : "Log In"}
+          {isSubmitting ? "Signing in..." : "Sign in"}
         </button>
       </form>
 
       {onShowSignup && (
         <p className="auth-switch">
-          Don't have an account? <button type="button" onClick={onShowSignup}>Sign up</button>
+        Don't have an account? <button type="button" onClick={onShowSignup}>Create an account</button>
         </p>
       )}
     </section>
