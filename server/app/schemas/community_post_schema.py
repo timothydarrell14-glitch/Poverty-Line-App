@@ -5,29 +5,29 @@ from app.models.community_posts import CommunityPost
 
 
 class CommunityPostSchema(ma.SQLAlchemyAutoSchema):
-	class Meta:
-		model = CommunityPost
-		load_instance = False
-		include_fk = True
+    class Meta:
+        model = CommunityPost
+        load_instance = False
+        include_fk = True
 
 
 class CommunityPostCreateSchema(ma.SQLAlchemyAutoSchema):
-	community_id = fields.Integer(required=True)
-	content = fields.String(required=True, validate=validate.Length(min=1))
+    community_id = fields.Integer(required=True)
+    content = fields.String(required=True, validate=validate.Length(min=1))
 
-	class Meta:
-		model = CommunityPost
-		load_instance = False
-		fields = ("community_id", "content")
+    class Meta:
+        model = CommunityPost
+        load_instance = False
+        fields = ("community_id", "content")
 
 
 class CommunityPostUpdateSchema(ma.SQLAlchemyAutoSchema):
-	content = fields.String(required=True, validate=validate.Length(min=1))
+    content = fields.String(required=True, validate=validate.Length(min=1))
 
-	class Meta:
-		model = CommunityPost
-		load_instance = False
-		fields = ("content",)
+    class Meta:
+        model = CommunityPost
+        load_instance = False
+        fields = ("content",)
 
 
 community_post_schema = CommunityPostSchema()
