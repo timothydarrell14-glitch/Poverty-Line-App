@@ -11,5 +11,10 @@ class Community(db.Model):
 	location = db.Column(db.String(255))
 	created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
 
-	posts = db.relationship("CommunityPost", back_populates="community")
-	memberships = db.relationship("CommunityMembership", back_populates="community")
+	posts = db.relationship(
+		"CommunityPost", back_populates="community", cascade="all, delete-orphan"
+	)
+	memberships = db.relationship(
+		"CommunityMembership", back_populates="community", cascade="all, delete-orphan"
+	)
+

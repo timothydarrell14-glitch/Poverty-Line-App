@@ -37,6 +37,36 @@ def clear_data():
 def seed_users():
 	users = [
 		User(
+			first_name="Caroline",
+			last_name="Oriama",
+			email="carolineoriama@gmail.com",
+			password_hash=generate_password_hash("password123"),
+			phone="+254712345000",
+			gender="Female",
+			avatar_url="https://i.pinimg.com/736x/b1/11/5e/b1115e983068837364e923b1ebc0c8f1.jpg",
+			location="Nairobi",
+		),
+		User(
+			first_name="Keith",
+			last_name="Austine",
+			email="keithaustine@gmail.com",
+			password_hash=generate_password_hash("password123"),
+			phone="+254712345010",
+			gender="Female",
+			avatar_url="https://gizmodo.com/app/uploads/2017/07/kmmcfzf47kjtcbhfqbqr.jpg",
+			location="Nairobi",
+		),
+		User(
+			first_name="Chipphirah",
+			last_name="Wambugu",
+			email="chipphirahwambugu@gmail.com",
+			password_hash=generate_password_hash("password123"),
+			phone="+254712345011",
+			gender="Male",
+			avatar_url="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScZySnNo4yMVk-Ke45uFXElrG13UvgOABjhIt3RCwvDA&s=10",
+			location="Nairobi",
+		),
+		User(
 			first_name="Grace",
 			last_name="Cherono",
 			email="grace.cherono@example.com",
@@ -62,88 +92,11 @@ def seed_users():
 			skills="Fishing, boat repair",
 			location="Kisumu",
 		),
-		User(
-			first_name="Amina",
-			last_name="Hassan",
-			email="amina.hassan@example.com",
-			password_hash=generate_password_hash("password123"),
-			phone="+254712345003",
-			date_of_birth=date(1995, 1, 5),
-			gender="Female",
-			education_level="Secondary",
-			employment_status="Unemployed",
-			skills="Weaving, hospitality",
-			location="Mombasa",
-		),
-		User(
-			first_name="Peter",
-			last_name="Mwangi",
-			email="peter.mwangi@example.com",
-			password_hash=generate_password_hash("password123"),
-			phone="+254712345004",
-			date_of_birth=date(1985, 11, 30),
-			gender="Male",
-			education_level="Tertiary",
-			employment_status="Employed",
-			skills="Project management, data entry",
-			location="Nairobi",
-		),
-		User(
-			first_name="Faith",
-			last_name="Chebet",
-			email="faith.chebet@example.com",
-			password_hash=generate_password_hash("password123"),
-			phone="+254712345005",
-			date_of_birth=date(1998, 5, 18),
-			gender="Female",
-			education_level="Primary",
-			employment_status="Unemployed",
-			skills="Farming",
-			location="Eldoret",
-		),
-		User(
-			first_name="David",
-			last_name="Kamau",
-			email="david.kamau@example.com",
-			password_hash=generate_password_hash("password123"),
-			phone="+254712345006",
-			date_of_birth=date(1992, 9, 9),
-			gender="Male",
-			education_level="Secondary",
-			employment_status="Self-employed",
-			skills="Carpentry",
-			location="Nakuru",
-		),
-		User(
-			first_name="Mercy",
-			last_name="Wanjiru",
-			email="mercy.wanjiru@example.com",
-			password_hash=generate_password_hash("password123"),
-			phone="+254712345007",
-			date_of_birth=date(1993, 4, 25),
-			gender="Female",
-			education_level="Tertiary",
-			employment_status="Unemployed",
-			skills="Bookkeeping",
-			location="Machakos",
-		),
-		User(
-			first_name="Ali",
-			last_name="Abdi",
-			email="ali.abdi@example.com",
-			password_hash=generate_password_hash("password123"),
-			phone="+254712345008",
-			date_of_birth=date(1991, 12, 2),
-			gender="Male",
-			education_level="Secondary",
-			employment_status="Unemployed",
-			skills="Livestock keeping",
-			location="Garissa",
-		),
 	]
 	db.session.add_all(users)
 	db.session.commit()
 	return users
+
 
 
 def seed_assessment_questions():
@@ -208,8 +161,9 @@ def seed_assessment_responses(users, questions):
 		AssessmentResponse(user_id=users[0].user_id, question_id=questions[2].question_id, answer="No", score=0.00),
 		AssessmentResponse(user_id=users[4].user_id, question_id=questions[0].question_id, answer="3000", score=5.00),
 		AssessmentResponse(user_id=users[4].user_id, question_id=questions[3].question_id, answer="3", score=5.00),
-		AssessmentResponse(user_id=users[7].user_id, question_id=questions[0].question_id, answer="2500", score=3.00),
-		AssessmentResponse(user_id=users[7].user_id, question_id=questions[4].question_id, answer="No", score=0.00),
+		AssessmentResponse(user_id=users[2 % len(users)].user_id, question_id=questions[0].question_id, answer="2500", score=3.00),
+		AssessmentResponse(user_id=users[3 % len(users)].user_id, question_id=questions[4].question_id, answer="No", score=0.00),
+
 	]
 	db.session.add_all(responses)
 	db.session.commit()
@@ -329,15 +283,16 @@ def seed_jobs(organisations):
 
 def seed_job_applications(users, jobs):
 	applications = [
-		JobApplication(user_id=users[4].user_id, job_id=jobs[0].job_id, status="pending"),
-		JobApplication(user_id=users[5].user_id, job_id=jobs[0].job_id, status="pending"),
-		JobApplication(user_id=users[6].user_id, job_id=jobs[2].job_id, status="pending"),
-		JobApplication(user_id=users[7].user_id, job_id=jobs[4].job_id, status="pending"),
-		JobApplication(user_id=users[4].user_id, job_id=jobs[1].job_id, status="pending"),
+		JobApplication(user_id=users[4 % len(users)].user_id, job_id=jobs[0].job_id, status="pending"),
+		JobApplication(user_id=users[1 % len(users)].user_id, job_id=jobs[0].job_id, status="pending"),
+		JobApplication(user_id=users[2 % len(users)].user_id, job_id=jobs[2].job_id, status="pending"),
+		JobApplication(user_id=users[3 % len(users)].user_id, job_id=jobs[4].job_id, status="pending"),
+		JobApplication(user_id=users[4 % len(users)].user_id, job_id=jobs[1].job_id, status="pending"),
 	]
 	db.session.add_all(applications)
 	db.session.commit()
 	return applications
+
 
 
 
@@ -396,15 +351,16 @@ def seed_programs(organisations):
 
 def seed_program_memberships(users, programs):
 	memberships = [
-		ProgramMembership(user_id=users[4].user_id, program_id=programs[0].program_id, status="active"),
-		ProgramMembership(user_id=users[5].user_id, program_id=programs[1].program_id, status="active"),
-		ProgramMembership(user_id=users[6].user_id, program_id=programs[2].program_id, status="active"),
-		ProgramMembership(user_id=users[7].user_id, program_id=programs[3].program_id, status="active"),
+		ProgramMembership(user_id=users[4 % len(users)].user_id, program_id=programs[0].program_id, status="active"),
+		ProgramMembership(user_id=users[1 % len(users)].user_id, program_id=programs[1].program_id, status="active"),
+		ProgramMembership(user_id=users[2 % len(users)].user_id, program_id=programs[2].program_id, status="active"),
+		ProgramMembership(user_id=users[3 % len(users)].user_id, program_id=programs[3].program_id, status="active"),
 		ProgramMembership(user_id=users[0].user_id, program_id=programs[0].program_id, status="active"),
 	]
 	db.session.add_all(memberships)
 	db.session.commit()
 	return memberships
+
 
 
 def seed_donations(programs):
@@ -462,22 +418,34 @@ def seed_donations(programs):
 def seed_communities():
 	communities = [
 		Community(
-			name="Kericho Farmers Circle",
-			description="A space for smallholder farmers to share tips and market prices.",
-			category="Agriculture",
-			location="Kericho",
-		),
-		Community(
-			name="Nairobi Job Seekers",
-			description="Peer support and job leads for people looking for work in Nairobi.",
-			category="Employment",
+			name="General Support",
+			description="A safe space for open discussion and mutual help.",
+			category="General Support",
 			location="Nairobi",
 		),
 		Community(
-			name="Coastal Entrepreneurs",
-			description="Small business owners along the coast sharing ideas and support.",
-			category="Business",
-			location="Mombasa",
+			name="Housing Advice",
+			description="Emergency shelter, rent assistance, and tenant rights.",
+			category="Housing Advice",
+			location="Nairobi",
+		),
+		Community(
+			name="Food Sharing",
+			description="Local food banks, community pantries, and meal drives.",
+			category="Food Sharing",
+			location="Nairobi",
+		),
+		Community(
+			name="Job Seekers",
+			description="Employment leads, resume feedback, and interview prep.",
+			category="Job Seekers",
+			location="Nairobi",
+		),
+		Community(
+			name="Mental Wellbeing",
+			description="Peer support, counseling resources, and wellness chats.",
+			category="Mental Wellbeing",
+			location="Nairobi",
 		),
 	]
 	db.session.add_all(communities)
@@ -486,26 +454,23 @@ def seed_communities():
 
 
 def seed_community_posts(users, communities):
+	# users[0]: Caroline , users[1]: Keith , users[2]: Chipphirah
+	# communities[0]: General Support
 	posts = [
 		CommunityPost(
 			community_id=communities[0].community_id,
-			user_id=users[0].user_id,
-			content="Tea prices are looking better this month, anyone else noticing this in Kericho?",
+			user_id=users[1].user_id,
+			content="Hi everyone, I just wanted to share that the community pantry on 4th Street has received a new delivery of fresh produce this morning. They are open until 4 PM today.",
 		),
 		CommunityPost(
-			community_id=communities[1].community_id,
-			user_id=users[3].user_id,
-			content="Just landed a data entry role through this platform, happy to share tips.",
-		),
-		CommunityPost(
-			community_id=communities[2].community_id,
+			community_id=communities[0].community_id,
 			user_id=users[2].user_id,
-			content="Looking for two more members to join our beadwork cooperative.",
+			content="Thanks Austine! Do you know if they have any baby formula left? I've been trying to find some since yesterday.",
 		),
 		CommunityPost(
-			community_id=communities[1].community_id,
-			user_id=users[6].user_id,
-			content="Does anyone have advice for interviews with NGOs in Nairobi?",
+			community_id=communities[0].community_id,
+			user_id=users[0].user_id,
+			content="Chipphirah, I was just there. They had about 4 tins left behind the counter, you have to ask the volunteers specifically for it.",
 		),
 	]
 	db.session.add_all(posts)
@@ -515,22 +480,27 @@ def seed_community_posts(users, communities):
 
 def seed_community_memberships(users, communities):
 	memberships = [
-		CommunityMembership(user_id=users[0].user_id, community_id=communities[0].community_id, role="member"),
+		CommunityMembership(user_id=users[0].user_id, community_id=communities[0].community_id, role="admin"),
+		CommunityMembership(user_id=users[1].user_id, community_id=communities[0].community_id, role="moderator"),
+		CommunityMembership(user_id=users[2].user_id, community_id=communities[0].community_id, role="member"),
+		CommunityMembership(user_id=users[3].user_id, community_id=communities[0].community_id, role="member"),
 		CommunityMembership(user_id=users[4].user_id, community_id=communities[0].community_id, role="member"),
-		CommunityMembership(user_id=users[3].user_id, community_id=communities[1].community_id, role="moderator"),
-		CommunityMembership(user_id=users[6].user_id, community_id=communities[1].community_id, role="member"),
-		CommunityMembership(user_id=users[2].user_id, community_id=communities[2].community_id, role="moderator"),
-		CommunityMembership(user_id=users[7].user_id, community_id=communities[2].community_id, role="member"),
+		CommunityMembership(user_id=users[0].user_id, community_id=communities[1].community_id, role="member"),
+		CommunityMembership(user_id=users[1].user_id, community_id=communities[2].community_id, role="member"),
+		CommunityMembership(user_id=users[2].user_id, community_id=communities[3].community_id, role="member"),
 	]
 	db.session.add_all(memberships)
 	db.session.commit()
 	return memberships
 
 
+
 def run_seed():
 	app = create_app()
 	with app.app_context():
+		db.create_all()
 		clear_data()
+
 
 		users = seed_users()
 		questions = seed_assessment_questions()
