@@ -9,11 +9,24 @@ import Home from './pages/Admin/Home'
 import Programs from './pages/Admin/Programs'
 import Settings from './pages/Admin/Settings'
 import Users from './pages/Admin/Users'
+import HomePage from './Homepage'
+import GetHelpPage from './pages/GetHelpPage'
+import CommunityPage from './pages/CommunityPage'
+import OrganisationsPage from './pages/OrganisationsPage'
+import DonorsPage from './pages/DonorsPage'
+import LogisticsPage from './pages/LogisticsPage'
+import JobsPage from './pages/JobsPage'
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate replace to="/login" />} />
+      <Route path="/" element={<HomePage />} />
+      <Route path="/get-help" element={<GetHelpPage />} />
+      <Route path="/organisations" element={<OrganisationsPage />} />
+      <Route path="/donors" element={<DonorsPage />} />
+      <Route path="/logistics" element={<LogisticsPage />} />
+      <Route path="/jobs" element={<JobsPage />} />
+      <Route path="/community" element={<CommunityPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/access-denied" element={<AccessDeniedPage />} />
       <Route element={<AdminRoute />}>
@@ -24,50 +37,9 @@ function App() {
         <Route path="/admin/chats" element={<Chats />} />
         <Route path="/admin/settings" element={<Settings />} />
       </Route>
-      <Route path="*" element={<Navigate replace to="/admin" />} />
+      <Route path="*" element={<Navigate replace to="/" />} />
     </Routes>
   )
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
-import HomePage from "./Homepage";
-import GetHelpPage from "./pages/GetHelpPage";
-import CommunityPage from "./pages/CommunityPage";
-import OrganisationsPage from "./pages/OrganisationsPage";
-import DonorsPage from "./pages/DonorsPage";
-import LogisticsPage from "./pages/LogisticsPage";
-import JobsPage from "./pages/JobsPage";
-
-import "./App.css";
-
-function App() {
-  return (
-    <Router>
-      <main>
-        <Routes>
-          {/* Home */}
-          <Route path="/" element={<HomePage />} />
-
-          {/* Get Help */}
-          <Route path="/get-help" element={<GetHelpPage />} />
-
-          {/* Organisations Page */}
-          <Route path="/organisations" element={<OrganisationsPage />} />
-
-          <Route path="/donors" element={<DonorsPage />} />
-
-          {/* Logistics Page */}
-          <Route path="/logistics" element={<LogisticsPage />} />
-
-          {/* Jobs */}
-          <Route path="/jobs" element={<JobsPage />} />
-
-          {/* Community */}
-          <Route path="/community" element={<CommunityPage />} />
-        </Routes>
-      </main>
-    </Router>
-  );
 }
 
-export default App;
+export default App

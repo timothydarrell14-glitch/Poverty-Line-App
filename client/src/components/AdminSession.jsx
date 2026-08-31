@@ -50,7 +50,7 @@ export function AdminSessionProvider({ children }) {
             method: "POST",
             headers: { Authorization: `Bearer ${token}` },
           });
-        } catch (error) {
+        } catch {
           // Ignore logout API failures and clear local session anyway.
         }
       }
