@@ -1,4 +1,8 @@
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
+const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL ??
+  import.meta.env.VITE_API_URL ??
+  ""
+).replace(/\/$/, "");
 import { getAccessToken } from "../utils/auth";
 
 export const apiUrl = (path = "") =>
