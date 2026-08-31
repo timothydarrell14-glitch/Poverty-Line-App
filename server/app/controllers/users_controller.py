@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from marshmallow import ValidationError
-from werkzeug.security import generate_password_hash, check_password_hash
 
 from app.extensions import db
 from app.models.users import User
@@ -22,22 +21,10 @@ def register():
 	except ValidationError as err:
 		return jsonify(err.messages), 422
 
-	if User.query.filter_by(email=data["email"]).first():
+	if User.get_by_email(data["email"]):
 		return jsonify({"error": "Email already registered"}), 409
 
-	user = User(
-		first_name=data["first_name"],
-		last_name=data["last_name"],
-		email=data["email"],
-		password_hash=generate_password_hash(data["password"]),
-		phone=data.get("phone"),
-		date_of_birth=data.get("date_of_birth"),
-		gender=data.get("gender"),
-		education_level=data.get("education_level"),
-		employment_status=data.get("employment_status"),
-		skills=data.get("skills"),
-		location=data.get("location"),
-	)
+	user = User.create_from_registration(data)
 	db.session.add(user)
 	db.session.commit()
 
@@ -47,18 +34,35 @@ def register():
 @users_bp.route("/login", methods=["POST"])
 def login():
 	data = request.get_json() or {}
-	email = data.get("email")
+	email = data.get("email", "").strip()
 	password = data.get("password")
 
 	if not email or not password:
 		return jsonify({"error": "Email and password required"}), 400
 
-	user = User.query.filter_by(email=email).first()
-	if not user or not check_password_hash(user.password_hash, password):
+	user = User.get_by_email(email) if email else None
+	if not user or not user.verifies_password(password):
 		return jsonify({"error": "Invalid credentials"}), 401
 
 	access_token = create_access_token(identity=str(user.user_id))
 	return jsonify({"access_token": access_token, "user": user_schema.dump(user)}), 200
+
+
+@users_bp.route("/me", methods=["GET"])
+@jwt_required()
+def current_user():
+	"""Return the database account represented by the supplied access token."""
+	user = db.session.get(User, int(get_jwt_identity()))
+	if user is None:
+		return jsonify({"message": "Authenticated user was not found."}), 401
+	return jsonify(user.to_dict()), 200
+
+
+@users_bp.route("/logout", methods=["POST"])
+@jwt_required()
+def logout():
+	"""Provide a logout endpoint; the client clears its bearer token locally."""
+	return jsonify({"message": "Signed out successfully."}), 200
 
 
 @users_bp.route("", methods=["GET"])

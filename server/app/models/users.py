@@ -1,4 +1,5 @@
 from app.extensions import db
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 class User(db.Model):
@@ -44,3 +45,30 @@ class User(db.Model):
 			"location": self.location,
 			"created_at": self.created_at.isoformat() if self.created_at else None,
 		}
+
+	@classmethod
+	def get_by_email(cls, email):
+		"""Find a user by an email address without case sensitivity."""
+		return cls.query.filter(db.func.lower(cls.email) == email.strip().lower()).first()
+
+	@classmethod
+	def create_from_registration(cls, data):
+		"""Build a standard-user account from validated registration data."""
+		return cls(
+			first_name=data["first_name"],
+			last_name=data["last_name"],
+			email=data["email"].strip().lower(),
+			password_hash=generate_password_hash(data["password"]),
+			phone=data.get("phone"),
+			date_of_birth=data.get("date_of_birth"),
+			gender=data.get("gender"),
+			education_level=data.get("education_level"),
+			employment_status=data.get("employment_status"),
+			skills=data.get("skills"),
+			location=data.get("location"),
+			role="user",
+		)
+
+	def verifies_password(self, password):
+		"""Safely check a plaintext password against the stored hash."""
+		return check_password_hash(self.password_hash, password)

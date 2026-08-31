@@ -53,3 +53,17 @@ def test_user_cannot_update_another_users_profile(client):
 	)
 
 	assert response.status_code == 403
+
+
+def test_current_user_returns_authenticated_account(client):
+	token, user_id = register_and_login(client, "current@example.com")
+
+	response = client.get("/users/me", headers={"Authorization": f"Bearer {token}"})
+
+	assert response.status_code == 200
+	assert response.get_json()["id"] == user_id
+	assert response.get_json()["role"] == "user"
+
+
+def test_logout_requires_a_valid_token(client):
+	assert client.post("/users/logout").status_code == 401
