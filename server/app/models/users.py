@@ -32,20 +32,6 @@ class User(db.Model):
 		"""Return whether this user currently has administrator access."""
 		return (self.role or "").strip().lower() == "admin"
 
-	def to_dict(self):
-		"""Serialize non-sensitive user data for future API responses."""
-		return {
-			"id": self.user_id,
-			"first_name": self.first_name,
-			"last_name": self.last_name,
-			"name": f"{self.first_name} {self.last_name}",
-			"email": self.email,
-			"role": self.role,
-			"phone": self.phone,
-			"location": self.location,
-			"created_at": self.created_at.isoformat() if self.created_at else None,
-		}
-
 	@classmethod
 	def get_by_email(cls, email):
 		"""Find a user by an email address without case sensitivity."""
@@ -72,3 +58,16 @@ class User(db.Model):
 	def verifies_password(self, password):
 		"""Safely check a plaintext password against the stored hash."""
 		return check_password_hash(self.password_hash, password)
+
+	@classmethod
+	def list_for_admin(cls, search=None, role=None):
+		"""Build a filtered user query for administrator management tools."""
+		query = cls.query
+		if search:
+			term = f"%{search.strip()}%"
+			query = query.filter(
+				db.or_(cls.first_name.ilike(term), cls.last_name.ilike(term), cls.email.ilike(term))
+			)
+		if role:
+			query = query.filter(db.func.lower(cls.role) == role.strip().lower())
+		return query.order_by(cls.created_at.desc(), cls.user_id.desc())

@@ -4,11 +4,13 @@ from marshmallow import ValidationError
 
 from app.extensions import db
 from app.models.users import User
+from app.routes.authorization import admin_required, get_authenticated_user
 from app.schemas.user_schema import (
 	user_schema,
 	users_schema,
 	user_register_schema,
 	user_update_schema,
+	admin_user_update_schema,
 )
 
 users_bp = Blueprint("users", __name__, url_prefix="/users")
@@ -55,7 +57,7 @@ def current_user():
 	user = db.session.get(User, int(get_jwt_identity()))
 	if user is None:
 		return jsonify({"message": "Authenticated user was not found."}), 401
-	return jsonify(user.to_dict()), 200
+	return jsonify(user_schema.dump(user)), 200
 
 
 @users_bp.route("/logout", methods=["POST"])
@@ -63,6 +65,76 @@ def current_user():
 def logout():
 	"""Provide a logout endpoint; the client clears its bearer token locally."""
 	return jsonify({"message": "Signed out successfully."}), 200
+
+
+@users_bp.route("/admin", methods=["GET"])
+@admin_required
+def admin_list_users():
+	"""List users for the administrator dashboard with server-side filters."""
+	page = max(request.args.get("page", 1, type=int), 1)
+	per_page = min(max(request.args.get("per_page", 20, type=int), 1), 100)
+	pagination = User.list_for_admin(
+		search=request.args.get("search"), role=request.args.get("role")
+	).paginate(page=page, per_page=per_page, error_out=False)
+	return jsonify({
+		"users": users_schema.dump(pagination.items),
+		"total": pagination.total,
+		"page": pagination.page,
+		"per_page": pagination.per_page,
+		"pages": pagination.pages,
+	}), 200
+
+
+@users_bp.route("/admin", methods=["POST"])
+@admin_required
+def admin_create_user():
+	"""Create a standard user; administrators can assign a role afterwards."""
+	try:
+		data = user_register_schema.load(request.get_json())
+	except ValidationError as err:
+		return jsonify(err.messages), 422
+	if User.get_by_email(data["email"]):
+		return jsonify({"error": "Email already registered"}), 409
+	user = User.create_from_registration(data)
+	db.session.add(user)
+	db.session.commit()
+	return jsonify(user_schema.dump(user)), 201
+
+
+@users_bp.route("/admin/<int:user_id>", methods=["PATCH"])
+@admin_required
+def admin_update_user(user_id):
+	"""Allow an administrator to update a user profile or application role."""
+	user = db.session.get(User, user_id)
+	if user is None:
+		return jsonify({"message": "User not found."}), 404
+	try:
+		data = admin_user_update_schema.load(request.get_json())
+	except ValidationError as err:
+		return jsonify(err.messages), 422
+	if "email" in data:
+		email_owner = User.get_by_email(data["email"])
+		if email_owner and email_owner.user_id != user.user_id:
+			return jsonify({"error": "Email already registered"}), 409
+	for key, value in data.items():
+		setattr(user, key, value)
+	db.session.commit()
+	return jsonify(user_schema.dump(user)), 200
+
+
+@users_bp.route("/admin/<int:user_id>", methods=["DELETE"])
+@admin_required
+def admin_delete_user(user_id):
+	"""Delete a user while preventing an administrator from deleting themself."""
+	current_user = get_authenticated_user()
+	if current_user.user_id == user_id:
+		return jsonify({"message": "You cannot delete your own account."}), 400
+	user = db.session.get(User, user_id)
+	if user is None:
+		return jsonify({"message": "User not found."}), 404
+	db.session.delete(user)
+	db.session.commit()
+	return "", 204
 
 
 @users_bp.route("", methods=["GET"])

@@ -61,9 +61,49 @@ def test_current_user_returns_authenticated_account(client):
 	response = client.get("/users/me", headers={"Authorization": f"Bearer {token}"})
 
 	assert response.status_code == 200
-	assert response.get_json()["id"] == user_id
+	assert response.get_json()["user_id"] == user_id
 	assert response.get_json()["role"] == "user"
 
 
 def test_logout_requires_a_valid_token(client):
 	assert client.post("/users/logout").status_code == 401
+
+
+def test_current_user_response_uses_the_user_schema(client):
+	token, _ = register_and_login(client, "schema@example.com")
+
+	response = client.get("/users/me", headers={"Authorization": f"Bearer {token}"})
+
+	assert response.status_code == 200
+	assert "password_hash" not in response.get_json()
+	assert response.get_json()["email"] == "schema@example.com"
+
+
+def test_admin_user_management_requires_an_admin_role(client, app):
+	token, user_id = register_and_login(client, "member@example.com")
+	member_response = client.get("/users/admin", headers={"Authorization": f"Bearer {token}"})
+	assert member_response.status_code == 403
+
+	from app.extensions import db
+	from app.models.users import User
+	with app.app_context():
+		user = db.session.get(User, user_id)
+		user.role = "admin"
+		db.session.commit()
+
+	admin_response = client.get("/users/admin", headers={"Authorization": f"Bearer {token}"})
+	assert admin_response.status_code == 200
+	assert admin_response.get_json()["total"] == 1
+
+
+def test_admin_cannot_delete_own_account(client, app):
+	token, user_id = register_and_login(client, "admin@example.com")
+	from app.extensions import db
+	from app.models.users import User
+	with app.app_context():
+		user = db.session.get(User, user_id)
+		user.role = "admin"
+		db.session.commit()
+
+	response = client.delete(f"/users/admin/{user_id}", headers={"Authorization": f"Bearer {token}"})
+	assert response.status_code == 400
