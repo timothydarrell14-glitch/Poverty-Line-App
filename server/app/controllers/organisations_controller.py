@@ -4,6 +4,7 @@ from marshmallow import ValidationError
 
 from app.extensions import db
 from app.models.organisations import Organisation
+from app.routes.authorization import admin_required, get_authenticated_user
 from app.schemas.organisation_schema import (
 	organisation_schema,
 	organisations_schema,
@@ -12,6 +13,32 @@ from app.schemas.organisation_schema import (
 )
 
 organisations_bp = Blueprint("organisations", __name__, url_prefix="/organisations")
+
+
+@organisations_bp.route("/admin", methods=["GET"])
+@admin_required
+def admin_list_organisations():
+	"""List organisations for admin program selection and management."""
+	page = max(request.args.get("page", 1, type=int), 1)
+	per_page = min(max(request.args.get("per_page", 50, type=int), 1), 100)
+	verified = request.args.get("verified")
+	if verified is not None and verified.lower() not in {"true", "false"}:
+		return jsonify({"message": "verified must be true or false."}), 422
+	pagination = Organisation.list_for_admin(request.args.get("search"), None if verified is None else verified.lower() == "true").paginate(page=page, per_page=per_page, error_out=False)
+	return jsonify({"organisations": organisations_schema.dump(pagination.items), "total": pagination.total, "page": pagination.page, "per_page": pagination.per_page, "pages": pagination.pages}), 200
+
+
+@organisations_bp.route("/admin", methods=["POST"])
+@admin_required
+def admin_create_organisation():
+	"""Create an organisation owned by the authenticated administrator."""
+	try:
+		data = organisation_create_schema.load(request.get_json())
+	except ValidationError as err:
+		return jsonify(err.messages), 422
+	organisation = Organisation.create_from_data(data, get_authenticated_user().user_id)
+	db.session.add(organisation); db.session.commit()
+	return jsonify(organisation_schema.dump(organisation)), 201
 
 
 @organisations_bp.route("", methods=["POST"])

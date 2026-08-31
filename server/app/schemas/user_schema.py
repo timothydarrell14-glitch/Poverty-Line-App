@@ -54,3 +54,10 @@ user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 user_register_schema = UserRegisterSchema()
 user_update_schema = UserUpdateSchema(partial=True)
+
+
+class AdminUserUpdateSchema(UserUpdateSchema):
+	role = fields.String(validate=validate.Length(min=1, max=50))
+
+
+admin_user_update_schema = AdminUserUpdateSchema(partial=True)

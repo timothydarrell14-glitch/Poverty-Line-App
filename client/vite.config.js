@@ -16,6 +16,8 @@ export default defineConfig({
       '/users': { target: 'http://127.0.0.1:5000', changeOrigin: true },
       '/jobs': { target: 'http://127.0.0.1:5000', changeOrigin: true },
       '/job-applications': { target: 'http://127.0.0.1:5000', changeOrigin: true },
+      '/programs': { target: 'http://127.0.0.1:5000', changeOrigin: true },
+      '/organisations': { target: 'http://127.0.0.1:5000', changeOrigin: true },
     },
   },
   test: {
