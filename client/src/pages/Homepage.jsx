@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import Navbar from './components/Navbar';
-import Herosection from './components/Herosection';
-import EcosystemSection from './components/EcosystemSection';
-import ProgressSection from './components/ProgressSection';
-import Footer from './components/Footer';
-import ContactScreen from './components/ContactScreen';
-import GetHelpPage from './pages/GetHelpPage';
-import './styles/Homepage.css';
+import Navbar from '../components/Navbar';
+import Herosection from '../components/Herosection';
+import EcosystemSection from '../components/EcosystemSection';
+import ProgressSection from '../components/ProgressSection';
+import Footer from '../components/Footer';
+import ContactScreen from '../components/ContactScreen';
+import GetHelpPage from './GetHelpPage';
+import '../styles/Homepage.css';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('home');
