@@ -4,11 +4,14 @@ from marshmallow import ValidationError
 
 from app.extensions import db
 from app.models.assessment_responses import AssessmentResponse
+from app.models.assessment_questions import AssessmentQuestion
+from app.models.users import User
 from app.schemas.assessment_response_schema import (
 	assessment_response_schema,
 	assessment_responses_schema,
 	assessment_response_create_schema,
 )
+from app.services.poverty_scoring import calculate_poverty_score
 
 assessment_responses_bp = Blueprint(
 	"assessment_responses", __name__, url_prefix="/assessment-responses"
@@ -70,3 +73,29 @@ def get_assessment_response(response_id):
 		return jsonify({"error": "Not authorized to view this response"}), 403
 
 	return jsonify(assessment_response_schema.dump(response)), 200
+
+
+@assessment_responses_bp.route("/calculate", methods=["POST"])
+@jwt_required()
+def calculate_my_poverty_score():
+	current_user_id = int(get_jwt_identity())
+
+	user = User.query.get_or_404(current_user_id)
+	responses = AssessmentResponse.query.filter_by(user_id=current_user_id).all()
+
+	if not responses:
+		return jsonify({"error": "No assessment responses found for this user"}), 400
+
+	questions = AssessmentQuestion.query.all()
+	questions_by_id = {question.question_id: question for question in questions}
+
+	calculate_poverty_score(user, responses, questions_by_id)
+	db.session.commit()
+
+	return jsonify(
+		{
+			"user_id": user.user_id,
+			"poverty_score": float(user.poverty_score),
+			"poverty_classification": user.poverty_classification,
+		}
+	), 200
