@@ -9,6 +9,13 @@ class Delivery(db.Model):
     destination = db.Column(db.String(255), nullable=False)
     status = db.Column(db.String(50), nullable=False, default="In Transit")
     last_update = db.Column(db.String(255), nullable=False, default="Updated: Just now")
-    marker_class = db.Column(db.String(255), nullable=False, default="delivery-map__marker--new")
+    marker_class = db.Column(
+        db.String(255), nullable=False, default="delivery-map__marker--new"
+    )
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
-    updated_at = db.Column(db.DateTime, nullable=False, server_default=db.func.now(), onupdate=db.func.now())
+    updated_at = db.Column(
+        db.DateTime,
+        nullable=False,
+        server_default=db.func.now(),
+        onupdate=db.func.now(),
+    )

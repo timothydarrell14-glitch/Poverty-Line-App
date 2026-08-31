@@ -10,7 +10,7 @@ def build_test_app():
     app = create_app()
     app.config["TESTING"] = True
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-    app.config["JWT_SECRET_KEY"] = "test-secret-key"
+    app.config["JWT_SECRET_KEY"] = "test-secret-key-with-at-least-32-chars"
     with app.app_context():
         db.drop_all()
         db.create_all()
@@ -61,11 +61,15 @@ def test_login_and_logout_flow():
     token = login_response.get_json()["access_token"]
     assert token
 
-    me_response = client.get("/api/auth/me", headers={"Authorization": f"Bearer {token}"})
+    me_response = client.get(
+        "/api/auth/me", headers={"Authorization": f"Bearer {token}"}
+    )
     assert me_response.status_code == 200
     assert me_response.get_json()["user"]["email"] == "admin@example.com"
 
-    logout_response = client.post("/api/auth/logout", headers={"Authorization": f"Bearer {token}"})
+    logout_response = client.post(
+        "/api/auth/logout", headers={"Authorization": f"Bearer {token}"}
+    )
     assert logout_response.status_code == 200
     assert logout_response.get_json()["message"] == "Logged out successfully."
 
@@ -92,11 +96,15 @@ def test_non_admin_cannot_manage_users_or_programs():
     )
     token = login_response.get_json()["access_token"]
 
-    users_response = client.get("/api/auth/users", headers={"Authorization": f"Bearer {token}"})
+    users_response = client.get(
+        "/api/auth/users", headers={"Authorization": f"Bearer {token}"}
+    )
     assert users_response.status_code == 403
     assert users_response.get_json()["message"] == "Admin access required."
 
-    programs_response = client.get("/api/auth/programs", headers={"Authorization": f"Bearer {token}"})
+    programs_response = client.get(
+        "/api/auth/programs", headers={"Authorization": f"Bearer {token}"}
+    )
     assert programs_response.status_code == 403
     assert programs_response.get_json()["message"] == "Admin access required."
 
@@ -124,7 +132,10 @@ def test_admin_can_create_program_for_organisation():
 
     create_response = client.post(
         "/api/auth/programs",
-        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+        },
         json={
             "name": "School Meals",
             "description": "Daily healthy lunches",
@@ -143,10 +154,24 @@ def test_admin_can_create_program_for_organisation():
         stored = Program.query.first()
         assert stored is not None
         assert stored.organisation_id == 1
-def test_user_admin_role_check_is_case_insensitive():
-	"""The model is the source of truth for the administrator-role check."""
-	admin = User(first_name="Admin", last_name="User", email="admin@example.com", password_hash="hash", role="ADMIN")
-	non_admin = User(first_name="Member", last_name="User", email="member@example.com", password_hash="hash", role="user")
 
-	assert admin.is_admin() is True
-	assert non_admin.is_admin() is False
+
+def test_user_admin_role_check_is_case_insensitive():
+    """The model is the source of truth for the administrator-role check."""
+    admin = User(
+        first_name="Admin",
+        last_name="User",
+        email="admin@example.com",
+        password_hash="hash",
+        role="ADMIN",
+    )
+    non_admin = User(
+        first_name="Member",
+        last_name="User",
+        email="member@example.com",
+        password_hash="hash",
+        role="user",
+    )
+
+    assert admin.is_admin() is True
+    assert non_admin.is_admin() is False

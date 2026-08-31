@@ -20,7 +20,9 @@ def serialize_user(user):
         "email": user.email,
         "role": user.role,
         "status": "Active" if user.is_active else "Inactive",
-        "lastActive": user.created_at.strftime("%b %d, %Y") if user.created_at else "Never",
+        "lastActive": user.created_at.strftime("%b %d, %Y")
+        if user.created_at
+        else "Never",
     }
 
 
@@ -70,7 +72,11 @@ def login():
     email = str(data.get("email", "")).strip().lower()
     password = str(data.get("password", ""))
     user = User.query.filter_by(email=email).first()
-    if not user or not user.is_active or not check_password_hash(user.password_hash, password):
+    if (
+        not user
+        or not user.is_active
+        or not check_password_hash(user.password_hash, password)
+    ):
         return jsonify({"message": "Invalid email or password."}), 401
     return jsonify(
         {
@@ -121,9 +127,13 @@ def update_current_user():
     email = str(payload.get("email", "")).strip().lower()
 
     if not all((first_name, last_name, email)):
-        return jsonify({"message": "First name, last name, and email are required."}), 400
+        return jsonify(
+            {"message": "First name, last name, and email are required."}
+        ), 400
 
-    email_owner = User.query.filter(User.email == email, User.user_id != user.user_id).first()
+    email_owner = User.query.filter(
+        User.email == email, User.user_id != user.user_id
+    ).first()
     if email_owner:
         return jsonify({"message": "That email address is already in use."}), 409
 
@@ -147,7 +157,21 @@ def update_current_user():
 @auth_bp.get("/organisations")
 @admin_required
 def list_organisations():
-    return jsonify({"organisations": [{"id": org.organisation_id, "name": org.name, "type": org.organisation_type, "location": org.location} for org in Organisation.query.order_by(Organisation.organisation_id.desc()).all()]})
+    return jsonify(
+        {
+            "organisations": [
+                {
+                    "id": org.organisation_id,
+                    "name": org.name,
+                    "type": org.organisation_type,
+                    "location": org.location,
+                }
+                for org in Organisation.query.order_by(
+                    Organisation.organisation_id.desc()
+                ).all()
+            ]
+        }
+    )
 
 
 @auth_bp.post("/organisations")
@@ -159,16 +183,37 @@ def create_organisation():
     if not name:
         return jsonify({"message": "Organisation name is required."}), 400
 
-    organisation = Organisation(name=name, organisation_type=organisation_type, description=data.get("description"), location=data.get("location"), verified=bool(data.get("verified", False)))
+    organisation = Organisation(
+        name=name,
+        organisation_type=organisation_type,
+        description=data.get("description"),
+        location=data.get("location"),
+        verified=bool(data.get("verified", False)),
+    )
     db.session.add(organisation)
     db.session.commit()
-    return jsonify({"organisation": {"id": organisation.organisation_id, "name": organisation.name, "type": organisation.organisation_type}}), 201
+    return jsonify(
+        {
+            "organisation": {
+                "id": organisation.organisation_id,
+                "name": organisation.name,
+                "type": organisation.organisation_type,
+            }
+        }
+    ), 201
 
 
 @auth_bp.get("/users")
 @admin_required
 def list_users():
-    return jsonify({"users": [serialize_user(user) for user in User.query.order_by(User.created_at.desc()).all()]})
+    return jsonify(
+        {
+            "users": [
+                serialize_user(user)
+                for user in User.query.order_by(User.created_at.desc()).all()
+            ]
+        }
+    )
 
 
 @auth_bp.post("/users")
@@ -225,7 +270,14 @@ def delete_user(user_id):
 @auth_bp.get("/programs")
 @admin_required
 def list_programs():
-    return jsonify({"programs": [serialize_program(program) for program in Program.query.order_by(Program.program_id.desc()).all()]})
+    return jsonify(
+        {
+            "programs": [
+                serialize_program(program)
+                for program in Program.query.order_by(Program.program_id.desc()).all()
+            ]
+        }
+    )
 
 
 @auth_bp.post("/programs")
@@ -279,7 +331,24 @@ def list_chats():
     from app.models.chats import Chat
 
     chats = Chat.query.order_by(Chat.updated_at.desc()).all()
-    return jsonify({"chats": [{"id": chat.chat_id, "name": chat.contact_name, "role": chat.role, "lastMessage": chat.last_message, "status": chat.status, "unread": chat.unread_count, "time": chat.updated_at.strftime("%b %d, %Y") if chat.updated_at else "Just now"} for chat in chats]})
+    return jsonify(
+        {
+            "chats": [
+                {
+                    "id": chat.chat_id,
+                    "name": chat.contact_name,
+                    "role": chat.role,
+                    "lastMessage": chat.last_message,
+                    "status": chat.status,
+                    "unread": chat.unread_count,
+                    "time": chat.updated_at.strftime("%b %d, %Y")
+                    if chat.updated_at
+                    else "Just now",
+                }
+                for chat in chats
+            ]
+        }
+    )
 
 
 @auth_bp.post("/chats")
@@ -301,7 +370,18 @@ def create_chat():
     )
     db.session.add(chat)
     db.session.commit()
-    return jsonify({"chat": {"id": chat.chat_id, "name": chat.contact_name, "role": chat.role, "lastMessage": chat.last_message, "status": chat.status, "unread": chat.unread_count}}), 201
+    return jsonify(
+        {
+            "chat": {
+                "id": chat.chat_id,
+                "name": chat.contact_name,
+                "role": chat.role,
+                "lastMessage": chat.last_message,
+                "status": chat.status,
+                "unread": chat.unread_count,
+            }
+        }
+    ), 201
 
 
 @auth_bp.get("/deliveries")
@@ -310,7 +390,20 @@ def list_deliveries():
     from app.models.deliveries import Delivery
 
     deliveries = Delivery.query.order_by(Delivery.updated_at.desc()).all()
-    return jsonify({"deliveries": [{"id": delivery.reference_code, "destination": delivery.destination, "status": delivery.status, "updated": delivery.last_update, "marker": delivery.marker_class} for delivery in deliveries]})
+    return jsonify(
+        {
+            "deliveries": [
+                {
+                    "id": delivery.reference_code,
+                    "destination": delivery.destination,
+                    "status": delivery.status,
+                    "updated": delivery.last_update,
+                    "marker": delivery.marker_class,
+                }
+                for delivery in deliveries
+            ]
+        }
+    )
 
 
 @auth_bp.post("/deliveries")
@@ -322,7 +415,9 @@ def create_delivery():
     reference = str(data.get("reference_code") or data.get("id") or "").strip()
     destination = str(data.get("destination", "")).strip()
     if not reference or not destination:
-        return jsonify({"message": "Delivery reference and destination are required."}), 400
+        return jsonify(
+            {"message": "Delivery reference and destination are required."}
+        ), 400
 
     delivery = Delivery(
         reference_code=reference,
@@ -333,7 +428,17 @@ def create_delivery():
     )
     db.session.add(delivery)
     db.session.commit()
-    return jsonify({"delivery": {"id": delivery.reference_code, "destination": delivery.destination, "status": delivery.status, "updated": delivery.last_update, "marker": delivery.marker_class}}), 201
+    return jsonify(
+        {
+            "delivery": {
+                "id": delivery.reference_code,
+                "destination": delivery.destination,
+                "status": delivery.status,
+                "updated": delivery.last_update,
+                "marker": delivery.marker_class,
+            }
+        }
+    ), 201
 
 
 @auth_bp.get("/settings")
@@ -342,7 +447,14 @@ def list_settings():
     from app.models.settings import AppSetting
 
     settings = AppSetting.query.order_by(AppSetting.key).all()
-    return jsonify({"settings": [{"key": option.key, "value": option.value, "category": option.category} for option in settings]})
+    return jsonify(
+        {
+            "settings": [
+                {"key": option.key, "value": option.value, "category": option.category}
+                for option in settings
+            ]
+        }
+    )
 
 
 @auth_bp.post("/settings")
@@ -356,10 +468,20 @@ def create_or_update_setting():
         return jsonify({"message": "Setting key is required."}), 400
     setting = AppSetting.query.filter_by(key=key).first()
     if setting is None:
-        setting = AppSetting(key=key, value=data.get("value"), category=data.get("category") or "general")
+        setting = AppSetting(
+            key=key, value=data.get("value"), category=data.get("category") or "general"
+        )
         db.session.add(setting)
     else:
         setting.value = data.get("value")
         setting.category = data.get("category") or setting.category
     db.session.commit()
-    return jsonify({"setting": {"key": setting.key, "value": setting.value, "category": setting.category}}), 201
+    return jsonify(
+        {
+            "setting": {
+                "key": setting.key,
+                "value": setting.value,
+                "category": setting.category,
+            }
+        }
+    ), 201

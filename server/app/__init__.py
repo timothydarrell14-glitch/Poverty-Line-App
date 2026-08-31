@@ -87,7 +87,9 @@ def create_app():
     from app.controllers.assessment_questions_controller import assessment_questions_bp
     from app.controllers.assessment_responses_controller import assessment_responses_bp
     from app.controllers.communities_controller import communities_bp
-    from app.controllers.community_memberships_controller import community_memberships_bp
+    from app.controllers.community_memberships_controller import (
+        community_memberships_bp,
+    )
     from app.controllers.community_posts_controller import community_posts_bp
     from app.controllers.donations_controller import donations_bp
     from app.controllers.job_applications_controller import job_applications_bp
