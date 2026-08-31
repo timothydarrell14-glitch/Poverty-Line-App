@@ -98,6 +98,9 @@ body {
   content: attr(data-tooltip);
   font: 12px/1.2 "Trebuchet MS", "Segoe UI", sans-serif;
   left: 50%;
+  height: auto;
+  min-height: 0;
+  max-width: min(240px, calc(100vw - 24px));
   opacity: 0;
   padding: 6px 8px;
   pointer-events: none;
@@ -106,18 +109,19 @@ body {
   transform: translate(-50%, -4px);
   transition: opacity 150ms ease, transform 150ms ease;
   visibility: hidden;
-  white-space: nowrap;
+  white-space: normal;
+  width: max-content;
   z-index: 20;
 }
 
 .tooltip:hover::after,
 .tooltip:focus-visible::after {
+  display: block;
+  height: auto;
+  min-height: 0;
   opacity: 1;
   transform: translate(-50%, 0);
   visibility: visible;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
 a {
