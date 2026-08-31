@@ -25,9 +25,18 @@ def _get_current_user_id():
 			return int(identity)
 	except Exception:
 		pass
-	# Fallback to default user (ID 1) if unauthenticated in demo mode
+	# Fallback to default user if unauthenticated in demo mode
 	user = User.query.first()
-	return user.user_id if user else 1
+	if not user:
+		user = User(
+			first_name="Demo",
+			last_name="User",
+			email="demo@example.com",
+			password_hash="demo_hash",
+		)
+		db.session.add(user)
+		db.session.commit()
+	return user.user_id
 
 
 @communities_bp.route("", methods=["POST"])
