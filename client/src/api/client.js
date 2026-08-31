@@ -1,8 +1,8 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? "/api";
-const TOKEN_KEY = "povertyLineToken";
+import { getAccessToken } from "../utils/auth";
 
 export async function apiRequest(path, { method = "GET", body, token } = {}) {
-  const accessToken = token ?? localStorage.getItem(TOKEN_KEY);
+  const accessToken = token ?? getAccessToken();
   const response = await fetch(`${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`, {
     method,
     headers: {
