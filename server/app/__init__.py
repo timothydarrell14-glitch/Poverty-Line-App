@@ -1,5 +1,6 @@
 import os
 from flask import Flask, jsonify
+from werkzeug.exceptions import HTTPException
 from dotenv import load_dotenv
 
 from app.extensions import db, migrate, ma, cors, jwt
@@ -23,6 +24,23 @@ def create_app():
 	ma.init_app(app)
 	cors.init_app(app)
 	jwt.init_app(app)
+
+	@jwt.unauthorized_loader
+	def missing_access_token(reason):
+		return jsonify({"message": "Authentication is required.", "details": reason}), 401
+
+	@jwt.invalid_token_loader
+	def invalid_access_token(reason):
+		return jsonify({"message": "The access token is invalid.", "details": reason}), 401
+
+	@jwt.expired_token_loader
+	def expired_access_token(_header, _payload):
+		return jsonify({"message": "The access token has expired."}), 401
+
+	@app.errorhandler(HTTPException)
+	def handle_http_error(error):
+		"""Return JSON errors so frontend API callers have one response shape."""
+		return jsonify({"message": error.description, "status": error.code}), error.code
 
 	@app.route("/")
 	def home():

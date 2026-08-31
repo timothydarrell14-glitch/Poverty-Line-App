@@ -17,3 +17,19 @@ class Organisation(db.Model):
 
 	programs = db.relationship("Program", back_populates="organisation")
 	jobs = db.relationship("Job", back_populates="organisation")
+
+	@classmethod
+	def list_for_admin(cls, search=None, verified=None):
+		"""Build an organisation query for administrator selection and management."""
+		query = cls.query
+		if search:
+			term = f"%{search.strip()}%"
+			query = query.filter(db.or_(cls.name.ilike(term), cls.description.ilike(term)))
+		if verified is not None:
+			query = query.filter(cls.verified == verified)
+		return query.order_by(cls.name.asc())
+
+	@classmethod
+	def create_from_data(cls, data, owner_user_id):
+		"""Create an unsaved organisation instance from schema-validated input."""
+		return cls(owner_user_id=owner_user_id, verified=False, **data)
