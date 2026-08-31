@@ -66,7 +66,9 @@ def test_current_user_returns_authenticated_account(client):
 
 
 def test_logout_requires_a_valid_token(client):
-	assert client.post("/users/logout").status_code == 401
+	response = client.post("/users/logout")
+	assert response.status_code == 401
+	assert response.get_json()["message"] == "Authentication is required."
 
 
 def test_current_user_response_uses_the_user_schema(client):
@@ -107,3 +109,9 @@ def test_admin_cannot_delete_own_account(client, app):
 
 	response = client.delete(f"/users/admin/{user_id}", headers={"Authorization": f"Bearer {token}"})
 	assert response.status_code == 400
+
+
+def test_api_not_found_response_is_json(client):
+	response = client.get("/users/99999")
+	assert response.status_code == 404
+	assert "message" in response.get_json()
