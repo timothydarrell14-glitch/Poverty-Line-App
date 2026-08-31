@@ -1,0 +1,108 @@
+.coming-soon-page {
+  background: #f5f7fb;
+  display: flex;
+  min-height: 100svh;
+}
+
+.coming-soon {
+  align-items: center;
+  background:
+    radial-gradient(circle at 15% 20%, rgb(0 125 137 / 15%), transparent 30rem),
+    radial-gradient(circle at 85% 75%, rgb(31 154 122 / 13%), transparent 28rem),
+    #f5f7fb;
+  color: #17242a;
+  display: grid;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  flex: 1;
+  min-width: 0;
+  padding: 24px;
+  place-items: center;
+}
+
+.coming-soon *,
+.coming-soon *::before,
+.coming-soon *::after {
+  box-sizing: border-box;
+}
+
+.coming-soon__panel {
+  background: rgb(255 255 255 / 86%);
+  border: 1px solid #d8e1e5;
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgb(22 51 59 / 12%);
+  max-width: 560px;
+  padding: clamp(36px, 7vw, 72px);
+  text-align: center;
+}
+
+.coming-soon__eyebrow {
+  align-items: center;
+  color: #007581;
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 700;
+  gap: 7px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.coming-soon__eyebrow svg {
+  height: 17px;
+  width: 17px;
+}
+
+.coming-soon h1 {
+  font-size: clamp(32px, 5vw, 48px);
+  letter-spacing: -.04em;
+  line-height: 1.05;
+  margin: 18px 0;
+}
+
+.coming-soon p {
+  color: #52636b;
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0 auto;
+  max-width: 420px;
+}
+
+.coming-soon__preview {
+  align-items: center;
+  background: #007581;
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 8px 18px rgb(0 117 129 / 22%);
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-weight: 700;
+  gap: 9px;
+  margin-top: 30px;
+  padding: 13px 20px;
+}
+
+.coming-soon__preview:hover {
+  background: #00636d;
+  transform: translateY(-1px);
+}
+
+.coming-soon__preview:focus-visible {
+  outline: 3px solid rgb(0 117 129 / 35%);
+  outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+  .coming-soon-page {
+    flex-direction: column;
+  }
+
+  .coming-soon-page .admin-sidebar {
+    align-self: stretch;
+    margin: 12px 12px 0;
+  }
+
+  .coming-soon {
+    min-height: 0;
+  }
+}

@@ -1,5 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 
+html,
+body,
+#root {
+  min-height: 100svh;
+}
+
+html {
+  background: #f5f7fb;
+}
+
+html[data-theme="dark"] {
+  background: #17242a;
+  color-scheme: dark;
+}
+
 :root {
   --primary-teal: #0f6258;
   --primary-dark-green: #275240;
@@ -33,6 +48,7 @@ html {
 
 body {
   margin: 0;
+  min-width: 320px;
   padding: 0;
   min-width: 320px;
   background-color: var(--bg-page);
@@ -42,6 +58,63 @@ body {
 
 #root {
   width: 100%;
+}
+
+.admin-topbar__notice {
+  background: #17242a;
+  border: 0;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  margin: 0;
+  padding: 8px 12px;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  z-index: 30;
+}
+
+.sr-only {
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  position: absolute;
+  width: 1px;
+}
+
+.login-page { align-items: center; display: grid; min-height: 100svh; place-items: center; }
+.login-page form { background: #fff; border-radius: 10px; box-shadow: 0 8px 24px rgb(0 0 0 / 12%); display: grid; gap: 14px; padding: 28px; width: min(360px, calc(100% - 32px)); }
+.login-page label { display: grid; gap: 5px; }.login-page input { padding: 9px; }.login-page button { background: #00707b; border: 0; border-radius: 5px; color: #fff; padding: 10px; }
+
+.tooltip {
+  position: relative;
+}
+
+.tooltip::after {
+  background: #17242a;
+  border-radius: 4px;
+  color: #fff;
+  content: attr(data-tooltip);
+  font: 12px/1.2 "Trebuchet MS", "Segoe UI", sans-serif;
+  left: 50%;
+  opacity: 0;
+  padding: 6px 8px;
+  pointer-events: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  transform: translate(-50%, -4px);
+  transition: opacity 150ms ease, transform 150ms ease;
+  visibility: hidden;
+  white-space: nowrap;
+  z-index: 20;
+}
+
+.tooltip:hover::after,
+.tooltip:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  visibility: visible;
   min-height: 100vh;
   display: flex;
   flex-direction: column;

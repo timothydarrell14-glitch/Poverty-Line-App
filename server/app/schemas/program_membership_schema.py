@@ -5,19 +5,19 @@ from app.models.program_memberships import ProgramMembership
 
 
 class ProgramMembershipSchema(ma.SQLAlchemyAutoSchema):
-	class Meta:
-		model = ProgramMembership
-		load_instance = False
-		include_fk = True
+    class Meta:
+        model = ProgramMembership
+        load_instance = False
+        include_fk = True
 
 
 class ProgramMembershipCreateSchema(ma.SQLAlchemyAutoSchema):
-	program_id = fields.Integer(required=True)
+    program_id = fields.Integer(required=True)
 
-	class Meta:
-		model = ProgramMembership
-		load_instance = False
-		fields = ("program_id",)
+    class Meta:
+        model = ProgramMembership
+        load_instance = False
+        fields = ("program_id",)
 
 
 program_membership_schema = ProgramMembershipSchema()

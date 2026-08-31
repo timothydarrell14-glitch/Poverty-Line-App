@@ -65,6 +65,9 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   const isTabActive = (path, id) => {
     if (location && location.pathname === path) return true;
     if (activeTab === id) return true;
+    if (id === 'get-help' && (location?.pathname === '/community' || activeTab === 'community')) {
+      return true;
+    }
     return false;
   };
 
