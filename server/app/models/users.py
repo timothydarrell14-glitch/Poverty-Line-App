@@ -26,3 +26,21 @@ class User(db.Model):
 	job_applications = db.relationship("JobApplication", back_populates="user")
 	community_posts = db.relationship("CommunityPost", back_populates="user")
 	community_memberships = db.relationship("CommunityMembership", back_populates="user")
+
+	def is_admin(self):
+		"""Return whether this user currently has administrator access."""
+		return (self.role or "").strip().lower() == "admin"
+
+	def to_dict(self):
+		"""Serialize non-sensitive user data for future API responses."""
+		return {
+			"id": self.user_id,
+			"first_name": self.first_name,
+			"last_name": self.last_name,
+			"name": f"{self.first_name} {self.last_name}",
+			"email": self.email,
+			"role": self.role,
+			"phone": self.phone,
+			"location": self.location,
+			"created_at": self.created_at.isoformat() if self.created_at else None,
+		}
