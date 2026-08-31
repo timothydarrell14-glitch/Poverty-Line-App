@@ -14,7 +14,7 @@ from app.schemas.assessment_response_schema import (
 from app.services.poverty_scoring import calculate_poverty_score
 
 assessment_responses_bp = Blueprint(
-    "assessment_responses", __name__, url_prefix="/assessment-responses"
+    "assessment_responses", __name__, url_prefix="/api/assessment-responses"
 )
 
 

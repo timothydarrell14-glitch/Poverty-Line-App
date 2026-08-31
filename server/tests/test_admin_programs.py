@@ -4,7 +4,7 @@ from app.models.users import User
 
 def admin_token(client, app):
     client.post(
-        "/users/register",
+        "/api/users/register",
         json={
             "first_name": "Admin",
             "last_name": "User",
@@ -17,7 +17,7 @@ def admin_token(client, app):
         user.role = "admin"
         db.session.commit()
     login = client.post(
-        "/users/login",
+        "/api/users/login",
         json={"email": "admin-programs@example.com", "password": "testpass123"},
     )
     return {"Authorization": f"Bearer {login.get_json()['access_token']}"}
@@ -26,7 +26,7 @@ def admin_token(client, app):
 def test_admin_can_create_organisation_and_program(client, app):
     headers = admin_token(client, app)
     organisation = client.post(
-        "/organisations/admin",
+        "/api/organisations/admin",
         headers=headers,
         json={
             "name": "Poverty Line Partners",
@@ -37,7 +37,7 @@ def test_admin_can_create_organisation_and_program(client, app):
     assert organisation.status_code == 201
 
     program = client.post(
-        "/programs/admin",
+        "/api/programs/admin",
         headers=headers,
         json={
             "organisation_id": organisation.get_json()["organisation_id"],
@@ -48,6 +48,6 @@ def test_admin_can_create_organisation_and_program(client, app):
     )
     assert program.status_code == 201
 
-    listing = client.get("/programs/admin?search=nutrition", headers=headers)
+    listing = client.get("/api/programs/admin?search=nutrition", headers=headers)
     assert listing.status_code == 200
     assert listing.get_json()["total"] == 1

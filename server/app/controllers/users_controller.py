@@ -13,7 +13,7 @@ from app.schemas.user_schema import (
     admin_user_update_schema,
 )
 
-users_bp = Blueprint("users", __name__, url_prefix="/users")
+users_bp = Blueprint("users", __name__, url_prefix="/api/users")
 
 
 @users_bp.route("/register", methods=["POST"])

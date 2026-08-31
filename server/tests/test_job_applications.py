@@ -3,7 +3,7 @@ from tests.test_auth import register_and_login
 
 def create_organisation_and_job(client, token):
     org_response = client.post(
-        "/organisations",
+        "/api/organisations",
         json={
             "name": "Test Org",
             "organisation_type": "NGO",
@@ -14,7 +14,7 @@ def create_organisation_and_job(client, token):
     organisation_id = org_response.get_json()["organisation_id"]
 
     job_response = client.post(
-        "/jobs",
+        "/api/jobs",
         json={
             "organisation_id": organisation_id,
             "title": "Test Job",
@@ -31,7 +31,7 @@ def test_apply_to_job_success(client):
     job_id = create_organisation_and_job(client, token)
 
     response = client.post(
-        "/job-applications",
+        "/api/job-applications",
         json={"job_id": job_id},
         headers={"Authorization": f"Bearer {token}"},
     )
@@ -47,14 +47,14 @@ def test_duplicate_job_application_fails(client):
     job_id = create_organisation_and_job(client, token)
 
     first_response = client.post(
-        "/job-applications",
+        "/api/job-applications",
         json={"job_id": job_id},
         headers={"Authorization": f"Bearer {token}"},
     )
     assert first_response.status_code == 201
 
     second_response = client.post(
-        "/job-applications",
+        "/api/job-applications",
         json={"job_id": job_id},
         headers={"Authorization": f"Bearer {token}"},
     )
@@ -67,14 +67,14 @@ def test_user_cannot_view_another_users_application(client):
     job_id = create_organisation_and_job(client, token_a)
 
     application_response = client.post(
-        "/job-applications",
+        "/api/job-applications",
         json={"job_id": job_id},
         headers={"Authorization": f"Bearer {token_a}"},
     )
     application_id = application_response.get_json()["application_id"]
 
     view_response = client.get(
-        f"/job-applications/{application_id}",
+        f"/api/job-applications/{application_id}",
         headers={"Authorization": f"Bearer {token_b}"},
     )
 

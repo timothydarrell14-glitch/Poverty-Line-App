@@ -7,7 +7,7 @@ def test_calculate_score_with_no_responses_fails(client):
     token, _ = register_and_login(client, "noresponses@example.com")
 
     response = client.post(
-        "/assessment-responses/calculate",
+        "/api/assessment-responses/calculate",
         headers={"Authorization": f"Bearer {token}"},
     )
 
@@ -31,13 +31,13 @@ def test_calculate_score_with_responses_succeeds(client, app):
     token, _ = register_and_login(client, "hasresponses@example.com")
 
     client.post(
-        "/assessment-responses",
+        "/api/assessment-responses",
         json={"question_id": question_id, "answer": "2000"},
         headers={"Authorization": f"Bearer {token}"},
     )
 
     response = client.post(
-        "/assessment-responses/calculate",
+        "/api/assessment-responses/calculate",
         headers={"Authorization": f"Bearer {token}"},
     )
 

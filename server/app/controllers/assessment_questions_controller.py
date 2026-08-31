@@ -8,7 +8,7 @@ from app.schemas.assessment_question_schema import (
 )
 
 assessment_questions_bp = Blueprint(
-    "assessment_questions", __name__, url_prefix="/assessment-questions"
+    "assessment_questions", __name__, url_prefix="/api/assessment-questions"
 )
 
 

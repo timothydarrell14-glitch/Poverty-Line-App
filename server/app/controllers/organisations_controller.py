@@ -12,7 +12,7 @@ from app.schemas.organisation_schema import (
     organisation_update_schema,
 )
 
-organisations_bp = Blueprint("organisations", __name__, url_prefix="/organisations")
+organisations_bp = Blueprint("organisations", __name__, url_prefix="/api/organisations")
 
 
 @organisations_bp.route("/admin", methods=["GET"])

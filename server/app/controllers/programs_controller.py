@@ -13,7 +13,7 @@ from app.schemas.program_schema import (
     program_update_schema,
 )
 
-programs_bp = Blueprint("programs", __name__, url_prefix="/programs")
+programs_bp = Blueprint("programs", __name__, url_prefix="/api/programs")
 
 
 @programs_bp.route("/admin", methods=["GET"])

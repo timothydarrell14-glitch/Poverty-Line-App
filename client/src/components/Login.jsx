@@ -27,7 +27,7 @@ const Login = ({ isOpen, onClose, onShowSignup, onAuthenticated }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(apiUrl("/users/login"), {
+      const response = await fetch(apiUrl("/api/users/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -49,6 +49,8 @@ const Login = ({ isOpen, onClose, onShowSignup, onAuthenticated }) => {
       }
 
       localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("accessToken", data.access_token);
+      localStorage.setItem("povertyLineToken", data.access_token);
       if (data.user) {
         localStorage.setItem("user", JSON.stringify(data.user));
         onAuthenticated?.(data.user);

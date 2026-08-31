@@ -1,6 +1,6 @@
 def test_register_user_success(client):
     response = client.post(
-        "/users/register",
+        "/api/users/register",
         json={
             "first_name": "Test",
             "last_name": "User",
@@ -23,16 +23,16 @@ def test_register_duplicate_email_fails(client):
         "password": "testpass123",
     }
 
-    first_response = client.post("/users/register", json=payload)
+    first_response = client.post("/api/users/register", json=payload)
     assert first_response.status_code == 201
 
-    second_response = client.post("/users/register", json=payload)
+    second_response = client.post("/api/users/register", json=payload)
     assert second_response.status_code == 409
 
 
 def test_update_user_without_token_fails(client):
     register_response = client.post(
-        "/users/register",
+        "/api/users/register",
         json={
             "first_name": "Test",
             "last_name": "User",
@@ -43,7 +43,7 @@ def test_update_user_without_token_fails(client):
     user_id = register_response.get_json()["user_id"]
 
     update_response = client.patch(
-        f"/users/{user_id}",
+        f"/api/users/{user_id}",
         json={"location": "Nairobi"},
     )
 

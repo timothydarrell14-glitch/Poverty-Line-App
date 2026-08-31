@@ -13,7 +13,7 @@ export default function Signup({ isOpen, onClose, onShowLogin }) {
   const handleSubmit = async (event) => {
     event.preventDefault(); setError(""); setMessage(""); setIsSubmitting(true);
     try {
-      const response = await fetch(apiUrl("/users/register"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+      const response = await fetch(apiUrl("/api/users/register"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || Object.values(data).flat().join(" ") || "Unable to create your account.");
       setMessage("Account created. You can now sign in.");

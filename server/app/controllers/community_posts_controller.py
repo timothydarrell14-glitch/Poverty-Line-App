@@ -12,7 +12,7 @@ from app.schemas.community_post_schema import (
 )
 
 community_posts_bp = Blueprint(
-    "community_posts", __name__, url_prefix="/community-posts"
+    "community_posts", __name__, url_prefix="/api/community-posts"
 )
 
 

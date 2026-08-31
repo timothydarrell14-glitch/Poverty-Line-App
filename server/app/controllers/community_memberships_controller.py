@@ -11,7 +11,7 @@ from app.schemas.community_membership_schema import (
 )
 
 community_memberships_bp = Blueprint(
-    "community_memberships", __name__, url_prefix="/community-memberships"
+    "community_memberships", __name__, url_prefix="/api/community-memberships"
 )
 
 

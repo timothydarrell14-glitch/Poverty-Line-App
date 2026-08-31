@@ -11,7 +11,7 @@ from app.schemas.donation_schema import (
     donation_create_schema,
 )
 
-donations_bp = Blueprint("donations", __name__, url_prefix="/donations")
+donations_bp = Blueprint("donations", __name__, url_prefix="/api/donations")
 
 
 @donations_bp.route("", methods=["POST"])

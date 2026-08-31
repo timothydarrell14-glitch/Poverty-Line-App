@@ -11,7 +11,7 @@ from app.schemas.job_application_schema import (
 )
 
 job_applications_bp = Blueprint(
-    "job_applications", __name__, url_prefix="/job-applications"
+    "job_applications", __name__, url_prefix="/api/job-applications"
 )
 
 

@@ -9,7 +9,14 @@ from app.extensions import cors, db, jwt, ma, migrate
 import app.models  # noqa: F401
 from app.routes.callbacks import callback_bp
 
-load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+# Load .env.local first (if it exists) to override .env
+env_path = Path(__file__).resolve().parents[1] / ".env"
+env_local = Path(__file__).resolve().parents[1] / ".env.local"
+# Load .env first
+load_dotenv(env_path)
+# Then load .env.local which overrides keys from .env
+if env_local.exists():
+    load_dotenv(env_local, override=True)
 
 
 def create_app():

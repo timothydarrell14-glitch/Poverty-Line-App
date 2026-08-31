@@ -11,7 +11,7 @@ from app.schemas.job_schema import (
     job_update_schema,
 )
 
-jobs_bp = Blueprint("jobs", __name__, url_prefix="/jobs")
+jobs_bp = Blueprint("jobs", __name__, url_prefix="/api/jobs")
 
 
 @jobs_bp.route("", methods=["POST"])
