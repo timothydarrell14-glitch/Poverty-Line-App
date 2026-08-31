@@ -9,4 +9,9 @@ class AppSetting(db.Model):
     value = db.Column(db.Text)
     category = db.Column(db.String(100), nullable=False, default="general")
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
-    updated_at = db.Column(db.DateTime, nullable=False, server_default=db.func.now(), onupdate=db.func.now())
+    updated_at = db.Column(
+        db.DateTime,
+        nullable=False,
+        server_default=db.func.now(),
+        onupdate=db.func.now(),
+    )

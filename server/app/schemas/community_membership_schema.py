@@ -5,19 +5,19 @@ from app.models.community_membership import CommunityMembership
 
 
 class CommunityMembershipSchema(ma.SQLAlchemyAutoSchema):
-	class Meta:
-		model = CommunityMembership
-		load_instance = False
-		include_fk = True
+    class Meta:
+        model = CommunityMembership
+        load_instance = False
+        include_fk = True
 
 
 class CommunityMembershipCreateSchema(ma.SQLAlchemyAutoSchema):
-	community_id = fields.Integer(required=True)
+    community_id = fields.Integer(required=True)
 
-	class Meta:
-		model = CommunityMembership
-		load_instance = False
-		fields = ("community_id",)
+    class Meta:
+        model = CommunityMembership
+        load_instance = False
+        fields = ("community_id",)
 
 
 community_membership_schema = CommunityMembershipSchema()

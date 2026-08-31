@@ -5,45 +5,45 @@ from app.models.programs import Program
 
 
 class ProgramSchema(ma.SQLAlchemyAutoSchema):
-	class Meta:
-		model = Program
-		load_instance = False
-		include_fk = True
+    class Meta:
+        model = Program
+        load_instance = False
+        include_fk = True
 
 
 class ProgramCreateSchema(ma.SQLAlchemyAutoSchema):
-	organisation_id = fields.Integer(required=True)
-	name = fields.String(required=True, validate=validate.Length(min=1, max=255))
+    organisation_id = fields.Integer(required=True)
+    name = fields.String(required=True, validate=validate.Length(min=1, max=255))
 
-	class Meta:
-		model = Program
-		load_instance = False
-		fields = (
-			"organisation_id",
-			"name",
-			"description",
-			"category",
-			"location",
-			"eligibility",
-			"start_date",
-			"end_date",
-		)
+    class Meta:
+        model = Program
+        load_instance = False
+        fields = (
+            "organisation_id",
+            "name",
+            "description",
+            "category",
+            "location",
+            "eligibility",
+            "start_date",
+            "end_date",
+        )
 
 
 class ProgramUpdateSchema(ma.SQLAlchemyAutoSchema):
-	class Meta:
-		model = Program
-		load_instance = False
-		fields = (
-			"name",
-			"description",
-			"category",
-			"location",
-			"eligibility",
-			"start_date",
-			"end_date",
-			"status",
-		)
+    class Meta:
+        model = Program
+        load_instance = False
+        fields = (
+            "name",
+            "description",
+            "category",
+            "location",
+            "eligibility",
+            "start_date",
+            "end_date",
+            "status",
+        )
 
 
 program_schema = ProgramSchema()
