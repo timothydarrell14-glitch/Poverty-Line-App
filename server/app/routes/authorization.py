@@ -17,7 +17,7 @@ def get_authenticated_user():
 
     try:
         return db.session.get(User, int(identity))
-    except TypeError, ValueError:
+    except (TypeError, ValueError):
         return None
 
 
