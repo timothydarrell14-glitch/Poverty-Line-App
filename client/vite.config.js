@@ -7,11 +7,20 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://127.0.0.1:5000',
+      '/api': {
+        target: 'http://127.0.0.1:5000',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+      '/users': { target: 'http://127.0.0.1:5000', changeOrigin: true },
+      '/jobs': { target: 'http://127.0.0.1:5000', changeOrigin: true },
+      '/job-applications': { target: 'http://127.0.0.1:5000', changeOrigin: true },
     },
   },
   test: {
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/setupTests.js',
-  }
+  },
 })
