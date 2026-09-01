@@ -124,7 +124,7 @@ def create_app():
         """Create the initial administrator from ADMIN_* environment variables."""
         from werkzeug.security import generate_password_hash
 
-        from app.models.users import User
+        from app.models.Users.members import User
 
         first_name = os.environ.get("ADMIN_FIRST_NAME", "Admin").strip()
         last_name = os.environ.get("ADMIN_LAST_NAME", "User").strip()

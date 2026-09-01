@@ -1,7 +1,7 @@
 from marshmallow import fields, validate
 
 from app.extensions import ma
-from app.models.programs import Program
+from app.models.Donations.programs import Program
 
 
 class ProgramSchema(ma.SQLAlchemyAutoSchema):

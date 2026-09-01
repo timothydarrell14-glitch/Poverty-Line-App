@@ -1,7 +1,7 @@
 from marshmallow import fields, validate
 
 from app.extensions import ma
-from app.models.community_posts import CommunityPost
+from app.models.Communication.community_posts import CommunityPost
 
 
 class CommunityPostSchema(ma.SQLAlchemyAutoSchema):

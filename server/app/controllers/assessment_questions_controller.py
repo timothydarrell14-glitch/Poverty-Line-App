@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 
 from app.extensions import db
-from app.models.assessment_questions import AssessmentQuestion
+from app.models.Classification.assessment_questions import AssessmentQuestion
 from app.schemas.assessment_question_schema import (
     assessment_question_schema,
     assessment_questions_schema,

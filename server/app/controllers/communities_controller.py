@@ -4,10 +4,10 @@ from marshmallow import ValidationError
 from sqlalchemy.orm import joinedload
 
 from app.extensions import db
-from app.models.communities import Community
-from app.models.community_membership import CommunityMembership
-from app.models.community_posts import CommunityPost
-from app.models.users import User
+from app.models.Communication.communities import Community
+from app.models.Communication.community_membership import CommunityMembership
+from app.models.Communication.community_posts import CommunityPost
+from app.models.Users.members import User
 from app.schemas.community_schema import (
     community_schema,
     community_create_schema,
