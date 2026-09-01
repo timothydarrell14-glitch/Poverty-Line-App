@@ -570,3 +570,17 @@ button:focus-visible {
   border-bottom: none;
   text-decoration: none;
 }
+.ecosystem-card .card-link:focus,
+.ecosystem-card .card-link:focus-visible,
+.ecosystem-card .card-link:active,
+.ecosystem-card .card-action:focus,
+.ecosystem-card .card-action:focus-visible,
+.ecosystem-card .card-action:active {
+  border-bottom: none;
+  text-decoration: none;
+}
+
+.ecosystem-card .card-link::after,
+.ecosystem-card .card-action::after {
+  display: none;
+}
