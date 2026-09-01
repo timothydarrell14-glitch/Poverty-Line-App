@@ -561,3 +561,12 @@ button:focus-visible {
   .site-footer .footer-grid { grid-template-columns: 1fr; }
   .site-footer .footer-brand-column { grid-column: auto; }
 }
+
+/* Keep Ecosystem actions text-only, without decorative underlines. */
+.ecosystem-card .card-link,
+.ecosystem-card .card-action,
+.ecosystem-card .card-link:hover,
+.ecosystem-card .card-action:hover {
+  border-bottom: none;
+  text-decoration: none;
+}
