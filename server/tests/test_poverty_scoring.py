@@ -1,5 +1,5 @@
 from app.extensions import db
-from app.models.assessment_questions import AssessmentQuestion
+from app.models.Classification.assessment_questions import AssessmentQuestion
 from tests.test_auth import register_and_login
 
 

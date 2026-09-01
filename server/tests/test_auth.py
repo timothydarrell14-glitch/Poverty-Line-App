@@ -89,7 +89,7 @@ def test_admin_user_management_requires_an_admin_role(client, app):
     assert member_response.status_code == 403
 
     from app.extensions import db
-    from app.models.users import User
+    from app.models.Users.members import User
 
     with app.app_context():
         user = db.session.get(User, user_id)
@@ -106,7 +106,7 @@ def test_admin_user_management_requires_an_admin_role(client, app):
 def test_admin_cannot_delete_own_account(client, app):
     token, user_id = register_and_login(client, "admin@example.com")
     from app.extensions import db
-    from app.models.users import User
+    from app.models.Users.members import User
 
     with app.app_context():
         user = db.session.get(User, user_id)

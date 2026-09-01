@@ -3,7 +3,7 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 from marshmallow import ValidationError
 
 from app.extensions import db
-from app.models.users import User
+from app.models.Users.members import User
 from app.routes.authorization import admin_required, get_authenticated_user
 from app.schemas.user_schema import (
     user_schema,
