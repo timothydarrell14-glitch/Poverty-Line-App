@@ -1,5 +1,6 @@
 import './App.css'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { useLayoutEffect } from 'react'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import AdminRoute from './components/AdminRoute'
 import AccessDeniedPage from './pages/AccessDeniedPage'
 import LoginPage from './pages/LoginPage'
