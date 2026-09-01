@@ -1,52 +1,51 @@
+import { useState } from 'react';
+
 export default function ContactScreen() {
+  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState('idle');
+
+  const handleChange = ({ target: { name, value } }) => {
+    setForm((current) => ({ ...current, [name]: value }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setStatus('sending');
+
+    // This is the integration point for the contact API payload.
+    window.setTimeout(() => {
+      setStatus('sent');
+      setForm({ name: '', email: '', message: '' });
+    }, 350);
+  };
+
   return (
-    <main className="max-w-[1200px] mx-auto px-4 md:px-8 py-20 pt-28">
-      <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-sm border border-[#e0e3e8] p-8 md:p-12">
-        <p className="text-[#005f6a] font-bold uppercase tracking-wider text-sm mb-3">
-          Get in touch
-        </p>
-        <h1 className="text-4xl font-bold text-[#181c20] mb-4 font-heading">
-          Let&apos;s build a stronger community.
-        </h1>
-        <p className="text-[#3e494a] leading-relaxed mb-8">
-          Have a question about our work or want to help? Send us a message and our team will get back to you.
-        </p>
-        <form className="grid gap-5" onSubmit={(event) => event.preventDefault()}>
-          <label className="grid gap-2 text-sm font-bold text-[#181c20]">
-            Name
-            <input
-              type="text"
-              name="name"
-              required
-              className="border border-[#bdc8cb] rounded-lg px-4 py-3 font-normal"
-            />
+    <main className="contact-page">
+      <section className="contact-card" aria-labelledby="contact-heading">
+        <div className="contact-intro">
+          <p className="contact-eyebrow">Get in touch</p>
+          <h1 id="contact-heading" className="font-heading">Let&apos;s build a stronger community.</h1>
+          <p>Have a question about our work or want to help? Send us a message and our team will get back to you.</p>
+        </div>
+        <form className="contact-form" onSubmit={handleSubmit}>
+          <label>
+            <span>Name</span>
+            <input type="text" name="name" value={form.name} onChange={handleChange} autoComplete="name" required />
           </label>
-          <label className="grid gap-2 text-sm font-bold text-[#181c20]">
-            Email
-            <input
-              type="email"
-              name="email"
-              required
-              className="border border-[#bdc8cb] rounded-lg px-4 py-3 font-normal"
-            />
+          <label>
+            <span>Email</span>
+            <input type="email" name="email" value={form.email} onChange={handleChange} autoComplete="email" required />
           </label>
-          <label className="grid gap-2 text-sm font-bold text-[#181c20]">
-            Message
-            <textarea
-              name="message"
-              required
-              rows="5"
-              className="border border-[#bdc8cb] rounded-lg px-4 py-3 font-normal resize-y"
-            />
+          <label className="contact-message-field">
+            <span>Message</span>
+            <textarea name="message" value={form.message} onChange={handleChange} rows="6" required />
           </label>
-          <button
-            type="submit"
-            className="bg-[#005f6a] text-white rounded-lg px-5 py-3 font-bold justify-self-start"
-          >
-            Send message
-          </button>
+          <div className="contact-form-actions">
+            <button type="submit" className="contact-submit" disabled={status === 'sending'}>{status === 'sending' ? 'Sending…' : 'Send message'}</button>
+            {status === 'sent' && <p className="contact-success" role="status">Thanks — your message has been received.</p>}
+          </div>
         </form>
-      </div>
+      </section>
     </main>
   );
 }
