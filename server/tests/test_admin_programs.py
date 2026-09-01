@@ -1,5 +1,5 @@
 from app.extensions import db
-from app.models.Users.members import User
+from app.models.users.members import User
 
 
 def admin_token(client, app):

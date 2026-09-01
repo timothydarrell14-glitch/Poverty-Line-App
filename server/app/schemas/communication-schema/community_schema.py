@@ -1,7 +1,7 @@
 from marshmallow import fields, validate
 
 from app.extensions import ma
-from app.models.Communication.communities import Community
+from app.models.communication.communities import Community
 
 
 class CommunitySchema(ma.SQLAlchemyAutoSchema):

@@ -6,7 +6,7 @@ from flask import jsonify
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app.extensions import db
-from app.models.Users.members import User
+from app.models.users.members import User
 
 
 def get_authenticated_user():

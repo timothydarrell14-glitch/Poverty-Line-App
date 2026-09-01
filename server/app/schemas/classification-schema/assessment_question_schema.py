@@ -1,5 +1,5 @@
 from app.extensions import ma
-from app.models.Classification.assessment_questions import AssessmentQuestion
+from app.models.classification.assessment_questions import AssessmentQuestion
 
 
 class AssessmentQuestionSchema(ma.SQLAlchemyAutoSchema):

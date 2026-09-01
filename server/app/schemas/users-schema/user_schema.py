@@ -1,7 +1,7 @@
 from marshmallow import fields, validate
 
 from app.extensions import ma
-from app.models.Users.members import User
+from app.models.users.members import User
 
 
 class UserSchema(ma.SQLAlchemyAutoSchema):

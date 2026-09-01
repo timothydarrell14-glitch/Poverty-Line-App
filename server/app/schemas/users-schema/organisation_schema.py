@@ -1,7 +1,7 @@
 from marshmallow import fields, validate
 
 from app.extensions import ma
-from app.models.Users.organisations import Organisation
+from app.models.users.organisations import Organisation
 
 
 class OrganisationSchema(ma.SQLAlchemyAutoSchema):

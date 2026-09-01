@@ -5,9 +5,9 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.extensions import db
-from app.models.Users.organisations import Organisation
-from app.models.Donations.programs import Program
-from app.models.Users.members import User
+from app.models.users.organisations import Organisation
+from app.models.donations.programs import Program
+from app.models.users.members import User
 
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
@@ -408,7 +408,7 @@ def delete_program(program_id):
 @auth_bp.get("/chats")
 @admin_required
 def list_chats():
-    from app.models.Communication.chats import Chat
+    from app.models.communication.chats import Chat
 
     chats = Chat.query.order_by(Chat.updated_at.desc()).all()
     return jsonify(
@@ -434,7 +434,7 @@ def list_chats():
 @auth_bp.post("/chats")
 @admin_required
 def create_chat():
-    from app.models.Communication.chats import Chat
+    from app.models.communication.chats import Chat
 
     data = request.get_json(silent=True) or {}
     name = str(data.get("name", "")).strip()
@@ -467,7 +467,7 @@ def create_chat():
 @auth_bp.get("/deliveries")
 @admin_required
 def list_deliveries():
-    from app.models.Donations.deliveries import Delivery
+    from app.models.donations.deliveries import Delivery
 
     deliveries = Delivery.query.order_by(Delivery.updated_at.desc()).all()
     return jsonify(
@@ -489,7 +489,7 @@ def list_deliveries():
 @auth_bp.post("/deliveries")
 @admin_required
 def create_delivery():
-    from app.models.Donations.deliveries import Delivery
+    from app.models.donations.deliveries import Delivery
 
     data = request.get_json(silent=True) or {}
     reference = str(data.get("reference_code") or data.get("id") or "").strip()

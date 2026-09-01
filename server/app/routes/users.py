@@ -3,15 +3,16 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 from marshmallow import ValidationError
 
 from app.extensions import db
-from app.models.Users.members import User
+from app.models.users.members import User
 from app.routes.authorization import admin_required, get_authenticated_user
-from app.schemas.user_schema import (
+from server.app.schemas.users.user_schema import (
     user_schema,
     users_schema,
     user_register_schema,
     user_update_schema,
     admin_user_update_schema,
 )
+
 
 users_bp = Blueprint("users", __name__, url_prefix="/api/users")
 
