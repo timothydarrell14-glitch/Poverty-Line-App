@@ -1,5 +1,6 @@
 import './App.css'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { useLayoutEffect } from 'react'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import AdminRoute from './components/AdminRoute'
 import AccessDeniedPage from './pages/AccessDeniedPage'
 import LoginPage from './pages/LoginPage'
@@ -16,29 +17,44 @@ import OrganisationsPage from './pages/OrganisationsPage'
 import DonorsPage from './pages/DonorsPage'
 import LogisticsPage from './pages/LogisticsPage'
 import JobsPage from './pages/JobsPage'
+import ContactPage from './pages/ContactPage'
+
+function ScrollToTop() {
+  const { pathname } = useLocation()
+
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+
+  return null
+}
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/get-help" element={<GetHelpPage />} />
-      <Route path="/organisations" element={<OrganisationsPage />} />
-      <Route path="/donors" element={<DonorsPage />} />
-      <Route path="/logistics" element={<LogisticsPage />} />
-      <Route path="/jobs" element={<JobsPage />} />
-      <Route path="/community" element={<CommunityPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/access-denied" element={<AccessDeniedPage />} />
-      <Route element={<AdminRoute />}>
-        <Route path="/admin" element={<Home />} />
-        <Route path="/admin/users" element={<Users />} />
-        <Route path="/admin/programs" element={<Programs />} />
-        <Route path="/admin/deliveries" element={<Deliveries />} />
-        <Route path="/admin/chats" element={<Chats />} />
-        <Route path="/admin/settings" element={<Settings />} />
-      </Route>
-      <Route path="*" element={<Navigate replace to="/" />} />
-    </Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/get-help" element={<GetHelpPage />} />
+        <Route path="/organisations" element={<OrganisationsPage />} />
+        <Route path="/donors" element={<DonorsPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/logistics" element={<LogisticsPage />} />
+        <Route path="/jobs" element={<JobsPage />} />
+        <Route path="/community" element={<CommunityPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/access-denied" element={<AccessDeniedPage />} />
+        <Route element={<AdminRoute />}>
+          <Route path="/admin" element={<Home />} />
+          <Route path="/admin/users" element={<Users />} />
+          <Route path="/admin/programs" element={<Programs />} />
+          <Route path="/admin/deliveries" element={<Deliveries />} />
+          <Route path="/admin/chats" element={<Chats />} />
+          <Route path="/admin/settings" element={<Settings />} />
+        </Route>
+        <Route path="*" element={<Navigate replace to="/" />} />
+      </Routes>
+    </>
   )
 }
 
