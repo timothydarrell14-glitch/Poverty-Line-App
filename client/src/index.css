@@ -584,3 +584,23 @@ button:focus-visible {
 .ecosystem-card .card-action::after {
   display: none;
 }
+
+.site-footer .footer-connect-link {
+  min-height: 34px;
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: #e7f3f1;
+  color: #006a6f;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.site-footer .footer-connect-link:hover,
+.site-footer .footer-connect-link:focus-visible,
+.site-footer .footer-connect-link:active {
+  background: #d6ebe7;
+  color: #004f57;
+  text-decoration: none;
+}
