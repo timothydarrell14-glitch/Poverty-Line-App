@@ -24,7 +24,7 @@ export const Footer = () => {
         </div>
         <div className="footer-connect-column">
           <h5 className="font-heading">Connect</h5>
-          <div className="footer-socials"><button type="button" className="footer-social" onClick={() => goTo('/contact')} aria-label="Contact us"><span className="material-symbols-outlined">mail</span></button><button type="button" className="footer-social" aria-label="Share"><span className="material-symbols-outlined">share</span></button></div>
+          <button type="button" className="footer-connect-link" onClick={() => goTo('/contact')}>Contact us</button>
         </div>
       </div>
     </footer>
