@@ -604,3 +604,9 @@ button:focus-visible {
   color: #004f57;
   text-decoration: none;
 }
+
+@media (max-width: 560px) {
+  .site-footer .footer-connect-link {
+    width: max-content;
+  }
+}
