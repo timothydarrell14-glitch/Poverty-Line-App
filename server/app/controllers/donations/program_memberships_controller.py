@@ -3,8 +3,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from marshmallow import ValidationError
 
 from app.extensions import db
-from app.models.Donations.program_memberships import ProgramMembership
-from app.schemas.program_membership_schema import (
+from app.models.donations.program_memberships import ProgramMembership
+from server.app.schemas.donations.program_membership_schema import (
     program_membership_schema,
     program_memberships_schema,
     program_membership_create_schema,

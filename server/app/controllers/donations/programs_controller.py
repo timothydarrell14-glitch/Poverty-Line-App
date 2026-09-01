@@ -3,10 +3,10 @@ from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 
 from app.extensions import db
-from app.models.Donations.programs import Program
-from app.models.Users.organisations import Organisation
+from app.models.donations.programs import Program
+from app.models.users.organisations import Organisation
 from app.routes.authorization import admin_required
-from app.schemas.program_schema import (
+from server.app.schemas.donations.program_schema import (
     program_schema,
     programs_schema,
     program_create_schema,

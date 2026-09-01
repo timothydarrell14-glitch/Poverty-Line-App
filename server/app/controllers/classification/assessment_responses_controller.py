@@ -3,10 +3,10 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from marshmallow import ValidationError
 
 from app.extensions import db
-from app.models.Classification.assessment_responses import AssessmentResponse
-from app.models.Classification.assessment_questions import AssessmentQuestion
-from app.models.Users.members import User
-from app.schemas.assessment_response_schema import (
+from app.models.classification.assessment_responses import AssessmentResponse
+from app.models.classification.assessment_questions import AssessmentQuestion
+from app.models.users.members import User
+from server.app.schemas.classification.assessment_response_schema import (
     assessment_response_schema,
     assessment_responses_schema,
     assessment_response_create_schema,

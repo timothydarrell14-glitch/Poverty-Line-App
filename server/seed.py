@@ -5,35 +5,18 @@ from werkzeug.security import generate_password_hash
 
 from app import create_app
 from app.extensions import db
-from app.models.Users.members import User
-from app.models.Classification.assessment_questions import AssessmentQuestion
-from app.models.Classification.assessment_responses import AssessmentResponse
-from app.models.Users.organisations import Organisation
+from app.models.users.members import User
+from app.models.classification.assessment_questions import AssessmentQuestion
+from app.models.classification.assessment_responses import AssessmentResponse
+from app.models.users.organisations import Organisation
 from app.models.jobs import Job
-from app.models.Classification.job_applications import JobApplication
-from app.models.Donations.programs import Program
-from app.models.Donations.program_memberships import ProgramMembership
-from app.models.Donations.donations import Donation
-from app.models.Communication.communities import Community
-from app.models.Communication.community_posts import CommunityPost
-from app.models.Communication.community_membership import CommunityMembership
-
-
-def clear_data():
-    CommunityMembership.query.delete()
-    CommunityPost.query.delete()
-    Community.query.delete()
-    Donation.query.delete()
-    ProgramMembership.query.delete()
-    Program.query.delete()
-    JobApplication.query.delete()
-    Job.query.delete()
-    Organisation.query.delete()
-    AssessmentResponse.query.delete()
-    AssessmentQuestion.query.delete()
-    User.query.delete()
-    db.session.commit()
-
+from app.models.classification.job_applications import JobApplication
+from app.models.donations.programs import Program
+from app.models.donations.program_memberships import ProgramMembership
+from app.models.donations.donations import Donation
+from app.models.communication.communities import Community
+from app.models.communication.community_posts import CommunityPost
+from app.models.communication.community_membership import CommunityMembership
 
 def seed_users():
     users = [

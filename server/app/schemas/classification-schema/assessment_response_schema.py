@@ -1,7 +1,7 @@
 from marshmallow import fields
 
 from app.extensions import ma
-from app.models.Classification.assessment_responses import AssessmentResponse
+from app.models.classification.assessment_responses import AssessmentResponse
 
 
 class AssessmentResponseSchema(ma.SQLAlchemyAutoSchema):

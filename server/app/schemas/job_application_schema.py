@@ -1,7 +1,7 @@
 from marshmallow import fields
 
 from app.extensions import ma
-from app.models.Classification.job_applications import JobApplication
+from app.models.classification.job_applications import JobApplication
 
 
 class JobApplicationSchema(ma.SQLAlchemyAutoSchema):

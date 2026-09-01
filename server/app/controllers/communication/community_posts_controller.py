@@ -3,8 +3,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from marshmallow import ValidationError
 
 from app.extensions import db
-from app.models.Communication.community_posts import CommunityPost
-from app.schemas.community_post_schema import (
+from app.models.communication.community_posts import CommunityPost
+from server.app.schemas.communication.community_post_schema import (
     community_post_schema,
     community_posts_schema,
     community_post_create_schema,

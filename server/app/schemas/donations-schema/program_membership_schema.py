@@ -1,7 +1,7 @@
 from marshmallow import fields
 
 from app.extensions import ma
-from app.models.Donations.program_memberships import ProgramMembership
+from app.models.donations.program_memberships import ProgramMembership
 
 
 class ProgramMembershipSchema(ma.SQLAlchemyAutoSchema):
