@@ -12,17 +12,15 @@ from app.models.users.organisations import Organisation
 from app.models.jobs import Job
 from app.models.classification.job_applications import JobApplication
 from server.app.models.programs import Program
-from app.models.donations.financialDonations import FinancialDonation
-from app.models.donations.nonFInancialDonations import NonFinancialDonation
-from app.models.donations.deliveries import Delivery
-from app.models.communication.chats import Chat
-from app.models.communication.Admin.groupChats import GroupChats
-from app.models.communication.Admin.messages import AdminMessages
-from app.models.communication.Admin.one_to_one_chats import DirectChats
-from app.models.communication.Admin.groupChats import GroupChats
 from app.models.communication.communities import Community
 from app.models.communication.community_posts import CommunityPost
 from app.models.communication.community_membership import CommunityMembership
+from app.models.donations.financialDonations import FinancialDonation
+
+
+def clear_data():
+    db.drop_all()
+    db.create_all()
 
 def seed_users():
     users = [
@@ -394,40 +392,9 @@ def seed_programs(organisations):
     return programs
 
 
-def seed_program_memberships(users, programs):
-    memberships = [
-        ProgramMembership(
-            user_id=users[4 % len(users)].user_id,
-            program_id=programs[0].program_id,
-            status="active",
-        ),
-        ProgramMembership(
-            user_id=users[1 % len(users)].user_id,
-            program_id=programs[1].program_id,
-            status="active",
-        ),
-        ProgramMembership(
-            user_id=users[2 % len(users)].user_id,
-            program_id=programs[2].program_id,
-            status="active",
-        ),
-        ProgramMembership(
-            user_id=users[3 % len(users)].user_id,
-            program_id=programs[3].program_id,
-            status="active",
-        ),
-        ProgramMembership(
-            user_id=users[0].user_id, program_id=programs[0].program_id, status="active"
-        ),
-    ]
-    db.session.add_all(memberships)
-    db.session.commit()
-    return memberships
-
-
 def seed_donations(programs):
     donations = [
-        Donation(
+        FinancialDonation(
             program_id=programs[0].program_id,
             donor_name="Safaricom Foundation",
             donor_type="Corporate",
@@ -438,7 +405,7 @@ def seed_donations(programs):
             anonymous=False,
             transaction_reference="TXN-SF-001",
         ),
-        Donation(
+        FinancialDonation(
             program_id=programs[1].program_id,
             donor_name="John Kiptoo",
             donor_type="Individual",
@@ -449,7 +416,7 @@ def seed_donations(programs):
             anonymous=False,
             transaction_reference="TXN-JK-002",
         ),
-        Donation(
+        FinancialDonation(
             program_id=programs[2].program_id,
             donor_name=None,
             donor_type="Individual",
@@ -460,7 +427,7 @@ def seed_donations(programs):
             anonymous=True,
             transaction_reference="TXN-ANN-003",
         ),
-        Donation(
+        FinancialDonation(
             program_id=programs[3].program_id,
             donor_name="Nairobi Rotary Club",
             donor_type="Organisation",
@@ -602,7 +569,6 @@ def run_seed():
         seed_job_applications(users, jobs)
 
         programs = seed_programs(organisations)
-        seed_program_memberships(users, programs)
         seed_donations(programs)
 
         communities = seed_communities()
