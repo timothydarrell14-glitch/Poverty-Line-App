@@ -104,7 +104,7 @@ def create_app():
     from app.controllers.users.organisations_controller import organisations_bp
     from app.controllers.donations.program_memberships_controller import program_memberships_bp
     from app.controllers.donations.programs_controller import programs_bp
-    from app.routes.users import users_bp
+    from app.routes.users.users import users_bp
 
     app.register_blueprint(users_bp)
     app.register_blueprint(jobs_bp)
