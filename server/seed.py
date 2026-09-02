@@ -12,8 +12,14 @@ from app.models.users.organisations import Organisation
 from app.models.jobs import Job
 from app.models.classification.job_applications import JobApplication
 from app.models.donations.programs import Program
-from app.models.donations.program_memberships import ProgramMembership
-from app.models.donations.donations import Donation
+from app.models.donations.financialDonations import FinancialDonation
+from app.models.donations.nonFInancialDonations import NonFinancialDonation
+from app.models.donations.deliveries import Delivery
+from app.models.communication.chats import Chat
+from app.models.communication.Admin.groupChats import GroupChats
+from app.models.communication.Admin.messages import AdminMessages
+from app.models.communication.Admin.one_to_one_chats import DirectChats
+from app.models.communication.Admin.groupChats import GroupChats
 from app.models.communication.communities import Community
 from app.models.communication.community_posts import CommunityPost
 from app.models.communication.community_membership import CommunityMembership

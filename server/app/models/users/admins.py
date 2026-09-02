@@ -1,3 +1,6 @@
-class Admin:
+from extensions import db
+
+class Admin(db.Model):
     __tablename__ = 'admins'
-    pass
+
+    active = db.Column(db.Boolean, default=True, nullable=False)

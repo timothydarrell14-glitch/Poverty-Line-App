@@ -1,7 +1,7 @@
 from marshmallow import fields, validate
 
 from app.extensions import ma
-from app.models.donations.donations import Donation
+from server.app.models.donations.financialDonations import Donation
 
 
 class DonationSchema(ma.SQLAlchemyAutoSchema):
