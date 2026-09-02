@@ -3,6 +3,7 @@ from app.extensions import db
 class NonFinancialDonation(db.Model):
     __tablename__ = "non_financial_donations"
 
+    donation_id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(255), nullable=False)
     donation_date = db.Column(db.Date)
