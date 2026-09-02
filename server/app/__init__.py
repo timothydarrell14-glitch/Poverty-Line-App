@@ -6,7 +6,7 @@ from werkzeug.exceptions import HTTPException
 from dotenv import load_dotenv
 
 from app.extensions import cors, db, jwt, ma, migrate
-import app.models  # noqa: F401
+from app.models import *  # noqa: F401
 from app.routes.callbacks import callback_bp
 
 # Load .env.local first (if it exists) to override .env
