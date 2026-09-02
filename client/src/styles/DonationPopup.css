@@ -72,14 +72,14 @@
 }
 
 .nav-tab:hover {
-  background: rgba(149, 57, 20, 0.1);
-  color: #953914;
+  background: rgba(0, 117, 129, 0.1);
+  color: #007581;
 }
 
 .nav-tab.active {
   background: #fff;
-  color: #953914;
-  border-bottom: 3px solid #953914;
+  color: #007581;
+  border-bottom: 3px solid #007581;
 }
 
 .header-content h2 {
@@ -92,7 +92,7 @@
 }
 
 .header-content h2 .material-symbols-outlined {
-  color: #953914;
+  color: #007581;
   font-size: 24px;
 }
 
@@ -161,7 +161,7 @@
 
 .program-select:hover,
 .program-select:focus {
-  border-color: #953914;
+  border-color: #007581;
   outline: none;
 }
 
@@ -191,15 +191,15 @@
 }
 
 .amount-button:hover {
-  border-color: #953914;
-  background: #ffefeb;
-  color: #953914;
+  border-color: #007581;
+  background: #d5f9ff;
+  color: #007581;
 }
 
 .amount-button.selected {
-  border-color: #953914;
-  background: #f4d1c7;
-  color: #953914;
+  border-color: #007581;
+  background: #005f6a;
+  color: #fff;
 }
 
 /* Custom Amount */
@@ -214,7 +214,7 @@
 }
 
 .custom-amount:focus-within {
-  border-color: #953914;
+  border-color: #007581;
 }
 
 .currency-symbol {
@@ -269,7 +269,7 @@
 
 .form-group input:hover,
 .form-group input:focus {
-  border-color: #953914;
+  border-color: #007581;
   outline: none;
 }
 
@@ -308,7 +308,7 @@ option {
 .form-input:focus,
 .form-select:hover,
 .form-select:focus {
-  border-color: #953914;
+  border-color: #007581;
   outline: none;
 }
 
@@ -347,7 +347,7 @@ option {
 
 .back-to-countries-btn {
   border: none;
-  background: #953914;
+  background: #007581;
   color: white;
   width: 28px;
   height: 28px;
@@ -361,7 +361,7 @@ option {
 }
 
 .back-to-countries-btn:hover {
-  background: #7a2e11;
+  background: #005f6a;
   transform: scale(1.1);
 }
 
@@ -383,7 +383,7 @@ option {
 
 .form-textarea:hover,
 .form-textarea:focus {
-  border-color: #953914;
+  border-color: #007581;
   outline: none;
 }
 
@@ -446,18 +446,18 @@ option {
   border: 0;
   border-radius: 14px;
   padding: 16px 24px;
-  background: linear-gradient(135deg, #8b4513, #a0522d);
+  background: linear-gradient(135deg, #007581, #005f6a);
   color: #fff;
   font: 700 16px/1.2 "Hanken Grotesk", sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 117, 129, 0.3);
 }
 
 .submit-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #a0522d, #8b4513);
+  background: linear-gradient(135deg, #005f6a, #007581);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 117, 129, 0.4);
 }
 
 .submit-button:disabled {
