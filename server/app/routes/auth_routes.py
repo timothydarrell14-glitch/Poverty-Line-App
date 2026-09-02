@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timezone
 from functools import wraps
 from uuid import uuid4
 
@@ -10,7 +11,7 @@ from werkzeug.utils import secure_filename
 from app.extensions import db
 from app.models.users.organisations import Organisation
 from app.models.programs import Program
-from app.models.users.users import User
+from app.models.users.users import USER_STATUSES, User
 from app.services.notifications import notify
 
 
@@ -33,16 +34,15 @@ def save_uploaded_image(file_storage, subfolder):
 
 
 def serialize_user(user):
+    last_active = user.last_active_at or user.created_at
     return {
         "id": user.user_id,
         "name": f"{user.first_name} {user.last_name}",
         "email": user.email,
         "role": user.role,
-        "status": "Active" if user.is_active else "Inactive",
+        "status": user.status,
         "avatarUrl": user.avatar_url,
-        "lastActive": user.created_at.strftime("%b %d, %Y")
-        if user.created_at
-        else "Never",
+        "lastActive": last_active.strftime("%b %d, %Y %H:%M") if last_active else "Never",
     }
 
 
@@ -108,6 +108,8 @@ def login():
         or not check_password_hash(user.password_hash, password)
     ):
         return jsonify({"message": "Invalid email or password."}), 401
+    user.last_active_at = datetime.now(timezone.utc)
+    db.session.commit()
     return jsonify(
         {
             "access_token": create_access_token(identity=str(user.user_id)),
@@ -130,6 +132,9 @@ def current_user():
 
     if user is None:
         return jsonify({"message": "User not found."}), 404
+
+    user.last_active_at = datetime.now(timezone.utc)
+    db.session.commit()
 
     return jsonify(
         {
@@ -409,7 +414,64 @@ def list_users():
         {
             "users": [
                 serialize_user(user)
-                for user in User.query.order_by(User.created_at.desc()).all()
+                for user in User.query.filter(User.role != "user")
+                .order_by(User.created_at.desc())
+                .all()
+            ]
+        }
+    )
+
+
+@auth_bp.get("/members")
+@admin_required
+def list_members():
+    members = User.query.filter_by(role="user").order_by(User.created_at.desc()).all()
+    return jsonify(
+        {
+            "members": [
+                {
+                    "id": member.user_id,
+                    "name": f"{member.first_name} {member.last_name}",
+                    "email": member.email,
+                    "phone": member.phone,
+                    "location": member.location,
+                    "status": member.status,
+                    "povertyClassification": member.poverty_classification,
+                    "joined": member.created_at.strftime("%b %d, %Y")
+                    if member.created_at
+                    else "Unknown",
+                }
+                for member in members
+            ]
+        }
+    )
+
+
+@auth_bp.get("/donations")
+@admin_required
+def list_donations():
+    from app.models.donations.financialDonations import FinancialDonation
+
+    donations = FinancialDonation.query.order_by(
+        FinancialDonation.donation_id.desc()
+    ).all()
+    return jsonify(
+        {
+            "donations": [
+                {
+                    "id": donation.donation_id,
+                    "donorName": donation.donor.name if donation.donor else "Anonymous",
+                    "donorEmail": donation.donor.email if donation.donor else None,
+                    "programTitle": donation.program.title if donation.program else "General Community Fund",
+                    "amount": float(donation.amount),
+                    "currency": donation.currency,
+                    "paymentMethod": donation.payment_method,
+                    "status": donation.payment_status,
+                    "date": donation.donation_date.strftime("%b %d, %Y")
+                    if donation.donation_date
+                    else "Unknown",
+                }
+                for donation in donations
             ]
         }
     )
@@ -455,8 +517,17 @@ def update_user(user_id):
     data = request.get_json(silent=True) or {}
     if "role" in data:
         user.role = data["role"]
+    if "status" in data:
+        status = str(data["status"]).strip()
+        if status not in USER_STATUSES:
+            return jsonify(
+                {"message": f"Status must be one of: {', '.join(USER_STATUSES)}."}
+            ), 400
+        user.status = status
+        user.is_active = status in ("Active", "On Leave")
     if "is_active" in data:
         user.is_active = bool(data["is_active"])
+        user.status = "Active" if user.is_active else "Inactive"
     db.session.commit()
     return jsonify({"user": serialize_user(user)})
 

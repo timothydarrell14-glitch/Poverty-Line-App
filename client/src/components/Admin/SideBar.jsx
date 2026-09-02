@@ -20,7 +20,7 @@ import "../../styles/Admin/SideBar.css";
 
 const navigationItems = [
   { label: "Dashboard", icon: FiGrid, to: "/admin", help: "Overview of programs, donations, and recent activity." },
-  { label: "Users", icon: FiUsers, to: "/admin/users", help: "Create, view, edit, and remove admins, field agents, and partners." },
+  { label: "Users", icon: FiUsers, to: "/admin/users", help: "Manage staff, community members, and donations." },
   { label: "Programs", icon: FiBox, to: "/admin/programs", help: "Create, view, edit, and remove assistance programs." },
   { label: "Deliveries", icon: FiTruck, to: "/admin/deliveries", help: "Track and log shipments to communities." },
   { label: "Chats", icon: FiMessageSquare, to: "/admin/chats", help: "Message field agents and partners." },
