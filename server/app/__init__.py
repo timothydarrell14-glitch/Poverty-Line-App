@@ -86,7 +86,7 @@ def create_app():
     def home():
         return jsonify({"message": "Welcome to the BACKEND API!"})
 
-    from app.routes.auth_routes import auth_bp
+    from app.routes.users.auth_routes import auth_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(callback_bp)

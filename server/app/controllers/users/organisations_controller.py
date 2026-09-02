@@ -4,7 +4,7 @@ from marshmallow import ValidationError
 
 from app.extensions import db
 from app.models.users.organisations import Organisation
-from app.routes.authorization import admin_required, get_authenticated_user
+from app.routes.users.authorization import admin_required, get_authenticated_user
 from app.schemas.users.organisation_schema import (
     organisation_schema,
     organisations_schema,
