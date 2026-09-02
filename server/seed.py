@@ -17,6 +17,10 @@ from app.models.communication.community_posts import CommunityPost
 from app.models.communication.community_membership import CommunityMembership
 from app.models.donations.financialDonations import FinancialDonation
 from app.models.users.donors import Donor
+from app.models.communication.chats import Chat
+from app.models.donations.deliveries import Delivery
+from app.models.settings import AppSetting
+from app.models.notifications import Notification
 
 
 def clear_data():
@@ -573,6 +577,133 @@ def seed_community_memberships(users, communities):
     return memberships
 
 
+def seed_chats():
+    chats = [
+        Chat(
+            contact_name="Sarah Jenkins",
+            role="Field Agent",
+            last_message="The delivery at sector 4 is complete. All packages accounted for.",
+            status="Active now",
+            unread_count=0,
+        ),
+        Chat(
+            contact_name="Mercy Corps",
+            role="Partner",
+            last_message="We can allocate additional resources for the upcoming initiative.",
+            status="Offline",
+            unread_count=1,
+        ),
+        Chat(
+            contact_name="David Chen",
+            role="Field Agent",
+            last_message="Issue with the vehicle routing in zone B.",
+            status="Offline",
+            unread_count=2,
+        ),
+    ]
+    db.session.add_all(chats)
+    db.session.commit()
+    return chats
+
+
+def seed_deliveries(organisations):
+    deliveries = [
+        Delivery(
+            reference_code="SHP-992A",
+            destination="North District Hub",
+            status="In Transit",
+            last_update="Updated: 10:42 AM",
+            marker_class="delivery-map__marker--north",
+        ),
+        Delivery(
+            reference_code="SHP-844B",
+            destination="Westside Community Center",
+            status="In Transit",
+            last_update="Updated: 09:15 AM",
+            marker_class="delivery-map__marker--west",
+        ),
+        Delivery(
+            reference_code="SHP-771C",
+            destination="South Metro Clinic",
+            status="Delivered",
+            last_update="Delivered: Yesterday, 4:30 PM",
+            marker_class="delivery-map__marker--south",
+        ),
+        Delivery(
+            reference_code="SHP-602D",
+            destination="Eastside Food Bank",
+            status="Delivered",
+            last_update="Delivered: Yesterday, 1:20 PM",
+            marker_class="delivery-map__marker--east",
+        ),
+        Delivery(
+            reference_code="SHP-495E",
+            destination="Central Shelter",
+            status="Delayed",
+            last_update="Updated: 08:30 AM",
+            marker_class="delivery-map__marker--central",
+        ),
+    ]
+    db.session.add_all(deliveries)
+    db.session.commit()
+    return deliveries
+
+
+def seed_settings():
+    settings = [
+        AppSetting(key="orgName", value="Poverty Line Initiative", category="general"),
+        AppSetting(key="supportEmail", value="support@povertyline.org", category="general"),
+        AppSetting(
+            key="publicDescription",
+            value="Bridging the gap between communities in need and resources.",
+            category="general",
+        ),
+        AppSetting(
+            key="communicationPreferences",
+            value='{"system-alerts": true, "new-user-signups": false, "donation-receipts": true}',
+            category="notifications",
+        ),
+        AppSetting(
+            key="systemPermissions",
+            value='{"data-export": "Admin & Managers", "delete-programs": "Super Admin"}',
+            category="security",
+        ),
+    ]
+    db.session.add_all(settings)
+    db.session.commit()
+    return settings
+
+
+def seed_notifications(organisations, programs, donations):
+    notifications = [
+        Notification(
+            type="new_partner",
+            title="New partner onboarded",
+            message=f"{organisations[3].name} has joined as a partner organisation.",
+            related_type="organisation",
+            related_id=organisations[3].organisation_id,
+        ),
+        Notification(
+            type="donation",
+            title="New donation received",
+            message=f"{donations[0].currency} {donations[0].amount} received for {programs[0].title}.",
+            related_type="donation",
+            related_id=donations[0].donation_id,
+            is_read=True,
+        ),
+        Notification(
+            type="program_completed",
+            title="Program completed",
+            message=f"{programs[3].title} has been marked as completed.",
+            related_type="program",
+            related_id=programs[3].id,
+        ),
+    ]
+    db.session.add_all(notifications)
+    db.session.commit()
+    return notifications
+
+
 def run_seed():
     app = create_app()
     with app.app_context():
@@ -587,11 +718,16 @@ def run_seed():
         seed_job_applications(users, jobs)
 
         programs = seed_programs(organisations)
-        seed_donations(users, programs)
+        donations = seed_donations(users, programs)
 
         communities = seed_communities()
         seed_community_posts(users, communities)
         seed_community_memberships(users, communities)
+
+        seed_chats()
+        seed_deliveries(organisations)
+        seed_settings()
+        seed_notifications(organisations, programs, donations)
 
         print("Database seeded successfully.")
 

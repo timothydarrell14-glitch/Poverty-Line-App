@@ -28,6 +28,7 @@ class User(db.Model):
     poverty_score = db.Column(db.Numeric(10, 2), nullable=True)
     location = db.Column(db.String(255))
     avatar_url = db.Column(db.String(500))
+    cover_url = db.Column(db.String(500))
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
 
     assessment_responses = db.relationship("AssessmentResponse", back_populates="user")

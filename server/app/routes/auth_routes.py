@@ -1,16 +1,35 @@
+import os
 from functools import wraps
+from uuid import uuid4
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 
 from app.extensions import db
 from app.models.users.organisations import Organisation
 from app.models.programs import Program
 from app.models.users.users import User
+from app.services.notifications import notify
 
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
+
+ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
+
+
+def save_uploaded_image(file_storage, subfolder):
+    """Persist an uploaded image under static/uploads and return its public URL."""
+    filename = secure_filename(file_storage.filename or "")
+    extension = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    if extension not in ALLOWED_IMAGE_EXTENSIONS:
+        return None
+    unique_name = f"{uuid4().hex}.{extension}"
+    upload_dir = os.path.join(current_app.static_folder, "uploads", subfolder)
+    os.makedirs(upload_dir, exist_ok=True)
+    file_storage.save(os.path.join(upload_dir, unique_name))
+    return f"/static/uploads/{subfolder}/{unique_name}"
 
 
 def serialize_user(user):
@@ -20,6 +39,7 @@ def serialize_user(user):
         "email": user.email,
         "role": user.role,
         "status": "Active" if user.is_active else "Inactive",
+        "avatarUrl": user.avatar_url,
         "lastActive": user.created_at.strftime("%b %d, %Y")
         if user.created_at
         else "Never",
@@ -118,6 +138,8 @@ def current_user():
                 "name": f"{user.first_name} {user.last_name}",
                 "email": user.email,
                 "role": user.role,
+                "avatarUrl": user.avatar_url,
+                "coverUrl": user.cover_url,
             }
         }
     )
@@ -150,6 +172,10 @@ def update_current_user():
     user.first_name = first_name
     user.last_name = last_name
     user.email = email
+    if "avatar_url" in payload:
+        user.avatar_url = str(payload.get("avatar_url") or "").strip() or None
+    if "cover_url" in payload:
+        user.cover_url = str(payload.get("cover_url") or "").strip() or None
     db.session.commit()
 
     return jsonify(
@@ -159,9 +185,94 @@ def update_current_user():
                 "name": f"{user.first_name} {user.last_name}",
                 "email": user.email,
                 "role": user.role,
+                "avatarUrl": user.avatar_url,
+                "coverUrl": user.cover_url,
             }
         }
     )
+
+
+@auth_bp.post("/me/avatar")
+@jwt_required()
+def upload_avatar():
+    """Upload a new profile picture for the authenticated administrator."""
+    user = current_user_from_token()
+    if user is None:
+        return jsonify({"message": "User not found."}), 404
+    file = request.files.get("file")
+    if not file or not file.filename:
+        return jsonify({"message": "An image file is required."}), 400
+    url = save_uploaded_image(file, "avatars")
+    if url is None:
+        return jsonify({"message": "Unsupported image type."}), 422
+    user.avatar_url = url
+    db.session.commit()
+    return jsonify({"avatarUrl": user.avatar_url})
+
+
+@auth_bp.post("/me/cover")
+@jwt_required()
+def upload_cover():
+    """Upload a new dashboard cover image for the authenticated administrator."""
+    user = current_user_from_token()
+    if user is None:
+        return jsonify({"message": "User not found."}), 404
+    file = request.files.get("file")
+    if not file or not file.filename:
+        return jsonify({"message": "An image file is required."}), 400
+    url = save_uploaded_image(file, "covers")
+    if url is None:
+        return jsonify({"message": "Unsupported image type."}), 422
+    user.cover_url = url
+    db.session.commit()
+    return jsonify({"coverUrl": user.cover_url})
+
+
+@auth_bp.get("/notifications")
+@admin_required
+def list_notifications():
+    from app.models.notifications import Notification
+
+    notifications = Notification.query.order_by(Notification.created_at.desc()).limit(50).all()
+    return jsonify(
+        {
+            "notifications": [
+                {
+                    "id": item.notification_id,
+                    "type": item.type,
+                    "title": item.title,
+                    "message": item.message,
+                    "isRead": item.is_read,
+                    "createdAt": item.created_at.isoformat() if item.created_at else None,
+                }
+                for item in notifications
+            ],
+            "unreadCount": Notification.query.filter_by(is_read=False).count(),
+        }
+    )
+
+
+@auth_bp.post("/notifications/<int:notification_id>/read")
+@admin_required
+def mark_notification_read(notification_id):
+    from app.models.notifications import Notification
+
+    notification = db.session.get(Notification, notification_id)
+    if notification is None:
+        return jsonify({"message": "Notification not found."}), 404
+    notification.is_read = True
+    db.session.commit()
+    return jsonify({"message": "Notification marked as read."})
+
+
+@auth_bp.post("/notifications/read-all")
+@admin_required
+def mark_all_notifications_read():
+    from app.models.notifications import Notification
+
+    Notification.query.filter_by(is_read=False).update({"is_read": True})
+    db.session.commit()
+    return jsonify({"message": "All notifications marked as read."})
 
 
 @auth_bp.get("/organisations")
@@ -202,6 +313,14 @@ def create_organisation():
         verified=bool(data.get("verified", False)),
     )
     db.session.add(organisation)
+    db.session.flush()
+    notify(
+        "new_partner",
+        "New partner onboarded",
+        f"{organisation.name} has joined as a partner organisation.",
+        related_type="organisation",
+        related_id=organisation.organisation_id,
+    )
     db.session.commit()
     return jsonify(
         {
@@ -392,9 +511,18 @@ def update_program(program_id):
     if not program:
         return jsonify({"message": "Program not found."}), 404
     data = request.get_json(silent=True) or {}
+    was_active = program.active
     for key in ("title", "description", "summary", "type", "location", "active"):
         if key in data:
             setattr(program, key, data[key])
+    if was_active and "active" in data and not program.active:
+        notify(
+            "program_completed",
+            "Program completed",
+            f"{program.title} has been marked as completed.",
+            related_type="program",
+            related_id=program.id,
+        )
     db.session.commit()
     return jsonify({"program": serialize_program(program)})
 

@@ -11,6 +11,7 @@ from app.schemas.users.organisation_schema import (
     organisation_create_schema,
     organisation_update_schema,
 )
+from app.services.notifications import notify
 
 organisations_bp = Blueprint("organisations", __name__, url_prefix="/api/organisations")
 
@@ -49,6 +50,14 @@ def admin_create_organisation():
         return jsonify(err.messages), 422
     organisation = Organisation.create_from_data(data, get_authenticated_user().user_id)
     db.session.add(organisation)
+    db.session.flush()
+    notify(
+        "new_partner",
+        "New partner onboarded",
+        f"{organisation.name} has joined as a partner organisation.",
+        related_type="organisation",
+        related_id=organisation.organisation_id,
+    )
     db.session.commit()
     return jsonify(organisation_schema.dump(organisation)), 201
 
@@ -100,6 +109,14 @@ def create_organisation():
         verified=False,
     )
     db.session.add(organisation)
+    db.session.flush()
+    notify(
+        "new_partner",
+        "New partner onboarded",
+        f"{organisation.name} has joined as a partner organisation.",
+        related_type="organisation",
+        related_id=organisation.organisation_id,
+    )
     db.session.commit()
 
     return jsonify(organisation_schema.dump(organisation)), 201

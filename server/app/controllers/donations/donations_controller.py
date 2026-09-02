@@ -24,8 +24,20 @@ from app.services.payment_providers import (
     get_paypal_browser_safe_client_token,
     initiate_payment,
 )
+from app.services.notifications import notify
 
 donations_bp = Blueprint("donations", __name__, url_prefix="/api/donations")
+
+
+def notify_donation_completed(donation):
+    program_name = donation.program.title if donation.program else "the General Community Fund"
+    notify(
+        "donation",
+        "New donation received",
+        f"{donation.currency} {donation.amount} received for {program_name}.",
+        related_type="donation",
+        related_id=donation.donation_id,
+    )
 
 
 def fastlane_enabled():
@@ -172,6 +184,8 @@ def create_donation():
 
     donation.payment_status = payment["status"]
     donation.provider_reference = payment.get("provider_reference")
+    if donation.payment_status == "completed":
+        notify_donation_completed(donation)
     db.session.commit()
 
     return jsonify(
@@ -229,6 +243,8 @@ def mpesa_callback():
                 return jsonify({"message": "Duplicate M-Pesa receipt."}), 409
             donation.transaction_code = receipt
             break
+    if donation.payment_status == "completed":
+        notify_donation_completed(donation)
     db.session.commit()
     return jsonify({"received": True}), 200
 
@@ -246,6 +262,8 @@ def paypal_capture():
     except PaymentProviderError as error:
         return jsonify({"message": str(error)}), 502
     donation.payment_status = "completed" if completed else "failed"
+    if donation.payment_status == "completed":
+        notify_donation_completed(donation)
     db.session.commit()
     return jsonify({"donation": serialize_donation(donation)}), 200
 

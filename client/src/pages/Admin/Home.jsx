@@ -7,7 +7,7 @@ import {
   FiUser,
   FiUsers,
 } from "react-icons/fi";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminTopbar from "../../components/Admin/AdminTopbar";
 import { useAdminSession } from "../../components/AdminSession";
@@ -49,7 +49,9 @@ function Home() {
   const [showAllActivities, setShowAllActivities] = useState(false);
   const [profileError, setProfileError] = useState("");
   const [isSavingProfile, setIsSavingProfile] = useState(false);
-  const { user, updateUser } = useAdminSession();
+  const { user, updateUser, uploadAvatar, uploadCover } = useAdminSession();
+  const avatarFileRef = useRef(null);
+  const coverFileRef = useRef(null);
   const visibleActivities = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     const matchingActivities = activities.filter((activity) =>
@@ -64,10 +66,16 @@ function Home() {
     setProfileError("");
     setIsSavingProfile(true);
     try {
+      const avatarFile = avatarFileRef.current?.files?.[0];
+      const coverFile = coverFileRef.current?.files?.[0];
+      if (avatarFile) await uploadAvatar(avatarFile);
+      if (coverFile) await uploadCover(coverFile);
       await updateUser({
         first_name: form.get("firstName"),
         last_name: form.get("lastName"),
         email: form.get("email"),
+        avatar_url: avatarFile ? undefined : form.get("avatarUrl"),
+        cover_url: coverFile ? undefined : form.get("coverUrl"),
       });
       setIsEditingProfile(false);
     } catch (error) {
@@ -86,7 +94,6 @@ function Home() {
         placeholder="Search..."
         searchTerm={searchTerm}
         onSearchChange={(event) => setSearchTerm(event.target.value)}
-        showNotificationDot
       />
 
       <div className="admin-home__body">
@@ -99,13 +106,14 @@ function Home() {
           >
             <img
               className="admin-home__cover-image"
-              src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1600&q=80"
-              alt="City skyline at sunset"
+              src={user?.coverUrl || "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1600&q=80"}
+              alt="Dashboard cover"
             />
             <div className="admin-home__profile-content">
               <img
                 className="admin-home__profile-avatar"
-                src="https://i.pravatar.cc/144?img=12"
+                src={user?.avatarUrl || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(user?.name || "Admin")}`}
+                alt=""
               />
               <div className="admin-home__profile-copy">
                 <h1 id="admin-profile-name">{user?.name}</h1>
@@ -216,6 +224,10 @@ function Home() {
             <label>First name<input name="firstName" defaultValue={user?.name?.split(" ")[0] ?? ""} required /></label>
             <label>Last name<input name="lastName" defaultValue={user?.name?.split(" ").slice(1).join(" ") ?? ""} required /></label>
             <label>Email<input name="email" type="email" defaultValue={user?.email ?? ""} required /></label>
+            <label>Profile picture URL<input name="avatarUrl" type="url" placeholder="https://…" defaultValue={user?.avatarUrl ?? ""} /></label>
+            <label>Or upload a profile picture<input ref={avatarFileRef} name="avatarFile" type="file" accept="image/*" /></label>
+            <label>Dashboard cover URL<input name="coverUrl" type="url" placeholder="https://…" defaultValue={user?.coverUrl ?? ""} /></label>
+            <label>Or upload a cover image<input ref={coverFileRef} name="coverFile" type="file" accept="image/*" /></label>
             {profileError && <p className="admin-home__form-error" role="alert">{profileError}</p>}
             <div className="admin-home__form-actions">
               <button type="button" onClick={() => setIsEditingProfile(false)}>Cancel</button>
