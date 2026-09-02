@@ -12,7 +12,7 @@ from app.models.users.organisations import Organisation
 from app.models.donations.program_memberships import ProgramMembership
 from app.models.donations.programs import Program
 from app.models.settings import AppSetting
-from app.models.users.members import User
+from app.models.users.users import User
 
 __all__ = [
     "AssessmentQuestion",
