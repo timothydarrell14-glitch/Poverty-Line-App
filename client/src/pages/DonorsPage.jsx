@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import DonationPopup from "../components/DonationPopup";
 import "../styles/Donors.css";
 
 const donations = [
@@ -38,10 +39,17 @@ export default function DonorsPage() {
   const [isSubscriptionOpen, setIsSubscriptionOpen] = useState(false);
   const [monthlyAmount, setMonthlyAmount] = useState(2500);
   const [subscriptionStatus, setSubscriptionStatus] = useState("Active");
+  const [isDonationPopupOpen, setIsDonationPopupOpen] = useState(false);
   const totalGiven = donations.reduce((total, donation) => total + donation.amount, 0);
 
   const showDonationNotice = () => {
-    window.alert("The donation flow will be available here soon.");
+    setIsDonationPopupOpen(true);
+  };
+
+  const handleDonationSubmit = (donationData) => {
+    console.log("Donation submitted:", donationData);
+    // Here you would typically call your backend API to process the donation
+    window.alert(`Thank you for your donation of $${donationData.amount} to ${donationData.program}!`);
   };
 
   useEffect(() => {
@@ -65,10 +73,17 @@ export default function DonorsPage() {
             </div>
             <img className="public-hero-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBy3M80B5UbKEYaAg7SzGUdGfva1q6-sb_S_FpyZgCcVzlY3LwQjBEJ6Q2H21Fj6GLhM_2Eh4tS1BdFlkDf-xsfq65T608S7RqIEMbMui4tIA7Cgh5TAFbBN6uBBAZiHIn2VT2xR-TFiQgxW9oAQgu49O8EYBI8ljGOpLllhJkOuJwJ9pkTgqSPmUb0-ES1aLoJzfBTVO3MQXpTqML1MMgfoDV3_J0bGZLYz5UhQyfdA0NgVOwm8nmPpA" alt="Community food and essentials distribution" />
           </section>
-          <section className="public-programs" id="active-programs-section"><header><div><h2>Active Programs</h2><p>Choose where your support creates direct, transparent, and durable impact.</p></div><button type="button" onClick={showDonationNotice}>Custom allocation or monthly pledge <span className="material-symbols-outlined">arrow_forward</span></button></header><div className="public-program-grid">{publicPrograms.map((program) => <article key={program.id} className="public-program-card"><div className="public-program-image"><img src={program.image} alt={program.title} /><span><span className="material-symbols-outlined">{program.icon}</span>{program.category}</span></div><div className="public-program-copy"><div><h3>{program.title}</h3><p>{program.description}</p></div>{program.id === "health" && <div className="public-progress"><p><span>Campaign Goal: $1,000,000</span><b>65% Funded ($650K)</b></p><i><i /></i></div>}<div className="public-program-footer"><p><span className="material-symbols-outlined">verified</span>{program.impact}</p><div><button type="button" onClick={showDonationNotice}>Support Program <span className="material-symbols-outlined">arrow_forward</span></button><button type="button" onClick={showDonationNotice}>Learn more</button></div></div></div></article>)}</div></section>
-          <section className="public-transparency"><div><span><span className="material-symbols-outlined">shield</span> 100% Transparency Commitment</span><h2>Every cent tracked with open accountability.</h2><p>All program logistics and expenditures are audited every month. Donors receive live updates and dispatch confirmations as provisions reach local distribution hubs.</p></div><button type="button" onClick={showDonationNotice}><span className="material-symbols-outlined">volunteer_activism</span> Start Monthly Giving</button></section>
+          <section className="public-programs" id="active-programs-section"><header><div><h2>Active Programs</h2><p>Choose where your support creates direct, transparent, and durable impact.</p></div><button type="button" onClick={showDonationNotice}>Custom allocation <span className="material-symbols-outlined">arrow_forward</span></button></header><div className="public-program-grid">{publicPrograms.map((program) => <article key={program.id} className="public-program-card"><div className="public-program-image"><img src={program.image} alt={program.title} /><span><span className="material-symbols-outlined">{program.icon}</span>{program.category}</span></div><div className="public-program-copy"><div><h3>{program.title}</h3><p>{program.description}</p></div>{program.id === "health" && <div className="public-progress"><p><span>Campaign Goal: $1,000,000</span><b>65% Funded ($650K)</b></p><i><i /></i></div>}<div className="public-program-footer"><p><span className="material-symbols-outlined">verified</span>{program.impact}</p><div><button type="button" onClick={showDonationNotice}>Support Program <span className="material-symbols-outlined">arrow_forward</span></button><button type="button" onClick={showDonationNotice}>Learn more</button></div></div></div></article>)}</div></section>
+          <section className="public-transparency"><div><span><span className="material-symbols-outlined">shield</span> 100% Transparency Commitment</span><h2>Every cent tracked with open accountability.</h2><p>All program logistics and expenditures are audited every month. Donors receive live updates and dispatch confirmations as provisions reach local distribution hubs.</p></div><button type="button" onClick={showDonationNotice}><span className="material-symbols-outlined">volunteer_activism</span> Make a Donation</button></section>
         </main>
         <Footer onSelectTab={(tab) => navigate(tab === "home" ? "/" : `/${tab}`)} />
+
+        <DonationPopup
+          isOpen={isDonationPopupOpen}
+          onClose={() => setIsDonationPopupOpen(false)}
+          programs={publicPrograms}
+          onDonate={handleDonationSubmit}
+        />
       </div>
     );
   }
@@ -123,6 +138,13 @@ export default function DonorsPage() {
       <Footer onSelectTab={(tab) => navigate(tab === "home" ? "/" : `/${tab}`)} />
 
       {selectedReceipt && <div className="donor-modal-backdrop" role="presentation" onMouseDown={() => setSelectedReceipt(null)}><section className="donor-modal" role="dialog" aria-modal="true" aria-labelledby="receipt-title" onMouseDown={(event) => event.stopPropagation()}><header><div><h2 id="receipt-title">Official Donation Receipt</h2><p>PovertyLine Kenya Trust • Tax Exempt</p></div><button type="button" aria-label="Close receipt" onClick={() => setSelectedReceipt(null)}><span className="material-symbols-outlined">close</span></button></header><div className="receipt-details"><p><span>Receipt No:</span><b>{selectedReceipt.receipt}</b></p><p><span>Donor Name:</span><b>Sarah Mwangi</b></p><p><span>Program:</span><b>{selectedReceipt.program}</b></p><p><span>Date of Issue:</span><b>{selectedReceipt.date}</b></p><p><span>Payment Gateway:</span><b>{selectedReceipt.method}</b></p><p><span>M-PESA Code:</span><b className="mpesa-code">{selectedReceipt.reference}</b></p><p className="receipt-total"><span>Total Amount Paid:</span><b>{formatCurrency(selectedReceipt.amount)}</b></p></div><footer><button type="button" className="print-button" onClick={() => window.print()}><span className="material-symbols-outlined">print</span> Print / Save PDF</button><button type="button" className="close-button" onClick={() => setSelectedReceipt(null)}>Close</button></footer></section></div>}
+
+      <DonationPopup
+        isOpen={isDonationPopupOpen}
+        onClose={() => setIsDonationPopupOpen(false)}
+        programs={publicPrograms}
+        onDonate={handleDonationSubmit}
+      />
 
       {isSubscriptionOpen && <div className="donor-modal-backdrop" role="presentation" onMouseDown={() => setIsSubscriptionOpen(false)}><section className="donor-modal subscription-modal" role="dialog" aria-modal="true" aria-labelledby="subscription-title" onMouseDown={(event) => event.stopPropagation()}><header><h2 id="subscription-title">Manage Monthly Giving</h2><button type="button" aria-label="Close subscription management" onClick={() => setIsSubscriptionOpen(false)}><span className="material-symbols-outlined">close</span></button></header><label>Monthly Contribution (KSh)</label><div className="amount-options">{[1000, 2500, 5000].map((amount) => <button type="button" className={monthlyAmount === amount ? "selected" : ""} onClick={() => setMonthlyAmount(amount)} key={amount}>{formatCurrency(amount)}</button>)}</div><div className="status-control"><div><b>Subscription Status</b><small>Currently {subscriptionStatus}</small></div><button type="button" onClick={() => setSubscriptionStatus(subscriptionStatus === "Active" ? "Paused" : "Active")}>{subscriptionStatus === "Active" ? "Pause Giving" : "Resume Giving"}</button></div><button type="button" className="save-button" onClick={() => setIsSubscriptionOpen(false)}>Save Settings</button></section></div>}
     </div>
