@@ -280,7 +280,17 @@
 }
 
 /* General Donation Form Inputs */
-.form-input, 
+.form-input {
+  width: 100%;
+  border: 2px solid #eae7e7;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #fff;
+  color: #3f4848;
+  font: 500 14px/1.2 "Hanken Grotesk", sans-serif;
+  transition: all 0.2s ease;
+}
+
 .form-select {
   width: 100%;
   border: 2px solid #eae7e7;
@@ -295,10 +305,7 @@
   background-repeat: no-repeat;
   background-position: right 14px center;
   background-size: 16px;
-}
-
-.form-select {
-  font-family: "Segoe UI Emoji", "Noto Color Emoji", "Hanken Grotesk", sans-serif;
+  cursor: pointer;
 }
 
 /* Ensure emoji flags render properly in select options */
@@ -309,7 +316,9 @@ option {
 .form-input:hover,
 .form-input:focus,
 .form-select:hover,
-.form-select:focus {
+.form-select:focus,
+.country-code-select:hover,
+.country-code-select:focus {
   border-color: #007581;
   outline: none;
 }
@@ -321,50 +330,97 @@ option {
 /* Phone Input with Country Code */
 .phone-input-container {
   display: flex;
-  gap: 12px;
+  gap: 0;
   align-items: center;
+  border: 2px solid #eae7e7;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.phone-input-container:focus-within {
+  border-color: #007581;
+  outline: none;
+}
+
+.phone-input-container:focus-within {
+  border-color: #007581;
 }
 
 .country-code-select {
-  width: 160px;
+  width: auto;
+  min-width: 80px;
+  max-width: 120px;
   flex-shrink: 0;
+  /* Ensure consistent styling with form-select */
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='%233f4848'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+  padding: 12px 32px 12px 8px;
+  cursor: pointer;
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+  color: #3f4848;
+  font: 500 14px/1.2 "Hanken Grotesk", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  transition: all 0.2s ease;
 }
 
 .phone-number-input {
   flex: 1;
+  min-width: 0; /* Allow input to shrink if needed */
+  border: none;
+  border-radius: 0;
+  padding: 12px 14px;
+  background: transparent;
+  color: #3f4848;
+  font: 500 14px/1.2 "Hanken Grotesk", sans-serif;
+  outline: none;
 }
 
 /* Custom Country Code Input */
 .custom-country-input-container {
   display: flex;
-  gap: 8px;
+  gap: 0;
   align-items: center;
   flex: 1;
+  border: none;
+  background: transparent;
 }
 
 .country-code-input {
-  width: 160px;
+  width: auto;
+  min-width: 80px;
   flex-shrink: 0;
+  border: none;
+  border-radius: 0;
+  padding: 12px 14px;
+  background: transparent;
+  color: #3f4848;
+  font: 500 14px/1.2 "Hanken Grotesk", sans-serif;
+  outline: none;
 }
 
 .back-to-countries-btn {
   border: none;
-  background: #007581;
-  color: white;
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
+  background: transparent;
+  color: #6e797b;
+  width: 24px;
+  height: 24px;
   cursor: pointer;
   font-size: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  padding: 0;
+  margin-left: -8px;
 }
 
 .back-to-countries-btn:hover {
-  background: #005f6a;
-  transform: scale(1.1);
+  color: #3f4848;
 }
 
 .phone-number-input {
@@ -523,12 +579,27 @@ option {
   .phone-input-container {
     flex-direction: column;
     gap: 8px;
+    border: 2px solid #eae7e7;
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
   }
 
   .country-code-select,
   .country-code-input,
   .custom-country-input-container {
     width: 100%;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .country-code-select {
+    padding: 12px 32px 12px 8px;
+  }
+
+  .phone-number-input {
+    padding: 12px 14px;
   }
 
   .back-to-countries-btn {

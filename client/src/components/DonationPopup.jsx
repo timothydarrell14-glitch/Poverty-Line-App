@@ -389,7 +389,7 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
                       [
                         countries.map((country) => (
                           <option key={country.code} value={country.code}>
-                            {country.flag} {country.name} ({country.code})
+                            {country.flag} {country.code}
                           </option>
                         )),
                         <option value="custom">Other country code...</option>
