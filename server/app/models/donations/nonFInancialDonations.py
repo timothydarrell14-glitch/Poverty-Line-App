@@ -1,4 +1,4 @@
-from extensions import db
+from app.extensions import db
 
 class NonFinancialDonation(db.Model):
     __tablename__ = "non_financial_donations"

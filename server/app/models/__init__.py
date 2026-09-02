@@ -10,7 +10,7 @@ from app.models.donations.nonFInancialDonations import NonFinancialDonation
 from app.models.classification.job_applications import JobApplication
 from app.models.jobs import Job
 from app.models.users.organisations import Organisation
-from app.models.donations.programs import Program
+from server.app.models.programs import Program
 from app.models.settings import AppSetting
 from app.models.users.members import User
 
