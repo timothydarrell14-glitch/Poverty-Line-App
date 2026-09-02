@@ -4,7 +4,7 @@ from marshmallow import ValidationError
 
 from app.extensions import db
 from app.models.communication.community_posts import CommunityPost
-from server.app.schemas.communication.community_post_schema import (
+from app.schemas.communication.community_post_schema import (
     community_post_schema,
     community_posts_schema,
     community_post_create_schema,

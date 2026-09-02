@@ -2,7 +2,7 @@ import pytest
 from app import create_app
 from app.extensions import db
 from app.models.communication.community_membership import CommunityMembership
-from app.models.users.members import User
+from app.models.users.users import User
 
 
 @pytest.fixture

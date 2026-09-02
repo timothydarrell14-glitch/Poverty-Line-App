@@ -4,7 +4,7 @@ from marshmallow import ValidationError
 
 from app.extensions import db
 from app.models.donations.program_memberships import ProgramMembership
-from server.app.schemas.donations.program_membership_schema import (
+from app.schemas.donations.program_membership_schema import (
     program_membership_schema,
     program_memberships_schema,
     program_membership_create_schema,

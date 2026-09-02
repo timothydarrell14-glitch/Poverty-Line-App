@@ -6,7 +6,7 @@ from app.extensions import db
 from app.models.donations.programs import Program
 from app.models.users.organisations import Organisation
 from app.routes.authorization import admin_required
-from server.app.schemas.donations.program_schema import (
+from app.schemas.donations.program_schema import (
     program_schema,
     programs_schema,
     program_create_schema,

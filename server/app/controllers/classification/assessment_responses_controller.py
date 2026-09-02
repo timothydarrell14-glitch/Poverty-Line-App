@@ -5,8 +5,8 @@ from marshmallow import ValidationError
 from app.extensions import db
 from app.models.classification.assessment_responses import AssessmentResponse
 from app.models.classification.assessment_questions import AssessmentQuestion
-from app.models.users.members import User
-from server.app.schemas.classification.assessment_response_schema import (
+from app.models.users.users import User
+from app.schemas.classification.assessment_response_schema import (
     assessment_response_schema,
     assessment_responses_schema,
     assessment_response_create_schema,

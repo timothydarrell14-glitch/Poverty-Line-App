@@ -7,8 +7,8 @@ from app.extensions import db
 from app.models.communication.communities import Community
 from app.models.communication.community_membership import CommunityMembership
 from app.models.communication.community_posts import CommunityPost
-from app.models.users.members import User
-from server.app.schemas.communication.community_schema import (
+from app.models.users.users import User
+from app.schemas.communication.community_schema import (
     community_schema,
     community_create_schema,
     community_update_schema,

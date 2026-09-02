@@ -7,7 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from app.extensions import db
 from app.models.users.organisations import Organisation
 from app.models.donations.programs import Program
-from app.models.users.members import User
+from app.models.users.users import User
 
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
