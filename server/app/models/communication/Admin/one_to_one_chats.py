@@ -1,4 +1,4 @@
-from extensions import db
+from app.extensions import db
 
 class DirectChats(db.Model):
     __tablename__ = 'direct_chats'

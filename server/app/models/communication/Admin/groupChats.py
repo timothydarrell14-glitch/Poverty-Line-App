@@ -1,4 +1,4 @@
-from extensions import db
+from app.extensions import db
 
 class GroupChats(db.Model):
     __tablename__ = 'group_chats'

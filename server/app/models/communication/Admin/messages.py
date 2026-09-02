@@ -1,4 +1,4 @@
-from extensions import db
+from app.extensions import db
 
 class AdminMessages(db.Model):
     __tablename__ = 'admin_messages'
