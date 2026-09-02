@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "../styles/Donors.css";
+import DonorPortal from "../components/DonorPortal";
 
 const donations = [
   { id: "don-001", date: "Oct 12, 2024", program: "Clean Water Initiative - Kisumu", amount: 5000, receipt: "REC-2024-8849", method: "M-Pesa", reference: "RJK4992LK8" },
@@ -108,6 +109,9 @@ export default function DonorsPage() {
         </section>
 
         <section className="donor-dashboard-grid">
+          <div className="donor-portal-wrap">
+            <DonorPortal donations={donations} programs={publicPrograms} pledges={[{ id: 'pledge-1', title: 'Education Fund (Kiambu Youth Scholarships)', amount: 2500, nextCharge: 'Nov 1, 2024' }]} onNavigate={(path) => navigate(path)} />
+          </div>
           <article className="donor-panel history-panel">
             <h2>Giving History</h2><p className="panel-description">Verifiable transaction records and tax-exempt receipts.</p>
             <div className="history-table-wrap"><table><thead><tr><th>Date</th><th>Program</th><th>Amount</th><th>Status</th><th>Receipt</th></tr></thead>
