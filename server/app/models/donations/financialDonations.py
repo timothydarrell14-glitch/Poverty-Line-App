@@ -4,6 +4,7 @@ from app.extensions import db
 class FinancialDonation(db.Model):
     __tablename__ = "financial_donations"
 
+    donation_id = db.Column(db.Integer, primary_key=True)
     transaction_code = db.Column(db.String(255))
     amount = db.Column(db.Numeric(12, 2), nullable=False)
     donation_date = db.Column(db.Date)
