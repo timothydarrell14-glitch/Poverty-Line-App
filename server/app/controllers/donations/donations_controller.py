@@ -22,17 +22,7 @@ def create_donation():
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    donation = FinancialDonation(
-        program_id=data["program_id"],
-        donor_name=data.get("donor_name"),
-        donor_type=data.get("donor_type"),
-        amount=data["amount"],
-        currency=data.get("currency"),
-        donation_date=data.get("donation_date"),
-        payment_method=data.get("payment_method"),
-        anonymous=data.get("anonymous", False),
-        transaction_reference=data.get("transaction_reference"),
-    )
+    donation = FinancialDonation(**data)
     db.session.add(donation)
     db.session.commit()
 

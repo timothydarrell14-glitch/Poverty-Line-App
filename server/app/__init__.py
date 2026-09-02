@@ -107,6 +107,8 @@ def create_app():
     from app.routes.users import users_bp
     from app.controllers.countries_controller import countries_bp
 
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(callback_bp)
     app.register_blueprint(users_bp)
     app.register_blueprint(jobs_bp)
     app.register_blueprint(job_applications_bp)
