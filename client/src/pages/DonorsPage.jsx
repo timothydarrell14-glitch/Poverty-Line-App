@@ -68,8 +68,7 @@ export default function DonorsPage() {
               <span className="public-eyebrow"><span className="material-symbols-outlined material-symbols-fill">favorite</span> Empowering Resilient Futures</span>
               <h1>Together, We Bring Hope and <em>Change Lives</em></h1>
               <p>Your generous donations empower communities, provide essential resources, and create lasting sustainable change. Join us in making a difference today.</p>
-              <div className="public-hero-actions"><button type="button" className="public-primary-button" onClick={showDonationNotice}><span className="material-symbols-outlined">volunteer_activism</span> Make a Donation</button><button type="button" className="public-secondary-button" onClick={() => window.alert("The impact report will be available soon.")}><span className="material-symbols-outlined">description</span> View Impact Report</button></div>
-              <div className="public-stat-row"><div><b>10K+</b><span>Donations Received</span></div><div><b>50K+</b><span>Lives Impacted</span></div><div><b>520+</b><span>Active Volunteers</span></div></div>
+              <div className="public-hero-actions"><button type="button" className="public-primary-button" onClick={showDonationNotice}><span className="material-symbols-outlined">volunteer_activism</span> Make a Donation</button></div>
             </div>
             <img className="public-hero-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBy3M80B5UbKEYaAg7SzGUdGfva1q6-sb_S_FpyZgCcVzlY3LwQjBEJ6Q2H21Fj6GLhM_2Eh4tS1BdFlkDf-xsfq65T608S7RqIEMbMui4tIA7Cgh5TAFbBN6uBBAZiHIn2VT2xR-TFiQgxW9oAQgu49O8EYBI8ljGOpLllhJkOuJwJ9pkTgqSPmUb0-ES1aLoJzfBTVO3MQXpTqML1MMgfoDV3_J0bGZLYz5UhQyfdA0NgVOwm8nmPpA" alt="Community food and essentials distribution" />
           </section>
