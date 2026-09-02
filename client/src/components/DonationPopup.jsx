@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import "../styles/DonationPopup.css";
 import mpesaLogo from "../assets/mpesa-logo.png";
 import paypalLogo from "../assets/paypal-logo.svg";
+import FastlaneCheckout from "./FastlaneCheckout";
 
 const isKenyanMobile = (phone) =>
   /^(?:\+254|0)[17]\d{8}$/.test((phone || "").replace(/[\s-]/g, ""));
+const fastlaneEnabled = import.meta.env.VITE_PAYPAL_FASTLANE_ENABLED === "true";
 
 const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId }) => {
 
@@ -27,8 +29,8 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
   const [countriesLoading, setCountriesLoading] = useState(true);
   const [submissionError, setSubmissionError] = useState("");
 
-  // Predefined amounts
-  const predefinedAmounts = [100, 500, 1000, 2500];
+  const currency = paymentMethod === "paypal" ? "USD" : "KES";
+  const predefinedAmounts = currency === "USD" ? [10, 25, 50, 100] : [100, 500, 1000, 2500];
 
   const handleAmountSelect = (selectedAmount) => {
     setAmount(selectedAmount);
@@ -77,6 +79,8 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
 
   const handlePaymentMethodChange = (method) => {
     setPaymentMethod(method);
+    setCustomAmount("");
+    setAmount(method === "paypal" ? 10 : 100);
   };
 
   // Fetch countries from backend
@@ -277,20 +281,28 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
                   className={`amount-button ${amount === amt ? "selected" : ""}`}
                   onClick={() => handleAmountSelect(amt)}
                 >
-                  KES {amt}
+                  {currency} {amt}
                 </button>
               ))}
             </div>
             <div className="custom-amount">
               <input 
                 type="text"
-                placeholder="Or enter custom amount"
+                placeholder={`Or enter custom amount in ${currency}`}
                 value={customAmount}
                 onChange={handleCustomAmountChange}
                 className="custom-amount-input"
               />
             </div>
           </div>
+
+          {paymentMethod === "paypal" && fastlaneEnabled && (
+            <FastlaneCheckout
+              amount={amount}
+              programId={selectedProgram ? Number(selectedProgram) : null}
+              onCompleted={() => setSubmissionError("Fastlane payment submitted for confirmation.")}
+            />
+          )}
 
 
 
@@ -322,7 +334,7 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
             disabled={isSubmitting || amount <= 0 || !paymentMethod || (paymentMethod === "mpesa" && !isKenyanMobile(donorPhone)) || (!selectedProgram && (!donorName || !donorEmail || !donorPhone.trim()))}
           >
             {amount > 0 && paymentMethod && (paymentMethod !== "mpesa" || isKenyanMobile(donorPhone)) && (selectedProgram || (donorName && donorEmail && donorPhone.trim())) ? null : <span className="material-symbols-outlined">lock</span>}
-            Complete {paymentMethod === "paypal" ? "USD" : "KES"} {amount} Contribution
+            Complete {currency} {amount} Contribution
           </button>
         </form>
         ) : (

@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from datetime import date
+import os
 import re
 
 from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
@@ -18,10 +19,16 @@ from app.schemas.donations.donation_schema import (
 from app.services.payment_providers import (
     PaymentProviderError,
     capture_paypal_order,
+    create_paypal_fastlane_order,
+    get_paypal_browser_safe_client_token,
     initiate_payment,
 )
 
 donations_bp = Blueprint("donations", __name__, url_prefix="/api/donations")
+
+
+def fastlane_enabled():
+    return os.environ.get("PAYPAL_FASTLANE_ENABLED", "false").lower() == "true"
 
 
 def normalize_kenyan_mobile(phone):
@@ -35,6 +42,47 @@ def serialize_donation(donation):
     payload = donation_schema.dump(donation)
     payload["program_title"] = donation.program.title if donation.program else "General Community Fund"
     return payload
+
+
+@donations_bp.route("/paypal-api/auth/browser-safe-client-token", methods=["GET"])
+def paypal_browser_safe_client_token():
+    if not fastlane_enabled():
+        return jsonify({"message": "PayPal Fastlane is disabled."}), 404
+    try:
+        token = get_paypal_browser_safe_client_token()
+    except PaymentProviderError as error:
+        return jsonify({"message": str(error)}), 502
+    if token is None:
+        return jsonify({"message": "PayPal is not configured."}), 503
+    return jsonify({"accessToken": token}), 200
+
+
+@donations_bp.route("/paypal-api/checkout/orders/create", methods=["POST"])
+def paypal_fastlane_create_order():
+    if not fastlane_enabled():
+        return jsonify({"message": "PayPal Fastlane is disabled."}), 404
+    payload = request.get_json(silent=True) or {}
+    if payload.get("intent") != "CAPTURE" or not payload.get("purchaseUnits"):
+        return jsonify({"message": "A capture order with purchase units is required."}), 422
+    try:
+        order = create_paypal_fastlane_order(payload)
+    except PaymentProviderError as error:
+        return jsonify({"message": str(error)}), 502
+    return jsonify(order), 201
+
+
+@donations_bp.route("/paypal-api/checkout/orders/capture", methods=["POST"])
+def paypal_fastlane_capture_order():
+    if not fastlane_enabled():
+        return jsonify({"message": "PayPal Fastlane is disabled."}), 404
+    order_id = (request.get_json(silent=True) or {}).get("order_id")
+    if not order_id:
+        return jsonify({"message": "A PayPal order ID is required."}), 422
+    try:
+        completed = capture_paypal_order(order_id)
+    except PaymentProviderError as error:
+        return jsonify({"message": str(error)}), 502
+    return jsonify({"order_id": order_id, "status": "COMPLETED" if completed else "FAILED"}), 200
 
 
 @donations_bp.route("", methods=["POST"])
