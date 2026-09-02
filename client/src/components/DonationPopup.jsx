@@ -16,6 +16,8 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate }) => {
   const [donorName, setDonorName] = useState("");
   const [donorEmail, setDonorEmail] = useState("");
   const [donorPhone, setDonorPhone] = useState("+254 ");
+  const [customCountryCode, setCustomCountryCode] = useState("");
+  const [useCustomCountryCode, setUseCustomCountryCode] = useState(false);
   const [donationType, setDonationType] = useState("");
   const [donationDescription, setDonationDescription] = useState("");
   const [countries, setCountries] = useState([]);
@@ -125,7 +127,8 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate }) => {
 
   // Get current country code from phone state
   const getCurrentCountryCode = () => {
-    return donorPhone.split(' ')[0] || '+254';
+    const code = donorPhone.split(' ')[0] || '';
+    return code || (useCustomCountryCode ? customCountryCode : '+254');
   };
 
   const getProgramTitle = (programId) => {
@@ -174,6 +177,8 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate }) => {
       setDonorPhone("+254 ");
       setDonationType("");
       setDonationDescription("");
+      setUseCustomCountryCode(false);
+      setCustomCountryCode("");
     }
   };
 
@@ -327,25 +332,64 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate }) => {
             <div className="form-section">
               <label htmlFor="donor-phone">Phone Number</label>
               <div className="phone-input-container">
-                <select
-                  className="form-select country-code-select"
-                  value={getCurrentCountryCode()}
-                  onChange={(e) => {
-                    const phoneNumber = donorPhone.split(' ')[1] || '';
-                    setDonorPhone(e.target.value + ' ' + phoneNumber);
-                  }}
-                  disabled={countriesLoading}
-                >
-                  {countriesLoading ? (
-                    <option value="+254">Loading countries...</option>
-                  ) : (
-                    countries.map((country) => (
-                      <option key={country.code} value={country.code}>
-                        {country.flag} {country.name} ({country.code})
-                      </option>
-                    ))
-                  )}
-                </select>
+                {useCustomCountryCode ? (
+                  <div className="custom-country-input-container">
+                    <input 
+                      type="text" 
+                      className="form-input country-code-input"
+                      value={customCountryCode}
+                      onChange={(e) => {
+                        const phoneNumber = donorPhone.split(' ')[1] || '';
+                        setCustomCountryCode(e.target.value);
+                        setDonorPhone(e.target.value + ' ' + phoneNumber);
+                      }}
+                      placeholder="Country code (e.g., +254)"
+                    />
+                    <button 
+                      type="button" 
+                      className="back-to-countries-btn"
+                      onClick={() => {
+                        setUseCustomCountryCode(false);
+                        setCustomCountryCode("");
+                        const phoneNumber = donorPhone.split(' ')[1] || '';
+                        setDonorPhone("+254 " + phoneNumber);
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ) : (
+                  <select
+                    className="form-select country-code-select"
+                    value={getCurrentCountryCode()}
+                    onChange={(e) => {
+                      if (e.target.value === "custom") {
+                        setUseCustomCountryCode(true);
+                        const phoneNumber = donorPhone.split(' ')[1] || '';
+                        setDonorPhone("" + ' ' + phoneNumber);
+                      } else {
+                        const phoneNumber = donorPhone.split(' ')[1] || '';
+                        setDonorPhone(e.target.value + ' ' + phoneNumber);
+                      }
+                    }}
+                    disabled={countriesLoading}
+                  >
+                    {countriesLoading ? (
+                      <option value="+254">Loading countries...</option>
+                    ) : countries.length > 0 ? (
+                      [
+                        countries.map((country) => (
+                          <option key={country.code} value={country.code}>
+                            {country.flag} {country.name} ({country.code})
+                          </option>
+                        )),
+                        <option value="custom">Other country code...</option>
+                      ]
+                    ) : (
+                      <option value="+254">No countries available</option>
+                    )}
+                  </select>
+                )}
                 
                 <input 
                   type="tel" 
@@ -353,7 +397,7 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate }) => {
                   className="form-input phone-number-input"
                   value={donorPhone.split(' ')[1] || ''}
                   onChange={(e) => {
-                    const countryCode = getCurrentCountryCode();
+                    const countryCode = useCustomCountryCode ? customCountryCode : getCurrentCountryCode();
                     setDonorPhone(countryCode + ' ' + e.target.value);
                   }}
                   placeholder="Phone number"
@@ -398,9 +442,9 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate }) => {
             <button 
               type="submit" 
               className="submit-button"
-              disabled={isSubmitting || !donorName || !donorEmail || !donorPhone.trim() || donorPhone.trim().split(' ')[1]?.length < 1 || !donationType || !donationDescription}
+              disabled={isSubmitting || !donorName || !donorEmail || !donorPhone.trim() || donorPhone.trim().split(' ')[1]?.length < 1 || (useCustomCountryCode && !customCountryCode) || !donationType || !donationDescription}
             >
-              {donorName && donorEmail && donorPhone.trim().split(' ')[1]?.length >= 1 && donationType && donationDescription ? null : <span className="material-symbols-outlined">lock</span>}
+              {donorName && donorEmail && donorPhone.trim().split(' ')[1]?.length >= 1 && (!useCustomCountryCode || customCountryCode) && donationType && donationDescription ? null : <span className="material-symbols-outlined">lock</span>}
               Submit General Donation
             </button>
           </form>
