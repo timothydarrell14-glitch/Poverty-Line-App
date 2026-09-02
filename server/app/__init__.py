@@ -99,7 +99,6 @@ def create_app():
     from app.controllers.job_applications_controller import job_applications_bp
     from app.controllers.jobs_controller import jobs_bp
     from app.controllers.users.organisations_controller import organisations_bp
-    from app.controllers.donations.program_memberships_controller import program_memberships_bp
     from app.controllers.donations.programs_controller import programs_bp
     from app.controllers.users.users_controller import users_bp
     from .controllers.countries_controller import countries_bp
@@ -110,7 +109,6 @@ def create_app():
     app.register_blueprint(jobs_bp)
     app.register_blueprint(job_applications_bp)
     app.register_blueprint(programs_bp)
-    app.register_blueprint(program_memberships_bp)
     app.register_blueprint(donations_bp)
     app.register_blueprint(countries_bp)
     app.register_blueprint(communities_bp)
