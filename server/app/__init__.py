@@ -114,6 +114,7 @@ def create_app():
     app.register_blueprint(programs_bp)
     app.register_blueprint(donations_bp)
     app.register_blueprint(countries_bp)
+    app.register_blueprint(countries_bp)
     app.register_blueprint(communities_bp)
     app.register_blueprint(community_memberships_bp)
     app.register_blueprint(community_posts_bp)
