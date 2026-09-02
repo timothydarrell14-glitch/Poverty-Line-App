@@ -14,6 +14,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useAdminSession } from "../AdminSession";
 import { useHelpTour } from "../../utils/useHelpTour";
+import { formatRelativeTime } from "../../utils/formatRelativeTime";
 import {
   listNotifications,
   markAllNotificationsRead,
@@ -35,18 +36,6 @@ const helpSteps = [
   "Logout\nSigns you out of the admin workspace.",
 ];
 
-function formatRelativeTime(isoString) {
-  if (!isoString) return "";
-  const then = new Date(isoString).getTime();
-  const diffMinutes = Math.round((Date.now() - then) / 60000);
-  if (diffMinutes < 1) return "Just now";
-  if (diffMinutes < 60) return `${diffMinutes}m ago`;
-  const diffHours = Math.round(diffMinutes / 60);
-  if (diffHours < 24) return `${diffHours}h ago`;
-  const diffDays = Math.round(diffHours / 24);
-  return `${diffDays}d ago`;
-}
-
 function AdminTopbar({ pageClass, searchClass = `${pageClass}__global-search`, searchId, placeholder, searchTerm = "", onSearchChange }) {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -55,7 +44,7 @@ function AdminTopbar({ pageClass, searchClass = `${pageClass}__global-search`, s
   const navigate = useNavigate();
   const panelRef = useRef(null);
   const helpTourStep = useHelpTour(helpMode, helpSteps.length);
-  const helpClass = (step) => `tooltip tooltip--help-mode${helpTourStep === step ? " tooltip--pinned" : ""}`;
+  const helpClass = (step) => `tooltip${helpMode ? " tooltip--help-mode" : ""}${helpTourStep === step ? " tooltip--pinned" : ""}`;
 
   useEffect(() => {
     listNotifications()

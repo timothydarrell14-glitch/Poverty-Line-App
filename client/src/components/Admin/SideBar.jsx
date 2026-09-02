@@ -14,6 +14,8 @@ import {
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAdminSession } from "../AdminSession";
 import { useHelpTour } from "../../utils/useHelpTour";
+import { mediaUrl } from "../../api/client";
+import { capitalize } from "../../utils/capitalize";
 import "../../styles/Admin/SideBar.css";
 
 const navigationItems = [
@@ -30,7 +32,7 @@ function SideBar() {
   const { user, helpMode } = useAdminSession();
   const navigate = useNavigate();
   const helpTourStep = useHelpTour(helpMode, navigationItems.length + 2);
-  const helpClass = (step) => `tooltip tooltip--help-mode${helpTourStep === step ? " tooltip--pinned" : ""}`;
+  const helpClass = (step) => `tooltip${helpMode ? " tooltip--help-mode" : ""}${helpTourStep === step ? " tooltip--pinned" : ""}`;
 
   return (
     <aside
@@ -56,12 +58,12 @@ function SideBar() {
         <div className="admin-sidebar__identity">
           <img
             className="admin-sidebar__avatar"
-            src={user?.avatarUrl || "https://api.dicebear.com/9.x/initials/svg?seed=" + encodeURIComponent(user?.name || "Admin")}
+            src={mediaUrl(user?.avatarUrl) || "https://api.dicebear.com/9.x/initials/svg?seed=" + encodeURIComponent(user?.name || "Admin")}
             alt=""
           />
           <div>
             <p className="admin-sidebar__name">{user?.name}</p>
-            <p className="admin-sidebar__role">{user?.role}</p>
+            <p className="admin-sidebar__role">{capitalize(user?.role)}</p>
           </div>
         </div>
 

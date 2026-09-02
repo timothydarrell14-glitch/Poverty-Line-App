@@ -275,6 +275,25 @@ def mark_all_notifications_read():
     return jsonify({"message": "All notifications marked as read."})
 
 
+@auth_bp.get("/dashboard-stats")
+@admin_required
+def dashboard_stats():
+    from app.models.donations.financialDonations import FinancialDonation
+
+    active_programs = Program.query.filter_by(active=True).count()
+    total_donations = db.session.query(
+        db.func.coalesce(db.func.sum(FinancialDonation.amount), 0)
+    ).filter(FinancialDonation.payment_status == "completed").scalar()
+    partnerships = Organisation.query.count()
+    return jsonify(
+        {
+            "activePrograms": active_programs,
+            "totalDonations": float(total_donations or 0),
+            "partnerships": partnerships,
+        }
+    )
+
+
 @auth_bp.get("/organisations")
 @admin_required
 def list_organisations():
