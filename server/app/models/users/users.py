@@ -1,3 +1,5 @@
+import secrets
+
 from app.extensions import db
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -34,6 +36,7 @@ class User(db.Model):
     community_memberships = db.relationship(
         "CommunityMembership", back_populates="user"
     )
+    donor = db.relationship("Donor", back_populates="user", uselist=False)
 
     def is_admin(self):
         """Return whether this user currently has administrator access."""
@@ -67,6 +70,14 @@ class User(db.Model):
     def verifies_password(self, password):
         """Safely check a plaintext password against the stored hash."""
         return check_password_hash(self.password_hash, password)
+
+    @staticmethod
+    def generate_random_password():
+        return secrets.token_urlsafe(24)
+
+    @staticmethod
+    def hash_password(password):
+        return generate_password_hash(password)
 
     @classmethod
     def list_for_admin(cls, search=None, role=None):

@@ -27,6 +27,11 @@ def serialize_user(user):
 
 
 def serialize_program(program):
+    completed_amount = sum(
+        donation.amount
+        for donation in program.financial_donations
+        if donation.payment_status == "completed"
+    )
     return {
         "id": program.id,
         "title": program.title,
@@ -34,6 +39,12 @@ def serialize_program(program):
         "active": program.active,
         "location": program.location,
         "organisation_id": program.organisation_id,
+        "program_kind": program.program_kind,
+        "funding_goal": float(program.funding_goal or 0),
+        "funding_raised": float(completed_amount),
+        "progress_target": program.progress_target,
+        "progress_value": program.progress_value,
+        "progress_unit": program.progress_unit,
     }
 
 
