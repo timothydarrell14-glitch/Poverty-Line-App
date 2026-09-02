@@ -1,5 +1,7 @@
 import { useState } from "react";
 import "../styles/DonationPopup.css";
+import mpesaLogo from "../assets/mpesa-logo.png";
+import paypalLogo from "../assets/paypal-logo.svg";
 
 const DonationPopup = ({ isOpen, onClose, programs, onDonate }) => {
 
@@ -146,16 +148,14 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate }) => {
                 className={`payment-method ${paymentMethod === "mpesa" ? "selected" : ""}`}
                 onClick={() => handlePaymentMethodChange("mpesa")}
               >
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/M-Pesa_logo.svg/200px-M-Pesa_logo.svg.png" alt="M-Pesa" className="payment-logo" />
-                M-Pesa
+                <img src={mpesaLogo} alt="M-Pesa" className="payment-logo" style={{ width: '60px', height: '40px' }} />
               </button>
               <button 
                 type="button"
                 className={`payment-method ${paymentMethod === "paypal" ? "selected" : ""}`}
                 onClick={() => handlePaymentMethodChange("paypal")}
               >
-                <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-100px.png" alt="PayPal" className="payment-logo" />
-                PayPal
+                <img src={paypalLogo} alt="PayPal" className="payment-logo" />
               </button>
             </div>
           </div>
