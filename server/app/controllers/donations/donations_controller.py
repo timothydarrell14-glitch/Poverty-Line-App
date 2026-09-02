@@ -198,7 +198,10 @@ def mpesa_callback():
 
     if not request.is_json:
         return jsonify({"message": "A JSON callback payload is required."}), 400
-    callback = (request.get_json(silent=True) or {}).get("Body", {}).get("stkCallback", {})
+    payload = request.get_json(silent=True) or {}
+    callback = payload.get("Body", {}).get("stkCallback", {})
+    if not isinstance(callback, dict):
+        return jsonify({"message": "Invalid M-Pesa callback payload."}), 400
     provider_reference = callback.get("CheckoutRequestID")
     if not provider_reference or not isinstance(callback.get("ResultCode"), int):
         return jsonify({"message": "Invalid M-Pesa callback payload."}), 400
@@ -214,6 +217,8 @@ def mpesa_callback():
     if not isinstance(metadata, list):
         return jsonify({"message": "Invalid M-Pesa callback metadata."}), 400
     for item in metadata:
+        if not isinstance(item, dict):
+            return jsonify({"message": "Invalid M-Pesa callback metadata."}), 400
         if item.get("Name") == "MpesaReceiptNumber":
             receipt = str(item.get("Value"))
             duplicate = FinancialDonation.query.filter(

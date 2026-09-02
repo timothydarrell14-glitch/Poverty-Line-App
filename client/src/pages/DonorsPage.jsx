@@ -30,6 +30,8 @@ export default function DonorsPage() {
   const [learnMoreProgram, setLearnMoreProgram] = useState(null);
   const [activeProgramFilter, setActiveProgramFilter] = useState("all");
   const [programs, setPrograms] = useState([]);
+  const [programsLoading, setProgramsLoading] = useState(true);
+  const [programsError, setProgramsError] = useState("");
   const [donationHistory, setDonationHistory] = useState([]);
   const totalGiven = donationHistory.reduce((total, donation) => total + Number(donation.amount), 0);
 
@@ -95,7 +97,11 @@ export default function DonorsPage() {
   useEffect(() => {
     apiRequest("/api/programs?active=true")
       .then((data) => setPrograms(data.programs ?? []))
-      .catch(() => setPrograms([]));
+      .catch((error) => {
+        setPrograms([]);
+        setProgramsError(error.message || "Could not load programs.");
+      })
+      .finally(() => setProgramsLoading(false));
   }, []);
 
   useEffect(() => {
@@ -169,7 +175,9 @@ export default function DonorsPage() {
             </div>
             
             <div className="public-program-grid">
-              {filteredPrograms.map((program) => (
+              {programsLoading && <p className="programs-list__empty">Loading programs...</p>}
+              {!programsLoading && programsError && <p className="programs-list__empty" role="alert">{programsError} Start the backend on port 5000 and try again.</p>}
+              {!programsLoading && !programsError && filteredPrograms.map((program) => (
                 <article key={program.id} className="public-program-card">
                   <div className="public-program-image">
                     <img src={program.image} alt={program.title} />
@@ -202,6 +210,7 @@ export default function DonorsPage() {
                   </div>
                 </article>
               ))}
+              {!programsLoading && !programsError && !filteredPrograms.length && <p className="programs-list__empty">No active programs are available.</p>}
             </div>
           </section>
           <section className="public-transparency"><div><span><span className="material-symbols-outlined">shield</span> 100% Transparency Commitment</span><h2>Every cent tracked with open accountability.</h2><p>All program logistics and expenditures are audited every month. Donors receive live updates and dispatch confirmations as provisions reach local distribution hubs.</p></div><button type="button" onClick={() => showDonationNotice()}><span className="material-symbols-outlined">volunteer_activism</span> Make a Donation</button></section>

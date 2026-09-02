@@ -444,7 +444,7 @@ def seed_donations(users, programs):
             amount=75000.00,
             currency="KES",
             donation_date=date(2026, 1, 20),
-            payment_method="paypal",
+            payment_method="mpesa",
             payment_status="completed",
             provider_reference="TXN-NRC-004",
         ),
