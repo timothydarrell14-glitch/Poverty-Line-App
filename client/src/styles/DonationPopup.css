@@ -286,13 +286,22 @@
   padding: 12px 14px;
   background: #fff;
   color: #3f4848;
-  font: 500 14px/1.2 "Hanken Grotesk", sans-serif;
+  font: 500 14px/1.2 "Hanken Grotesk", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
   transition: all 0.2s ease;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='%233f4848'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
   background-size: 16px;
+}
+
+.form-select {
+  font-family: "Segoe UI Emoji", "Noto Color Emoji", "Hanken Grotesk", sans-serif;
+}
+
+/* Ensure emoji flags render properly in select options */
+option {
+  font-family: "Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", "Twemoji", inherit;
 }
 
 .form-input:hover,
@@ -321,6 +330,39 @@
 
 .phone-number-input {
   flex: 1;
+}
+
+/* Custom Country Code Input */
+.custom-country-input-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex: 1;
+}
+
+.country-code-input {
+  width: 160px;
+  flex-shrink: 0;
+}
+
+.back-to-countries-btn {
+  border: none;
+  background: #953914;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.back-to-countries-btn:hover {
+  background: #7a2e11;
+  transform: scale(1.1);
 }
 
 .phone-number-input {
@@ -481,8 +523,14 @@
     gap: 8px;
   }
 
-  .country-code-select {
+  .country-code-select,
+  .country-code-input,
+  .custom-country-input-container {
     width: 100%;
+  }
+
+  .back-to-countries-btn {
+    flex-shrink: 0;
   }
 
   .nav-tab {

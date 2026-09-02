@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, make_response
 
 # Comprehensive list of countries with flags, names, and dial codes
 COUNTRIES = [
@@ -256,6 +256,9 @@ countries_bp = Blueprint("countries", __name__, url_prefix="/api/countries")
 
 @countries_bp.route("", methods=["GET"])
 def get_countries():
+    """Get a list of all countries with their flags, names, and dial codes."""
     # Sort countries alphabetically by name
     sorted_countries = sorted(COUNTRIES, key=lambda x: x["name"])
-    return jsonify(sorted_countries)
+    response = make_response(jsonify(sorted_countries))
+    response.headers['Content-Type'] = 'application/json; charset=utf-8'
+    return response
