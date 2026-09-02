@@ -180,7 +180,7 @@ export default function DonorsPage() {
               {!programsLoading && !programsError && filteredPrograms.map((program) => (
                 <article key={program.id} className="public-program-card">
                   <div className="public-program-image">
-                    <img src={program.image} alt={program.title} />
+                    {program.image_url && <img src={program.image_url} alt={program.title} />}
                     <span><span className="material-symbols-outlined">{program.icon}</span>{program.category}</span>
                   </div>
                   <div className="public-program-copy">
@@ -225,7 +225,8 @@ export default function DonorsPage() {
                 <span className="material-symbols-outlined">close</span>
               </button>
               <h3>{learnMoreProgram.title}</h3>
-              <p>{learnMoreProgram.description}</p>
+              {learnMoreProgram.image_url && <img src={learnMoreProgram.image_url} alt="" />}
+              <p>{learnMoreProgram.long_description || learnMoreProgram.description}</p>
             </div>
           </div>
         )}

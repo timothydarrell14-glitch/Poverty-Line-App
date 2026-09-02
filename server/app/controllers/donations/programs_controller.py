@@ -100,6 +100,8 @@ def create_program():
         organisation_id=data["organisation_id"],
         title=data["title"],
         description=data.get("description"),
+        long_description=data.get("long_description"),
+        image_url=data.get("image_url"),
         summary=data.get("summary"),
         type=data.get("type"),
         location=data.get("location"),

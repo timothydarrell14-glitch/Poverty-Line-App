@@ -8,6 +8,8 @@ class Program(db.Model):
     title = db.Column(db.String(255), nullable=False)
     summary = db.Column(db.String(500))
     description = db.Column(db.Text)
+    long_description = db.Column(db.Text)
+    image_url = db.Column(db.String(500))
     type = db.Column(db.String(100))
     location = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, server_default=db.func.now())
@@ -45,6 +47,8 @@ class Program(db.Model):
             title=data["title"],
             summary=data.get("summary"),
             description=data.get("description"),
+            long_description=data.get("long_description"),
+            image_url=data.get("image_url"),
             type=data.get("type"),
             location=data.get("location"),
             created_by=data.get("created_by"),

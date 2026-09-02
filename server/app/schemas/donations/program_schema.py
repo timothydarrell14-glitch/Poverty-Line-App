@@ -40,6 +40,8 @@ class ProgramCreateSchema(ma.SQLAlchemyAutoSchema):
             "organisation_id",
             "title",
             "description",
+            "long_description",
+            "image_url",
             "summary",
             "type",
             "location",
@@ -59,6 +61,8 @@ class ProgramUpdateSchema(ma.SQLAlchemyAutoSchema):
         fields = (
             "title",
             "description",
+            "long_description",
+            "image_url",
             "summary",
             "type",
             "location",
