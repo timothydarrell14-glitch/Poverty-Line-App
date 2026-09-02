@@ -5,7 +5,7 @@ from sqlalchemy import func
 
 from app.extensions import db
 from server.app.models.donations.financialDonations import Donation
-from server.app.schemas.donations.donation_schema import (
+from app.schemas.donations.donation_schema import (
     donation_schema,
     donations_schema,
     donation_create_schema,

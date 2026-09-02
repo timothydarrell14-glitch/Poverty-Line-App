@@ -88,25 +88,24 @@ def create_app():
 
     from app.routes.auth_routes import auth_bp
 
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(callback_bp)
-
-    from server.app.controllers.classification.assessment_questions_controller import assessment_questions_bp
-    from server.app.controllers.classification.assessment_responses_controller import assessment_responses_bp
-    from server.app.controllers.communication.communities_controller import communities_bp
-    from server.app.controllers.communication.community_memberships_controller import (
+    from app.controllers.classification.assessment_questions_controller import assessment_questions_bp
+    from app.controllers.classification.assessment_responses_controller import assessment_responses_bp
+    from app.controllers.communication.communities_controller import communities_bp
+    from app.controllers.communication.community_memberships_controller import (
         community_memberships_bp,
     )
-    from server.app.controllers.communication.community_posts_controller import community_posts_bp
-    from server.app.controllers.donations.donations_controller import donations_bp
+    from app.controllers.communication.community_posts_controller import community_posts_bp
+    from app.controllers.donations.donations_controller import donations_bp
     from app.controllers.job_applications_controller import job_applications_bp
     from app.controllers.jobs_controller import jobs_bp
-    from server.app.controllers.users.organisations_controller import organisations_bp
-    from server.app.controllers.donations.program_memberships_controller import program_memberships_bp
-    from server.app.controllers.donations.programs_controller import programs_bp
-    from server.app.controllers.users.users_controller import users_bp
+    from app.controllers.users.organisations_controller import organisations_bp
+    from app.controllers.donations.program_memberships_controller import program_memberships_bp
+    from app.controllers.donations.programs_controller import programs_bp
+    from app.controllers.users.users_controller import users_bp
     from .controllers.countries_controller import countries_bp
 
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(callback_bp)
     app.register_blueprint(users_bp)
     app.register_blueprint(jobs_bp)
     app.register_blueprint(job_applications_bp)
