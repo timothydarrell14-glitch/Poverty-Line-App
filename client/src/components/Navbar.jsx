@@ -8,6 +8,7 @@ import {
   getCurrentUser,
   isAuthenticated,
 } from "../utils/auth";
+import { apiRequest } from "../api/client";
 
 export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -16,6 +17,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isDonationPopupOpen, setIsDonationPopupOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(getCurrentUser());
+  const [programs, setPrograms] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -49,9 +51,26 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
     setIsDonationPopupOpen(true);
   };
 
-  const handleDonationSubmit = (donationData) => {
-    console.log("Donation submitted:", donationData);
-    alert(`Thank you for your donation of $${donationData.amount} to ${donationData.program}!`);
+  useEffect(() => {
+    apiRequest("/api/programs?active=true")
+      .then((data) => setPrograms(data.programs ?? []))
+      .catch(() => setPrograms([]));
+  }, []);
+
+  const handleDonationSubmit = async (donationData) => {
+    if (donationData.kind === "non_financial") {
+      alert("Non-financial donation details received.");
+      return;
+    }
+    const response = await apiRequest("/api/donations", {
+      method: "POST",
+      body: donationData,
+    });
+    if (response.payment.approval_url) {
+      window.location.assign(response.payment.approval_url);
+      return;
+    }
+    alert(`Donation recorded. ${response.payment.provider} payment is pending confirmation.`);
   };
 
   const handleDonateClick = () => {
@@ -198,6 +217,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
       <DonationPopup
         isOpen={isDonationPopupOpen}
         onClose={() => setIsDonationPopupOpen(false)}
+        programs={programs}
         onDonate={handleDonationSubmit}
       />
     </>

@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash
 
 from app import create_app
 from app.extensions import db
-from app.models.users.members import User
+from app.models.users.users import User
 from app.models.classification.assessment_questions import AssessmentQuestion
 from app.models.classification.assessment_responses import AssessmentResponse
 from app.models.users.organisations import Organisation
@@ -16,6 +16,7 @@ from app.models.communication.communities import Community
 from app.models.communication.community_posts import CommunityPost
 from app.models.communication.community_membership import CommunityMembership
 from app.models.donations.financialDonations import FinancialDonation
+from app.models.users.donors import Donor
 
 
 def clear_data():
@@ -380,51 +381,62 @@ def seed_programs(organisations):
     return programs
 
 
-def seed_donations(programs):
+def seed_donations(users, programs):
+    donors = [
+        Donor(
+            user_id=users[0].user_id,
+            name=f"{users[0].first_name} {users[0].last_name}",
+            email=users[0].email,
+            phone_number=users[0].phone,
+        ),
+        Donor(
+            user_id=users[1].user_id,
+            name=f"{users[1].first_name} {users[1].last_name}",
+            email=users[1].email,
+            phone_number=users[1].phone,
+        ),
+    ]
+    db.session.add_all(donors)
+    db.session.flush()
     donations = [
         FinancialDonation(
-            program_id=programs[0].program_id,
-            donor_name="Safaricom Foundation",
-            donor_type="Corporate",
+            program_id=programs[0].id,
+            donor_id=donors[0].id,
             amount=150000.00,
             currency="KES",
             donation_date=date(2026, 2, 10),
-            payment_method="Bank transfer",
-            anonymous=False,
-            transaction_reference="TXN-SF-001",
+            payment_method="mpesa",
+            payment_status="completed",
+            provider_reference="TXN-SF-001",
         ),
         FinancialDonation(
-            program_id=programs[1].program_id,
-            donor_name="John Kiptoo",
-            donor_type="Individual",
+            program_id=programs[1].id,
+            donor_id=donors[1].id,
             amount=5000.00,
             currency="KES",
             donation_date=date(2026, 3, 5),
-            payment_method="M-Pesa",
-            anonymous=False,
-            transaction_reference="TXN-JK-002",
+            payment_method="mpesa",
+            payment_status="completed",
+            provider_reference="TXN-JK-002",
         ),
         FinancialDonation(
-            program_id=programs[2].program_id,
-            donor_name=None,
-            donor_type="Individual",
+            program_id=None,
             amount=2000.00,
             currency="KES",
             donation_date=date(2026, 4, 1),
-            payment_method="M-Pesa",
-            anonymous=True,
-            transaction_reference="TXN-ANN-003",
+            payment_method="paypal",
+            payment_status="completed",
+            provider_reference="TXN-ANN-003",
         ),
         FinancialDonation(
-            program_id=programs[3].program_id,
-            donor_name="Nairobi Rotary Club",
-            donor_type="Organisation",
+            program_id=programs[3].id,
+            donor_id=donors[0].id,
             amount=75000.00,
             currency="KES",
             donation_date=date(2026, 1, 20),
-            payment_method="Cheque",
-            anonymous=False,
-            transaction_reference="TXN-NRC-004",
+            payment_method="paypal",
+            payment_status="completed",
+            provider_reference="TXN-NRC-004",
         ),
     ]
     db.session.add_all(donations)
@@ -557,7 +569,7 @@ def run_seed():
         seed_job_applications(users, jobs)
 
         programs = seed_programs(organisations)
-        seed_donations(programs)
+        seed_donations(users, programs)
 
         communities = seed_communities()
         seed_community_posts(users, communities)

@@ -3,6 +3,9 @@ import "../styles/DonationPopup.css";
 import mpesaLogo from "../assets/mpesa-logo.png";
 import paypalLogo from "../assets/paypal-logo.svg";
 
+const isKenyanMobile = (phone) =>
+  /^(?:\+254|0)[17]\d{8}$/.test((phone || "").replace(/[\s-]/g, ""));
+
 const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId }) => {
 
   const [selectedProgram, setSelectedProgram] = useState(() => selectedProgramId || "");
@@ -22,14 +25,10 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
   const [donationDescription, setDonationDescription] = useState("");
   const [countries, setCountries] = useState([]);
   const [countriesLoading, setCountriesLoading] = useState(true);
+  const [submissionError, setSubmissionError] = useState("");
 
   // Predefined amounts
   const predefinedAmounts = [100, 500, 1000, 2500];
-
-  // Get program details
-  const getProgramDetails = (programId) => {
-    return programs?.find(p => p.id === programId) || { title: "General Community Fund" };
-  };
 
   const handleAmountSelect = (selectedAmount) => {
     setAmount(selectedAmount);
@@ -46,31 +45,34 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (paymentMethod === "mpesa" && !isKenyanMobile(donorPhone)) {
+      setSubmissionError("M-Pesa is only available for a valid Kenyan mobile number.");
+      return;
+    }
     setIsSubmitting(true);
+    setSubmissionError("");
     
     // Prepare donation data
     const donationData = {
-      type: "one-time",
-      programId: selectedProgram,
-      program: getProgramDetails(selectedProgram).title,
-      amount: amount,
-      customAmount: customAmount || null,
-      paymentMethod,
-      currency: "KES",
+      program_id: selectedProgram ? Number(selectedProgram) : null,
+      amount,
+      payment_method: paymentMethod,
+      currency: paymentMethod === "paypal" ? "USD" : "KES",
+      donor_name: selectedProgram ? null : donorName || null,
+      donor_email: selectedProgram ? null : donorEmail || null,
+      donor_phone: donorPhone.trim() || null,
     };
 
-    // Call the onDonate callback
-    if (onDonate) {
-      onDonate(donationData);
-    }
-
-    // Simulate API call delay
-    setTimeout(() => {
+    try {
+      if (onDonate) await onDonate(donationData);
       setIsSubmitting(false);
       onClose();
-    }, 2000);
+    } catch (error) {
+      setSubmissionError(error.message || "Could not record the donation.");
+      setIsSubmitting(false);
+    }
   };
 
   const handlePaymentMethodChange = (method) => {
@@ -136,13 +138,14 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
     return program?.title || "General Community Fund (Where Most Needed)";
   };
 
-  const handleGeneralSubmit = (e) => {
+  const handleGeneralSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmissionError("");
     
     // Prepare general donation data
     const generalDonationData = {
-      type: "general",
+      kind: "non_financial",
       donorName,
       donorEmail,
       donorPhone,
@@ -151,16 +154,14 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
       submissionDate: new Date().toISOString()
     };
 
-    // Call the onDonate callback for general donations
-    if (onDonate) {
-      onDonate(generalDonationData);
-    }
-
-    // Simulate API call delay
-    setTimeout(() => {
+    try {
+      if (onDonate) await onDonate(generalDonationData);
       setIsSubmitting(false);
       onClose();
-    }, 2000);
+    } catch (error) {
+      setSubmissionError(error.message || "Could not submit the donation.");
+      setIsSubmitting(false);
+    }
   };
 
   const handleFormSwitch = (formType) => {
@@ -213,7 +214,7 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
             className={`nav-tab ${activeForm === "general" ? "active" : ""}`}
             onClick={() => handleFormSwitch("general")}
           >
-            General Donation
+            Non-financial Donation
           </button>
         </div>
 
@@ -228,8 +229,8 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
               value={selectedProgram}
               onChange={(e) => setSelectedProgram(e.target.value)}
             >
-              <option value="">Select an initiative...</option>
-              {programs?.map((program) => (
+              <option value="">General Community Fund</option>
+              {programs?.filter((program) => program.active !== false).map((program) => (
                 <option key={program.id} value={program.id}>
                   {program.category && (
                     <span className="material-symbols-outlined">{program.icon}</span>
@@ -241,6 +242,29 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
               )}
             </select>
           </div>
+
+          {(paymentMethod === "mpesa" || !selectedProgram) && (
+            <div className="form-section">
+              <label htmlFor="financial-donor-phone">Phone number{paymentMethod === "mpesa" ? " for M-Pesa" : ""}</label>
+              <input id="financial-donor-phone" type="tel" className="form-input" value={donorPhone} onChange={(e) => setDonorPhone(e.target.value)} required={paymentMethod === "mpesa" || !selectedProgram} />
+              {paymentMethod === "mpesa" && donorPhone.trim() && !isKenyanMobile(donorPhone) && (
+                <small className="donation-error">Enter a Kenyan mobile number, for example +254 712 345 678.</small>
+              )}
+            </div>
+          )}
+
+          {!selectedProgram && (
+            <>
+              <div className="form-section">
+                <label htmlFor="financial-donor-name">Name</label>
+                <input id="financial-donor-name" className="form-input" value={donorName} onChange={(e) => setDonorName(e.target.value)} required />
+              </div>
+              <div className="form-section">
+                <label htmlFor="financial-donor-email">Email</label>
+                <input id="financial-donor-email" type="email" className="form-input" value={donorEmail} onChange={(e) => setDonorEmail(e.target.value)} required />
+              </div>
+            </>
+          )}
 
           {/* Contribution Amount */}
           <div className="form-section">
@@ -295,10 +319,10 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
           <button 
             type="submit" 
             className="submit-button"
-            disabled={isSubmitting || amount <= 0 || !selectedProgram || !paymentMethod}
+            disabled={isSubmitting || amount <= 0 || !paymentMethod || (paymentMethod === "mpesa" && !isKenyanMobile(donorPhone)) || (!selectedProgram && (!donorName || !donorEmail || !donorPhone.trim()))}
           >
-            {selectedProgram && amount > 0 && paymentMethod ? null : <span className="material-symbols-outlined">lock</span>}
-            Complete KES {amount} Contribution
+            {amount > 0 && paymentMethod && (paymentMethod !== "mpesa" || isKenyanMobile(donorPhone)) && (selectedProgram || (donorName && donorEmail && donorPhone.trim())) ? null : <span className="material-symbols-outlined">lock</span>}
+            Complete {paymentMethod === "paypal" ? "USD" : "KES"} {amount} Contribution
           </button>
         </form>
         ) : (
@@ -449,54 +473,10 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
             </button>
           </form>
         )}
+        {submissionError && <p role="alert" className="donation-error">{submissionError}</p>}
       </div>
     </div>
   );
-};
-
-DonationPopup.defaultProps = {
-  programs: [
-    { 
-      id: "general", 
-      title: "General Community Fund (Where Most Needed)", 
-      category: "General",
-      icon: "star",
-      description: "Support our most critical initiatives where funding is needed most.",
-      impact: "Flexible support for emerging community needs"
-    },
-    { 
-      id: "wells", 
-      title: "Sustainable Wells Initiative", 
-      category: "Clean Water",
-      icon: "water_drop",
-      description: "Building community-managed water infrastructure in drought-prone regions to ensure long-term health.",
-      impact: "38,000+ people with ongoing access to verified clean water"
-    },
-    { 
-      id: "nutrition", 
-      title: "Urban Nutrition Centers", 
-      category: "Food Security",
-      icon: "restaurant",
-      description: "Providing dignified access to nutritious meals through community-led kitchens and local farm partnerships.",
-      impact: "14,200 nutritious hot meals served every single week"
-    },
-    { 
-      id: "literacy", 
-      title: "Digital Literacy Access", 
-      category: "Education",
-      icon: "school",
-      description: "Equipping adults and youth with essential tech skills to bridge the digital divide and open employment pathways.",
-      impact: "1,840 graduates placed in living-wage career pathways"
-    },
-    { 
-      id: "health", 
-      title: "Mobile Health Clinics", 
-      category: "Healthcare Access",
-      icon: "medical_services",
-      description: "Bringing essential medical services and health education directly to underserved neighborhoods through our fleet of mobile units.",
-      impact: "65% funded • 9,400 clinic visits conducted this year"
-    }
-  ]
 };
 
 export default DonationPopup;

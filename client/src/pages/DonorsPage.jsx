@@ -3,28 +3,13 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import DonationPopup from "../components/DonationPopup";
+import { apiRequest } from "../api/client";
 import "../styles/Donors.css";
-
-const donations = [
-  { id: "don-001", date: "Oct 12, 2024", program: "Clean Water Initiative - Kisumu", amount: 5000, receipt: "REC-2024-8849", method: "M-Pesa", reference: "RJK4992LK8" },
-  { id: "don-002", date: "Sep 01, 2024", program: "Education Fund (Monthly)", amount: 2500, receipt: "REC-2024-7621", method: "M-Pesa", reference: "RI840131NX" },
-  { id: "don-003", date: "Aug 15, 2024", program: "Emergency Relief - Floods", amount: 10000, receipt: "REC-2024-6510", method: "M-Pesa", reference: "RH194821OP" },
-  { id: "don-004", date: "Aug 01, 2024", program: "Education Fund (Monthly)", amount: 2500, receipt: "REC-2024-5390", method: "M-Pesa", reference: "RG990142KA" },
-  { id: "don-005", date: "Jul 01, 2024", program: "Education Fund (Monthly)", amount: 2500, receipt: "REC-2024-4211", method: "M-Pesa", reference: "RF711928LQ" },
-  { id: "don-006", date: "May 10, 2024", program: "Sustainable Agriculture & Tea Farming", amount: 2500, receipt: "REC-2024-3199", method: "M-Pesa", reference: "RE449210PL" },
-];
 
 const impactUpdates = [
   { time: "Today", county: "Machakos County", title: "Clean water & solar pump commissioned in Machakos", summary: "Your contribution helped fund 3 new solar boreholes and a sand dam in Mwala, serving over 1,200 families with clean potable water.", image: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=700&q=80", auditor: "Maji Safi Kenya Quality Inspector #41" },
   { time: "Last Week", county: "Kiambu County", title: "Scholarships awarded in Kiambu", summary: "25 students received full tuition and tablet devices for the upcoming academic term in Githunguri.", image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=700&q=80", auditor: "Elimu Mashinani Field Coordinator" },
   { time: "2 Weeks Ago", county: "Kericho & Trans Nzoia", title: "Kericho co-op harvest boosts food resilience", summary: "Distributed drip irrigation kits to 140 smallholder farmers, boosting food resilience by 65%.", auditor: "Kilimo Endelevu Rift Agronomist" },
-];
-
-const publicPrograms = [
-  { id: "wells", title: "Sustainable Wells Initiative", category: "Clean Water", icon: "water_drop", description: "Building community-managed water infrastructure in drought-prone regions to ensure long-term health.", impact: "38,000+ people with ongoing access to verified clean water", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBmNSg5zfE7DQ3zu5jpj5Zxxyv-P3AAA9BiSGKYxSlW2irxydJVOEb5SCAVHab0zd0X_NXRgsx9Q3_5x_mQqqm5j33uVZmAjGKZT2aSB0ArTXiTd9-t5i6bne2ufq2LMtQR8jD_hUaYQ6cLisWMt3gahkzoPp5-DMn96ZRgFic6yJOtBbgRS2qVKuJSLP_7jEZwV21k4cKg2og2XK-CdC2-_PmSZwYQWy8nd3Xj-zuvOxoTe9LwT1ChUA" },
-  { id: "nutrition", title: "Urban Nutrition Centers", category: "Food Security", icon: "restaurant", description: "Providing dignified access to nutritious meals through community-led kitchens and local farm partnerships.", impact: "14,200 nutritious hot meals served every single week", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuD_nYDP1xQ8ebU7wdi6mFVIap80ikftYXPIAXzwTBRJfZ_3D9tIu3wAZS0WGnOrYslEHQKUKTtDZkbWObyTwFG6N5EsgaICBCzUhouo0XSHEnnb3ZZm3tEaSrs4LPTJbgF9h8CxZNgpK69HSdFb_CCBWgyxGzTUusU_ugcsTaW18PNOX5MESMrKSR3jUmBfBed3lC9jWjTWBk-y734hWnBuotUaDYQslcmGH5k5vYmy8jQnf5UC_Ijqyg" },
-  { id: "literacy", title: "Digital Literacy Access", category: "Education", icon: "school", description: "Equipping adults and youth with essential tech skills to bridge the digital divide and open employment pathways.", impact: "1,840 graduates placed in living-wage career pathways", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDv-4_7XiKvt01r0Aw_OFZxR2Q-vkmIfbyWAKs_S4bOVBD9T7eRbWMa0pa_QdAy9SJaTCBa3Tdw9nP0Ab0AAn7_DErNvG3iphSY-UUXhuWn1po_I3zpPXZQ0Ka35fgsMXT9uHlNMsg_QAgaWY77bJkZOAtSyFaawffzMonEbLjUwMxOhmZsP1SyO1qcB3pZQS0mBk9Pm0t--Qn9QHtgRIco2uIleBcRbi18acrnOKbEyHMzQlDz5_9d1Q" },
-  { id: "health", title: "Mobile Health Clinics", category: "Healthcare Access", icon: "medical_services", description: "Bringing essential medical services and health education directly to underserved neighborhoods through our fleet of mobile units.", impact: "65% funded • 9,400 clinic visits conducted this year", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuD58UOor5Jf6HP23RKceLauPM03eh82qXCZBYAXfvoz1_rK5DNZuv7sv_Bkf2BSJb5Jhpp-M-KSulKhnF0Jq97h0gdeeQyUBlq9_bjAy0-7qtHD1Z68xJ_hfEScK2EDuZZfwnHPT7_PRXP-BuMhNgA9HeEbmyHOFdU99Qd36ct6P28LMtCef7lL1-arjnggsW7klvzzXunsdL5DtMKH4rzs1fSYBH1Sg26MCMqQU7-rOIhZLH-JfeI-WQ" },
 ];
 
 const formatCurrency = (amount) => `KSh ${amount.toLocaleString()}`;
@@ -44,7 +29,9 @@ export default function DonorsPage() {
   const [isLearnMoreOpen, setIsLearnMoreOpen] = useState(false);
   const [learnMoreProgram, setLearnMoreProgram] = useState(null);
   const [activeProgramFilter, setActiveProgramFilter] = useState("all");
-  const totalGiven = donations.reduce((total, donation) => total + donation.amount, 0);
+  const [programs, setPrograms] = useState([]);
+  const [donationHistory, setDonationHistory] = useState([]);
+  const totalGiven = donationHistory.reduce((total, donation) => total + Number(donation.amount), 0);
 
   const showDonationNotice = (programId = null) => {
     if (programId) {
@@ -70,9 +57,10 @@ export default function DonorsPage() {
   };
 
   // Add type to existing programs for filtering
-  const programsWithTypes = publicPrograms.map(program => ({
+  const programsWithTypes = programs.map(program => ({
     ...program,
-    type: program.id === "wells" || program.id === "nutrition" || program.id === "health" ? "financial" : "non-financial"
+    category: program.type,
+    type: "financial",
   }));
 
   // Filter programs based on the active filter
@@ -80,16 +68,56 @@ export default function DonorsPage() {
     ? programsWithTypes 
     : programsWithTypes.filter(program => program.type === activeProgramFilter);
 
-  const handleDonationSubmit = (donationData) => {
-    console.log("Donation submitted:", donationData);
-    // Here you would typically call your backend API to process the donation
-    window.alert(`Thank you for your donation of $${donationData.amount} to ${donationData.program}!`);
+  const handleDonationSubmit = async (donationData) => {
+    if (donationData.kind === "non_financial") {
+      window.alert("Non-financial donation details received.");
+      return;
+    }
+    const response = await apiRequest("/api/donations", {
+      method: "POST",
+      body: donationData,
+    });
+    if (response.payment.approval_url) {
+      window.location.assign(response.payment.approval_url);
+      return;
+    }
+    window.alert(
+      `Donation recorded. ${response.payment.provider} payment is pending confirmation.`
+    );
   };
 
   useEffect(() => {
     const syncLoginStatus = () => setIsLoggedIn(isUserLoggedIn());
     window.addEventListener("storage", syncLoginStatus);
     return () => window.removeEventListener("storage", syncLoginStatus);
+  }, []);
+
+  useEffect(() => {
+    apiRequest("/api/programs?active=true")
+      .then((data) => setPrograms(data.programs ?? []))
+      .catch(() => setPrograms([]));
+  }, []);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    apiRequest("/api/donations/mine")
+      .then((data) => setDonationHistory(data.donations ?? []))
+      .catch(() => setDonationHistory([]));
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    const donationId = query.get("donation_id");
+    const orderId = query.get("token");
+    if (!donationId || !orderId) return;
+    apiRequest("/api/donations/payments/paypal/capture", {
+      method: "POST",
+      body: { donation_id: Number(donationId), order_id: orderId },
+    }).then(() => {
+      window.history.replaceState({}, "", window.location.pathname);
+    }).catch(() => {
+      window.alert("PayPal payment could not be confirmed.");
+    });
   }, []);
 
   if (!isLoggedIn) {
@@ -239,7 +267,7 @@ export default function DonorsPage() {
           <article className="donor-panel history-panel">
             <h2>Giving History</h2><p className="panel-description">Verifiable transaction records and tax-exempt receipts.</p>
             <div className="history-table-wrap"><table><thead><tr><th>Date</th><th>Program</th><th>Amount</th><th>Status</th><th>Receipt</th></tr></thead>
-              <tbody>{donations.map((donation) => <tr key={donation.id}><td>{donation.date}</td><td><b>{donation.program}</b><small>{donation.method}</small></td><td className="amount">{formatCurrency(donation.amount)}</td><td><span className="complete-status"><span className="material-symbols-outlined">check_circle</span> Completed</span></td><td><button type="button" className="receipt-button" onClick={() => setSelectedReceipt(donation)}><span className="material-symbols-outlined">download</span> Receipt</button></td></tr>)}</tbody>
+              <tbody>{donationHistory.map((donation) => <tr key={donation.donation_id}><td>{donation.donation_date}</td><td><b>{donation.program_title}</b><small>{donation.payment_method}</small></td><td className="amount">{formatCurrency(Number(donation.amount))}</td><td><span className="complete-status"><span className="material-symbols-outlined">check_circle</span> {donation.payment_status}</span></td><td><button type="button" className="receipt-button" onClick={() => setSelectedReceipt(donation)}><span className="material-symbols-outlined">download</span> Receipt</button></td></tr>)}</tbody>
             </table></div>
           </article>
           <aside className="donor-panel impact-panel">
