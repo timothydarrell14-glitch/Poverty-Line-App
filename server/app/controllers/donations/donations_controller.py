@@ -4,7 +4,7 @@ from marshmallow import ValidationError
 from sqlalchemy import func
 
 from app.extensions import db
-from app.models.donations.donations import Donation
+from server.app.models.donations.financialDonations import Donation
 from server.app.schemas.donations.donation_schema import (
     donation_schema,
     donations_schema,

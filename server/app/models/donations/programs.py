@@ -4,22 +4,19 @@ from app.extensions import db
 class Program(db.Model):
     __tablename__ = "programs"
 
-    program_id = db.Column(db.Integer, primary_key=True)
-    organisation_id = db.Column(
-        db.Integer, db.ForeignKey("organisations.organisation_id"), nullable=False
-    )
-    name = db.Column(db.String(255), nullable=False)
+    title = db.Column(db.String(255), nullable=False)
+    summary = db.Column(db.String(500))
     description = db.Column(db.Text)
-    category = db.Column(db.String(100))
+    type = db.Column(db.String(100))
     location = db.Column(db.String(255))
-    eligibility = db.Column(db.Text)
-    start_date = db.Column(db.Date)
-    end_date = db.Column(db.Date)
-    status = db.Column(db.String(50))
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    created_by = db.Column(db.Integer, db.ForeignKey("users.user_id"))
+    active = db.Column(db.Boolean, default=True, nullable=False)
+    organisation_id = db.Column(db.Integer, db.ForeignKey("organisations.organisation_id"))
 
     organisation = db.relationship("Organisation", back_populates="programs")
-    donations = db.relationship("Donation", back_populates="program")
-    memberships = db.relationship("ProgramMembership", back_populates="program")
+    financial_donations = db.relationship("FinancialDonation", back_populates="program")
+    non_financial_donations = db.relationship("NonFinancialDonation", back_populates="program")
 
     @classmethod
     def list_for_admin(cls, search=None, status=None, organisation_id=None):
@@ -28,25 +25,24 @@ class Program(db.Model):
         if search:
             term = f"%{search.strip()}%"
             query = query.filter(
-                db.or_(cls.name.ilike(term), cls.description.ilike(term))
+                db.or_(cls.title.ilike(term), cls.description.ilike(term), cls.description.ilike(term))
             )
         if status:
-            query = query.filter(db.func.lower(cls.status) == status.strip().lower())
+            query = query.filter(cls.active == status)
         if organisation_id:
             query = query.filter(cls.organisation_id == organisation_id)
-        return query.order_by(cls.program_id.desc())
+        return query.order_by(cls.type.desc())
 
     @classmethod
     def create_from_data(cls, data):
         """Create an unsaved program instance from schema-validated input."""
         return cls(
             organisation_id=data["organisation_id"],
-            name=data["name"],
+            title=data["title"],
+            summary=data.get("summary"),
             description=data.get("description"),
-            category=data.get("category"),
+            type=data.get("type"),
             location=data.get("location"),
-            eligibility=data.get("eligibility"),
-            start_date=data.get("start_date"),
-            end_date=data.get("end_date"),
-            status=data.get("status", "active"),
+            created_by=data.get("created_by"),
+            active=data.get("active", True),
         )
