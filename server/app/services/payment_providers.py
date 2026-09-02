@@ -6,6 +6,10 @@ from datetime import datetime
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
+from paypalserversdk.configuration import Environment
+from paypalserversdk.http.auth.o_auth_2 import ClientCredentialsAuthCredentials
+from paypalserversdk.paypal_serversdk_client import PaypalServersdkClient
+
 
 class PaymentProviderError(Exception):
     pass
@@ -83,29 +87,23 @@ def initiate_mpesa(donation, phone_number):
     }
 
 
-def _paypal_access_token():
-    client_id = os.environ.get("PAYPAL_CLIENT_ID")
-    client_secret = os.environ.get("PAYPAL_CLIENT_SECRET")
-    if not _configured("PAYPAL_CLIENT_ID", "PAYPAL_CLIENT_SECRET"):
-        return None, None
-    environment = os.environ.get("PAYPAL_ENVIRONMENT", "sandbox")
-    base_url = "https://api-m.paypal.com" if environment == "production" else "https://api-m.sandbox.paypal.com"
-    credentials = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
-    request = Request(
-        f"{base_url}/v1/oauth2/token",
-        data=b"grant_type=client_credentials",
-        headers={
-            "Authorization": f"Basic {credentials}",
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-        method="POST",
+def _paypal_client():
+    environment = (
+        Environment.PRODUCTION
+        if os.environ.get("PAYPAL_ENVIRONMENT", "sandbox") == "production"
+        else Environment.SANDBOX
     )
-    try:
-        with urlopen(request, timeout=20) as response:
-            token = json.loads(response.read().decode("utf-8"))
-    except (HTTPError, URLError, TimeoutError) as error:
-        raise PaymentProviderError(f"PayPal token request failed: {error}") from error
-    return base_url, token["access_token"]
+    credentials = ClientCredentialsAuthCredentials(
+        os.environ["PAYPAL_CLIENT_ID"], os.environ["PAYPAL_CLIENT_SECRET"]
+    )
+    return PaypalServersdkClient(
+        environment=environment,
+        client_credentials_auth_credentials=credentials,
+    )
+
+
+def _response_body(response):
+    return getattr(response, "body", response)
 
 
 def get_paypal_browser_safe_client_token():
@@ -113,50 +111,36 @@ def get_paypal_browser_safe_client_token():
     client_secret = os.environ.get("PAYPAL_CLIENT_SECRET")
     if not _configured("PAYPAL_CLIENT_ID", "PAYPAL_CLIENT_SECRET"):
         return None
-    environment = os.environ.get("PAYPAL_ENVIRONMENT", "sandbox")
-    base_url = "https://api-m.paypal.com" if environment == "production" else "https://api-m.sandbox.paypal.com"
     credentials = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
-    token_payload = {
-        "grant_type": "client_credentials",
-        "response_type": "client_token",
-    }
+    optional_form_parameters = {"response_type": "client_token"}
     domains = os.environ.get("PAYPAL_FASTLANE_DOMAINS", "")
     if domains.strip():
-        token_payload["domains[]"] = ",".join(
+        optional_form_parameters["domains[]"] = ",".join(
             domain.strip() for domain in domains.split(",") if domain.strip()
         )
-    request = Request(
-        f"{base_url}/v1/oauth2/token",
-        data=urlencode(token_payload).encode("ascii"),
-        headers={
-            "Authorization": f"Basic {credentials}",
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-        method="POST",
-    )
     try:
-        with urlopen(request, timeout=20) as response:
-            return json.loads(response.read().decode("utf-8"))["access_token"]
-    except (HTTPError, URLError, TimeoutError, KeyError) as error:
+        response = _paypal_client().o_auth_authorization.request_token(
+            {"authorization": f"Basic {credentials}"},
+            optional_form_parameters,
+        )
+        return _response_body(response).access_token
+    except Exception as error:
         raise PaymentProviderError(f"PayPal client token request failed: {error}") from error
 
 
 def create_paypal_fastlane_order(payload):
-    base_url, token = _paypal_access_token()
-    if not token:
+    if not _configured("PAYPAL_CLIENT_ID", "PAYPAL_CLIENT_SECRET"):
         raise PaymentProviderError("PayPal is not configured.")
-    result = _request(
-        f"{base_url}/v2/checkout/orders",
-        method="POST",
-        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
-        payload=payload,
-    )
-    return result
+    try:
+        response = _paypal_client().orders.create_order({"body": payload})
+        result = _response_body(response)
+        return result.to_dictionary() if hasattr(result, "to_dictionary") else result
+    except Exception as error:
+        raise PaymentProviderError(f"PayPal order creation failed: {error}") from error
 
 
 def create_paypal_order(donation):
-    base_url, token = _paypal_access_token()
-    if not token:
+    if not _configured("PAYPAL_CLIENT_ID", "PAYPAL_CLIENT_SECRET"):
         return {"status": "pending", "next_action": "configure_provider"}
     currency = os.environ.get("PAYPAL_CURRENCY", "USD")
     if donation.currency != currency:
@@ -177,12 +161,12 @@ def create_paypal_order(donation):
             "return_url": f"{return_url}?donation_id={donation.donation_id}",
             "cancel_url": cancel_url,
         }
-    result = _request(
-        f"{base_url}/v2/checkout/orders",
-        method="POST",
-        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
-        payload=payload,
-    )
+    try:
+        response = _paypal_client().orders.create_order({"body": payload})
+        result = _response_body(response)
+        result = result.to_dictionary() if hasattr(result, "to_dictionary") else result
+    except Exception as error:
+        raise PaymentProviderError(f"PayPal order creation failed: {error}") from error
     approval = next((link["href"] for link in result.get("links", []) if link.get("rel") == "approve"), None)
     return {
         "status": "pending",
@@ -193,16 +177,14 @@ def create_paypal_order(donation):
 
 
 def capture_paypal_order(provider_reference):
-    base_url, token = _paypal_access_token()
-    if not token:
+    if not _configured("PAYPAL_CLIENT_ID", "PAYPAL_CLIENT_SECRET"):
         raise PaymentProviderError("PayPal is not configured.")
-    result = _request(
-        f"{base_url}/v2/checkout/orders/{provider_reference}/capture",
-        method="POST",
-        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
-        payload={},
-    )
-    return result.get("status") == "COMPLETED"
+    try:
+        response = _paypal_client().orders.capture_order({"id": provider_reference, "body": {}})
+        result = _response_body(response)
+        return getattr(result, "status", None) == "COMPLETED"
+    except Exception as error:
+        raise PaymentProviderError(f"PayPal capture failed: {error}") from error
 
 
 def initiate_payment(donation, phone_number=None):
