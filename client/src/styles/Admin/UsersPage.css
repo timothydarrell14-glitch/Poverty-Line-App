@@ -498,12 +498,20 @@
 .admin-users__modal-body input,
 .admin-users__modal-body select,
 .admin-users__manage-body select {
-  border: 1px solid #aab8bd;
+  background: #f4f7fb;
+  border: 1px solid #cbd5d9;
   border-radius: 6px;
   color: #17242a;
   font: inherit;
   font-size: 14px;
+  outline: 0;
   padding: 9px 10px;
+  transition: border-color 0.2s ease;
+}
+.admin-users__modal-body input:focus,
+.admin-users__modal-body select:focus,
+.admin-users__manage-body select:focus {
+  border-color: #00707b;
 }
 .admin-users__modal-actions {
   display: flex;

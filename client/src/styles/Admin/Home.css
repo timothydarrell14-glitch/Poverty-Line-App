@@ -387,7 +387,24 @@
 .admin-home__profile-form h2,
 .admin-home__profile-form p { margin: 0; }
 .admin-home__profile-form label { color: #28383e; display: grid; font-size: 14px; gap: 6px; }
-.admin-home__profile-form input { border: 1px solid #aab8bd; border-radius: 5px; font: inherit; padding: 9px; }
+.admin-home__profile-form input {
+  background: #f4f7fb;
+  border: 1px solid #cbd5d9;
+  border-radius: 6px;
+  color: #1b282d;
+  font: inherit;
+  outline: 0;
+  padding: 9px 11px;
+  transition: border-color 0.2s ease;
+}
+.admin-home__profile-form input:focus {
+  border-color: #00707b;
+}
+.admin-home__profile-form input[type="file"] {
+  background: transparent;
+  border-style: dashed;
+  padding: 8px 10px;
+}
 .admin-home__form-actions { display: flex; gap: 10px; justify-content: flex-end; }
 .admin-home__form-actions button { border: 0; border-radius: 5px; cursor: pointer; font: inherit; padding: 9px 13px; }
 .admin-home__form-actions button[type="submit"] { background: #00707b; color: #fff; }

@@ -239,27 +239,37 @@ function Programs() {
       </div>
 
       {showCreateForm && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.5)", display: "grid", placeItems: "center", zIndex: 30 }}>
-          <form onSubmit={submitProgram} style={{ width: 440, background: "#fff", borderRadius: 14, padding: 24, boxShadow: "0 24px 60px rgba(15,23,42,0.22)" }}>
-            <h2 style={{ marginTop: 0 }}>Create program</h2>
-            <div style={{ display: "grid", gap: 12 }}>
-              <input value={programForm.title} onChange={(event) => setProgramForm((current) => ({ ...current, title: event.target.value }))} placeholder="Program title" required />
-              <textarea value={programForm.description} onChange={(event) => setProgramForm((current) => ({ ...current, description: event.target.value }))} placeholder="Description" rows={4} />
-              <select value={programForm.organisation_id} onChange={(event) => setProgramForm((current) => ({ ...current, organisation_id: event.target.value }))} required>
-                <option value="">Select organisation</option>
-                {organisations.map((organisation) => (
-                  <option key={organisation.id} value={organisation.id}>{organisation.name}</option>
-                ))}
-              </select>
-              <input value={programForm.location} onChange={(event) => setProgramForm((current) => ({ ...current, location: event.target.value }))} placeholder="Location" />
-              <select value={programForm.active} onChange={(event) => setProgramForm((current) => ({ ...current, active: event.target.value === "true" }))}>
-                <option value="true">Active</option>
-                <option value="false">Inactive</option>
-              </select>
+        <div className="admin-programs__modal-backdrop" role="presentation" onClick={() => setShowCreateForm(false)}>
+          <form className="admin-programs__modal" onSubmit={submitProgram} onClick={(event) => event.stopPropagation()}>
+            <h2>Create program</h2>
+            <div className="admin-programs__modal-body">
+              <label>Title
+                <input value={programForm.title} onChange={(event) => setProgramForm((current) => ({ ...current, title: event.target.value }))} placeholder="Program title" required />
+              </label>
+              <label>Description
+                <textarea value={programForm.description} onChange={(event) => setProgramForm((current) => ({ ...current, description: event.target.value }))} placeholder="Description" rows={4} />
+              </label>
+              <label>Organisation
+                <select value={programForm.organisation_id} onChange={(event) => setProgramForm((current) => ({ ...current, organisation_id: event.target.value }))} required>
+                  <option value="">Select organisation</option>
+                  {organisations.map((organisation) => (
+                    <option key={organisation.id} value={organisation.id}>{organisation.name}</option>
+                  ))}
+                </select>
+              </label>
+              <label>Location
+                <input value={programForm.location} onChange={(event) => setProgramForm((current) => ({ ...current, location: event.target.value }))} placeholder="Location" />
+              </label>
+              <label>Status
+                <select value={programForm.active} onChange={(event) => setProgramForm((current) => ({ ...current, active: event.target.value === "true" }))}>
+                  <option value="true">Active</option>
+                  <option value="false">Inactive</option>
+                </select>
+              </label>
             </div>
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 20 }}>
-              <button type="button" onClick={() => { setShowCreateForm(false); setProgramForm(emptyProgramForm); }}>Cancel</button>
-              <button type="submit">Save Program</button>
+            <div className="admin-programs__modal-actions">
+              <button type="button" className="admin-programs__modal-cancel" onClick={() => { setShowCreateForm(false); setProgramForm(emptyProgramForm); }}>Cancel</button>
+              <button type="submit" className="admin-programs__modal-confirm">Save Program</button>
             </div>
           </form>
         </div>
