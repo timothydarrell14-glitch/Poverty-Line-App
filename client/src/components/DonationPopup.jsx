@@ -3,7 +3,7 @@ import "../styles/DonationPopup.css";
 import mpesaLogo from "../assets/mpesa-logo.png";
 import paypalLogo from "../assets/paypal-logo.svg";
 
-const DonationPopup = ({ isOpen, onClose, programs, onDonate }) => {
+const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId }) => {
 
   const [selectedProgram, setSelectedProgram] = useState("");
   const [amount, setAmount] = useState(0);
@@ -30,6 +30,15 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate }) => {
   const getProgramDetails = (programId) => {
     return programs?.find(p => p.id === programId) || { title: "General Community Fund" };
   };
+
+  // Update selected program when selectedProgramId prop changes
+  useEffect(() => {
+    if (selectedProgramId) {
+      setSelectedProgram(selectedProgramId);
+      // Switch to financial form when a program is selected
+      setActiveForm("financial");
+    }
+  }, [selectedProgramId]);
 
   const handleAmountSelect = (selectedAmount) => {
     setAmount(selectedAmount);
