@@ -50,6 +50,31 @@ python seed.py
 flask --app run run
 ```
 
+### Payment configuration
+The donation API supports M-Pesa Daraja and PayPal. Keep these values in `server/.env`; never put them in the client environment:
+
+```env
+MPESA_ENVIRONMENT=sandbox
+MPESA_CONSUMER_KEY=...
+MPESA_CONSUMER_SECRET=...
+MPESA_SHORTCODE=...
+MPESA_PASSKEY=...
+MPESA_CALLBACK_URL=https://your-api.example.com/api/donations/payments/mpesa/callback
+
+PAYPAL_ENVIRONMENT=sandbox
+PAYPAL_CLIENT_ID=...
+PAYPAL_CLIENT_SECRET=...
+PAYPAL_CURRENCY=USD
+PAYPAL_RETURN_URL=https://your-client.example.com/donors
+PAYPAL_CANCEL_URL=https://your-client.example.com/donors
+PAYPAL_FASTLANE_ENABLED=true
+PAYPAL_FASTLANE_DOMAINS=https://your-client.example.com
+```
+
+M-Pesa updates the donation from the Daraja callback. PayPal creates an order, redirects the donor for approval, and captures the order after the client returns. Payment status must be confirmed by these server-side callbacks; the frontend does not mark a donation as paid.
+
+Set `PAYPAL_FASTLANE_ENABLED=true` in the server environment and `VITE_PAYPAL_FASTLANE_ENABLED=true` in the client environment to enable the PayPal Fastlane guest checkout. Fastlane uses the backend proxy endpoints under `/api/donations/paypal-api/`, so PayPal secrets remain on the server.
+
 ### Running tests
 ```bash
 pytest tests -v
