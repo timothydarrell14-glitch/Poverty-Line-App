@@ -1,6 +1,7 @@
 import base64
 import json
 import os
+from urllib.parse import urlencode, urlsplit, urlunsplit, parse_qsl
 from datetime import datetime
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -49,6 +50,13 @@ def initiate_mpesa(donation, phone_number):
     password = base64.b64encode(
         f"{os.environ['MPESA_SHORTCODE']}{os.environ['MPESA_PASSKEY']}{timestamp}".encode()
     ).decode()
+    callback_url = os.environ["MPESA_CALLBACK_URL"]
+    callback_token = os.environ.get("MPESA_CALLBACK_TOKEN")
+    if callback_token:
+        parts = urlsplit(callback_url)
+        query = dict(parse_qsl(parts.query))
+        query["token"] = callback_token
+        callback_url = urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
     result = _request(
         f"{base_url}/mpesa/stkpush/v1/processrequest",
         method="POST",
@@ -62,7 +70,7 @@ def initiate_mpesa(donation, phone_number):
             "PartyA": phone_number.replace("+", ""),
             "PartyB": os.environ["MPESA_SHORTCODE"],
             "PhoneNumber": phone_number.replace("+", ""),
-            "CallBackURL": os.environ["MPESA_CALLBACK_URL"],
+            "CallBackURL": callback_url,
             "AccountReference": f"DONATION-{donation.donation_id}",
             "TransactionDesc": "Poverty Line donation",
         },

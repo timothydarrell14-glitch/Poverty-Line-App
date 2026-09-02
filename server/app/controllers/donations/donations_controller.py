@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from datetime import date
+import hmac
 import os
 import re
 
@@ -187,17 +188,41 @@ def create_donation():
 
 @donations_bp.route("/payments/mpesa/callback", methods=["POST"])
 def mpesa_callback():
+    expected_token = os.environ.get("MPESA_CALLBACK_TOKEN")
+    supplied_token = request.args.get("token", "")
+    if expected_token and (
+        expected_token.lower().startswith("replace-with-")
+        or not hmac.compare_digest(supplied_token, expected_token)
+    ):
+        return jsonify({"message": "Unauthorized callback."}), 401
+
+    if not request.is_json:
+        return jsonify({"message": "A JSON callback payload is required."}), 400
     callback = (request.get_json(silent=True) or {}).get("Body", {}).get("stkCallback", {})
     provider_reference = callback.get("CheckoutRequestID")
+    if not provider_reference or not isinstance(callback.get("ResultCode"), int):
+        return jsonify({"message": "Invalid M-Pesa callback payload."}), 400
     donation = FinancialDonation.query.filter_by(provider_reference=provider_reference).first()
     if donation is None:
         return jsonify({"message": "Donation not found."}), 404
 
     result_code = callback.get("ResultCode")
+    if donation.payment_status in {"completed", "failed"}:
+        return jsonify({"received": True, "duplicate": True}), 200
     donation.payment_status = "completed" if result_code == 0 else "failed"
-    for item in callback.get("CallbackMetadata", {}).get("Item", []):
+    metadata = callback.get("CallbackMetadata", {}).get("Item", [])
+    if not isinstance(metadata, list):
+        return jsonify({"message": "Invalid M-Pesa callback metadata."}), 400
+    for item in metadata:
         if item.get("Name") == "MpesaReceiptNumber":
-            donation.transaction_code = str(item.get("Value"))
+            receipt = str(item.get("Value"))
+            duplicate = FinancialDonation.query.filter(
+                FinancialDonation.transaction_code == receipt,
+                FinancialDonation.donation_id != donation.donation_id,
+            ).first()
+            if duplicate:
+                return jsonify({"message": "Duplicate M-Pesa receipt."}), 409
+            donation.transaction_code = receipt
             break
     db.session.commit()
     return jsonify({"received": True}), 200

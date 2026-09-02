@@ -119,3 +119,42 @@ def test_general_guest_donation_creates_account_and_donor(client, app):
         assert donor.user_id == user.user_id
         assert donation.donor_id == donor.id
         assert donation.program_id is None
+
+
+def test_mpesa_callback_requires_token(client, monkeypatch):
+    monkeypatch.setenv("MPESA_CALLBACK_TOKEN", "callback-secret")
+    response = client.post(
+        "/api/donations/payments/mpesa/callback",
+        json={"Body": {"stkCallback": {"CheckoutRequestID": "checkout-1", "ResultCode": 0}}},
+    )
+
+    assert response.status_code == 401
+
+
+def test_mpesa_callback_is_idempotent(client, app, monkeypatch):
+    monkeypatch.setenv("MPESA_CALLBACK_TOKEN", "callback-secret")
+    with app.app_context():
+        donation = FinancialDonation(
+            amount=100,
+            currency="KES",
+            payment_method="mpesa",
+            payment_status="pending",
+            provider_reference="checkout-1",
+        )
+        db.session.add(donation)
+        db.session.commit()
+
+    payload = {
+        "Body": {
+            "stkCallback": {
+                "CheckoutRequestID": "checkout-1",
+                "ResultCode": 0,
+                "CallbackMetadata": {"Item": [{"Name": "MpesaReceiptNumber", "Value": "receipt-1"}]},
+            }
+        }
+    }
+    first = client.post("/api/donations/payments/mpesa/callback?token=callback-secret", json=payload)
+    second = client.post("/api/donations/payments/mpesa/callback?token=callback-secret", json=payload)
+
+    assert first.status_code == 200
+    assert second.get_json()["duplicate"] is True

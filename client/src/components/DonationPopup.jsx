@@ -234,11 +234,8 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
               onChange={(e) => setSelectedProgram(e.target.value)}
             >
               <option value="">General Community Fund</option>
-              {programs?.filter((program) => program.active !== false).map((program) => (
+              {programs?.filter((program) => program.active !== false && (program.program_kind || "financial") === "financial").map((program) => (
                 <option key={program.id} value={program.id}>
-                  {program.category && (
-                    <span className="material-symbols-outlined">{program.icon}</span>
-                  )}
                   {getProgramTitle(program.id)}
                 </option>
               )) || (

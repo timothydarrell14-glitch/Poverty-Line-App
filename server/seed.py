@@ -350,6 +350,8 @@ def seed_programs(organisations):
             type="Agriculture",
             location="Kericho",
             active=True,
+            program_kind="financial",
+            funding_goal=500000,
         ),
         Program(
             organisation_id=organisations[1].organisation_id,
@@ -358,6 +360,8 @@ def seed_programs(organisations):
             type="Education",
             location="Kisumu",
             active=True,
+            program_kind="financial",
+            funding_goal=750000,
         ),
         Program(
             organisation_id=organisations[2].organisation_id,
@@ -366,6 +370,10 @@ def seed_programs(organisations):
             type="Livelihood",
             location="Mombasa",
             active=True,
+            program_kind="non_financial",
+            progress_target=1000,
+            progress_value=640,
+            progress_unit="business kits",
         ),
         Program(
             organisation_id=organisations[3].organisation_id,
@@ -374,6 +382,8 @@ def seed_programs(organisations):
             type="Education",
             location="Nairobi",
             active=True,
+            program_kind="financial",
+            funding_goal=1000000,
         ),
     ]
     db.session.add_all(programs)

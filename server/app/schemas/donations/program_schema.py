@@ -14,6 +14,11 @@ class ProgramSchema(ma.SQLAlchemyAutoSchema):
 class ProgramCreateSchema(ma.SQLAlchemyAutoSchema):
     organisation_id = fields.Integer(required=True)
     title = fields.String(required=True, validate=validate.Length(min=1, max=255))
+    program_kind = fields.String(load_default="financial", validate=validate.OneOf(["financial", "non_financial"]))
+    funding_goal = fields.Decimal(load_default=None, allow_none=True, validate=validate.Range(min=0))
+    progress_target = fields.Integer(load_default=None, allow_none=True, validate=validate.Range(min=0))
+    progress_value = fields.Integer(load_default=0, validate=validate.Range(min=0))
+    progress_unit = fields.String(load_default=None, allow_none=True)
 
     @pre_load
     def normalize_legacy_fields(self, data, **kwargs):
@@ -39,6 +44,11 @@ class ProgramCreateSchema(ma.SQLAlchemyAutoSchema):
             "type",
             "location",
             "active",
+            "program_kind",
+            "funding_goal",
+            "progress_target",
+            "progress_value",
+            "progress_unit",
         )
 
 
@@ -53,6 +63,11 @@ class ProgramUpdateSchema(ma.SQLAlchemyAutoSchema):
             "type",
             "location",
             "active",
+            "program_kind",
+            "funding_goal",
+            "progress_target",
+            "progress_value",
+            "progress_unit",
         )
 
 

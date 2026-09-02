@@ -60,13 +60,13 @@ export default function DonorsPage() {
   const programsWithTypes = programs.map(program => ({
     ...program,
     category: program.type,
-    type: "financial",
+    program_kind: program.program_kind || "financial",
   }));
 
   // Filter programs based on the active filter
   const filteredPrograms = activeProgramFilter === "all" 
     ? programsWithTypes 
-    : programsWithTypes.filter(program => program.type === activeProgramFilter);
+    : programsWithTypes.filter(program => program.program_kind === activeProgramFilter.replace("-", "_"));
 
   const handleDonationSubmit = async (donationData) => {
     if (donationData.kind === "non_financial") {
@@ -180,10 +180,16 @@ export default function DonorsPage() {
                       <h3>{program.title}</h3>
                       <p>{program.description}</p>
                     </div>
-                    {program.id === "health" && 
+                    {program.program_kind === "financial" && program.funding_goal > 0 &&
                       <div className="public-progress">
-                        <p><span>Campaign Goal: $1,000,000</span><b>65% Funded ($650K)</b></p>
-                        <i><i /></i>
+                        <p><span>Goal: {program.funding_goal.toLocaleString()} {program.currency || "KES"}</span><b>{Math.min(100, Math.round((program.funding_raised / program.funding_goal) * 100))}% Funded</b></p>
+                        <i><i style={{ width: `${Math.min(100, (program.funding_raised / program.funding_goal) * 100)}%` }} /></i>
+                      </div>
+                    }
+                    {program.program_kind === "non_financial" && program.progress_target > 0 &&
+                      <div className="public-progress">
+                        <p><span>Target: {program.progress_target.toLocaleString()} {program.progress_unit || "items"}</span><b>{Math.min(100, Math.round((program.progress_value / program.progress_target) * 100))}% Acquired</b></p>
+                        <i><i style={{ width: `${Math.min(100, (program.progress_value / program.progress_target) * 100)}%` }} /></i>
                       </div>
                     }
                     <div className="public-program-footer">
