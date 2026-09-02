@@ -11,7 +11,7 @@ export default function HomePage() {
 
   return (
     <div className="site-shell">
-      <Navbar activeTab="home" onOpenDonate={() => alert('Donate modal opened')} />
+      <Navbar activeTab="home" />
       <main>
         <Herosection
           onExploreImpact={() => navigate('/donors')}

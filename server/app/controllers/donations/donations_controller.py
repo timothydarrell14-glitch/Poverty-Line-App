@@ -4,7 +4,7 @@ from marshmallow import ValidationError
 from sqlalchemy import func
 
 from app.extensions import db
-from app.models.donations.donations import Donation
+from app.models.donations.financialDonations import FinancialDonation
 from app.schemas.donations.donation_schema import (
     donation_schema,
     donations_schema,
@@ -22,17 +22,7 @@ def create_donation():
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    donation = Donation(
-        program_id=data["program_id"],
-        donor_name=data.get("donor_name"),
-        donor_type=data.get("donor_type"),
-        amount=data["amount"],
-        currency=data.get("currency"),
-        donation_date=data.get("donation_date"),
-        payment_method=data.get("payment_method"),
-        anonymous=data.get("anonymous", False),
-        transaction_reference=data.get("transaction_reference"),
-    )
+    donation = FinancialDonation(**data)
     db.session.add(donation)
     db.session.commit()
 
@@ -45,7 +35,7 @@ def list_donations():
     per_page = request.args.get("per_page", 20, type=int)
     program_id = request.args.get("program_id", type=int)
 
-    query = Donation.query
+    query = FinancialDonation.query
 
     if program_id:
         query = query.filter_by(program_id=program_id)
@@ -65,15 +55,15 @@ def list_donations():
 
 @donations_bp.route("/<int:donation_id>", methods=["GET"])
 def get_donation(donation_id):
-    donation = db.get_or_404(Donation, donation_id)
+    donation = db.get_or_404(FinancialDonation, donation_id)
     return jsonify(donation_schema.dump(donation)), 200
 
 
 @donations_bp.route("/<int:program_id>/total", methods=["GET"])
 def get_program_donation_total(program_id):
     total = (
-        db.session.query(func.sum(Donation.amount))
-        .filter(Donation.program_id == program_id)
+        db.session.query(func.sum(FinancialDonation.amount))
+        .filter(FinancialDonation.program_id == program_id)
         .scalar()
     )
     return jsonify(

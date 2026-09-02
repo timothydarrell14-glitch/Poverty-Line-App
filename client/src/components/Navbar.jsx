@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Login from "./Login";
 import Signup from "./Signup";
+import DonationPopup from "./DonationPopup";
 import {
   clearAuthSession,
   getCurrentUser,
@@ -13,6 +14,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   const [open, setOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
+  const [isDonationPopupOpen, setIsDonationPopupOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(getCurrentUser());
   const navigate = useNavigate();
   const location = useLocation();
@@ -41,6 +43,25 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   const signOut = () => {
     clearAuthSession();
     navigate("/");
+  };
+
+  const openDonationPopup = () => {
+    setIsDonationPopupOpen(true);
+  };
+
+  const handleDonationSubmit = (donationData) => {
+    console.log("Donation submitted:", donationData);
+    alert(`Thank you for your donation of $${donationData.amount} to ${donationData.program}!`);
+  };
+
+  const handleDonateClick = () => {
+    // If onOpenDonate is provided (for pages that want custom behavior), use it
+    // Otherwise, use the built-in popup
+    if (onOpenDonate) {
+      onOpenDonate();
+    } else {
+      openDonationPopup();
+    }
   };
 
   const items = [
@@ -110,7 +131,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
                 Login
               </button>
             )}
-            <button className="pill-button nav-donate" onClick={onOpenDonate}>
+            <button className="pill-button nav-donate" onClick={handleDonateClick}>
               <span className="material-symbols-outlined">favorite</span>Donate
               Now
             </button>
@@ -141,7 +162,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
             className="pill-button"
             onClick={() => {
               setOpen(false);
-              onOpenDonate?.();
+              handleDonateClick();
             }}
           >
             Donate Now
@@ -173,6 +194,11 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
           setIsSignupOpen(false);
           setIsLoginOpen(true);
         }}
+      />
+      <DonationPopup
+        isOpen={isDonationPopupOpen}
+        onClose={() => setIsDonationPopupOpen(false)}
+        onDonate={handleDonationSubmit}
       />
     </>
   );

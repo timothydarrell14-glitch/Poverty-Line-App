@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 
 from app.extensions import db
-from app.models.donations.programs import Program
+from app.models.programs import Program
 from app.models.users.organisations import Organisation
 from app.routes.authorization import admin_required
 from app.schemas.donations.program_schema import (
@@ -24,7 +24,7 @@ def admin_list_programs():
     per_page = min(max(request.args.get("per_page", 20, type=int), 1), 100)
     pagination = Program.list_for_admin(
         search=request.args.get("search"),
-        status=request.args.get("status"),
+        active=request.args.get("active", type=lambda value: value.lower() == "true"),
         organisation_id=request.args.get("organisation_id", type=int),
     ).paginate(page=page, per_page=per_page, error_out=False)
     return jsonify(
@@ -87,14 +87,12 @@ def create_program():
 
     program = Program(
         organisation_id=data["organisation_id"],
-        name=data["name"],
+        title=data["title"],
         description=data.get("description"),
-        category=data.get("category"),
+        summary=data.get("summary"),
+        type=data.get("type"),
         location=data.get("location"),
-        eligibility=data.get("eligibility"),
-        start_date=data.get("start_date"),
-        end_date=data.get("end_date"),
-        status="active",
+        active=data.get("active", True),
     )
     db.session.add(program)
     db.session.commit()
@@ -107,8 +105,8 @@ def list_programs():
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 20, type=int)
     search = request.args.get("search")
-    status = request.args.get("status")
-    category = request.args.get("category")
+    active = request.args.get("active", type=lambda value: value.lower() == "true")
+    program_type = request.args.get("type")
     organisation_id = request.args.get("organisation_id", type=int)
 
     query = Program.query
@@ -116,12 +114,12 @@ def list_programs():
     if search:
         like = f"%{search}%"
         query = query.filter(
-            (Program.name.ilike(like)) | (Program.description.ilike(like))
+            (Program.title.ilike(like)) | (Program.description.ilike(like))
         )
-    if status:
-        query = query.filter_by(status=status)
-    if category:
-        query = query.filter_by(category=category)
+    if active is not None:
+        query = query.filter_by(active=active)
+    if program_type:
+        query = query.filter_by(type=program_type)
     if organisation_id:
         query = query.filter_by(organisation_id=organisation_id)
 

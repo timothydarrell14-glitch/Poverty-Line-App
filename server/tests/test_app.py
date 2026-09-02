@@ -1,7 +1,7 @@
 from app import create_app
 from app.extensions import db
 from app.models.users.organisations import Organisation
-from app.models.donations.programs import Program
+from app.models.programs import Program
 from app.models.users.users import User
 from werkzeug.security import generate_password_hash
 

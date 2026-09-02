@@ -6,7 +6,7 @@ from werkzeug.exceptions import HTTPException
 from dotenv import load_dotenv
 
 from app.extensions import cors, db, jwt, ma, migrate
-import app.models  # noqa: F401
+from app.models import *  # noqa: F401, F403
 from app.routes.callbacks import callback_bp
 
 # Load .env.local first (if it exists) to override .env
@@ -87,10 +87,6 @@ def create_app():
         return jsonify({"message": "Welcome to the BACKEND API!"})
 
     from app.routes.auth_routes import auth_bp
-
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(callback_bp)
-
     from app.controllers.classification.assessment_questions_controller import assessment_questions_bp
     from app.controllers.classification.assessment_responses_controller import assessment_responses_bp
     from app.controllers.communication.communities_controller import communities_bp
@@ -102,16 +98,18 @@ def create_app():
     from app.controllers.job_applications_controller import job_applications_bp
     from app.controllers.jobs_controller import jobs_bp
     from app.controllers.users.organisations_controller import organisations_bp
-    from app.controllers.donations.program_memberships_controller import program_memberships_bp
     from app.controllers.donations.programs_controller import programs_bp
     from app.routes.users import users_bp
+    from app.controllers.countries_controller import countries_bp
 
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(callback_bp)
     app.register_blueprint(users_bp)
     app.register_blueprint(jobs_bp)
     app.register_blueprint(job_applications_bp)
     app.register_blueprint(programs_bp)
-    app.register_blueprint(program_memberships_bp)
     app.register_blueprint(donations_bp)
+    app.register_blueprint(countries_bp)
     app.register_blueprint(communities_bp)
     app.register_blueprint(community_memberships_bp)
     app.register_blueprint(community_posts_bp)

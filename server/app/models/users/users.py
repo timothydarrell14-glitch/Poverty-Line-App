@@ -29,7 +29,6 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
 
     assessment_responses = db.relationship("AssessmentResponse", back_populates="user")
-    program_memberships = db.relationship("ProgramMembership", back_populates="user")
     job_applications = db.relationship("JobApplication", back_populates="user")
     community_posts = db.relationship("CommunityPost", back_populates="user")
     community_memberships = db.relationship(

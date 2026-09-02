@@ -15,8 +15,7 @@ const fallbackPrograms = [
     title: "Urban Nutrition",
     description: "Distributing fresh, locally sourced produce to urban food deserts.",
     image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=400&q=80",
-    status: "On Track",
-    statusType: "on-track",
+    active: true,
     budgetAllocation: { current: 50000, total: 100000 },
     familiesReached: { current: 1200, total: 2000 },
   },
@@ -25,15 +24,14 @@ const fallbackPrograms = [
     title: "Digital Literacy",
     description: "Equipping seniors with essential digital skills and affordable devices.",
     image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80",
-    status: "Review Needed",
-    statusType: "review-needed",
+    active: true,
     budgetAllocation: { current: 85000, total: 90000 },
     graduates: { current: 300, total: 500 },
   },
 ];
 
-const filters = ["Active", "Draft", "Completed"];
-const emptyProgramForm = { name: "", description: "", organisation_id: "", status: "Draft", location: "" };
+const filters = ["All", "Active", "Inactive"];
+const emptyProgramForm = { title: "", description: "", organisation_id: "", active: true, location: "" };
 
 function Programs() {
   const [activeFilter, setActiveFilter] = useState("Active");
@@ -44,8 +42,6 @@ function Programs() {
   const [message, setMessage] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [programForm, setProgramForm] = useState(emptyProgramForm);
-  const [statusProgram, setStatusProgram] = useState(null);
-  const [statusDraft, setStatusDraft] = useState("Draft");
   const token = localStorage.getItem("accessToken");
 
   useEffect(() => {
@@ -59,9 +55,8 @@ function Programs() {
       (program) =>
         (!term || program.title.toLowerCase().includes(term) ||
           program.description.toLowerCase().includes(term)) &&
-        (activeFilter === "All" || activeFilter === "Active" || program.status === activeFilter ||
-         (activeFilter === "Draft" && program.statusType === "draft") ||
-         (activeFilter === "Completed" && program.statusType === "completed"))
+        (activeFilter === "All" || (activeFilter === "Active" && program.active) ||
+          (activeFilter === "Inactive" && !program.active))
     );
   }, [activeFilter, programs, searchTerm]);
 
@@ -78,20 +73,6 @@ function Programs() {
     setMessage("Program created.");
     setShowCreateForm(false);
     setProgramForm(emptyProgramForm);
-  }
-
-  async function updateStatus() {
-    if (!statusProgram) return;
-    const response = await fetch(apiUrl(`/api/auth/programs/${statusProgram.id}`), {
-      method: "PATCH",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ status: statusDraft }),
-    });
-    const data = await response.json();
-    if (!response.ok) return setMessage(data.message || "Could not update program status.");
-    setPrograms((current) => current.map((item) => item.id === statusProgram.id ? data.program : item));
-    setStatusProgram(null);
-    setMessage("Status updated.");
   }
 
   const totalImpact = {
@@ -163,8 +144,8 @@ function Programs() {
                       <div className="programs-list__card-content">
                         <h3>{program.title}</h3>
                         <p className="programs-list__card-description">{program.description}</p>
-                        <span className={`programs-list__status programs-list__status--${program.statusType}`}>
-                          {program.status}
+                        <span className="programs-list__status">
+                          {program.active ? "Active" : "Inactive"}
                         </span>
                         <div className="programs-list__progress">
                           {program.budgetAllocation && (
@@ -210,7 +191,7 @@ function Programs() {
                             </div>
                           )}
                         </div>
-                        <button className="programs-list__view-details" type="button" onClick={(event) => { event.stopPropagation(); setStatusProgram(program); setStatusDraft(program.status || "Draft"); }}>
+                        <button className="programs-list__view-details" type="button" onClick={(event) => { event.stopPropagation(); setSelectedProgram(program.id); }}>
                           <span>View Details</span>
                           <FiChevronRight aria-hidden="true" />
                         </button>
@@ -262,7 +243,7 @@ function Programs() {
           <form onSubmit={submitProgram} style={{ width: 440, background: "#fff", borderRadius: 14, padding: 24, boxShadow: "0 24px 60px rgba(15,23,42,0.22)" }}>
             <h2 style={{ marginTop: 0 }}>Create program</h2>
             <div style={{ display: "grid", gap: 12 }}>
-              <input value={programForm.name} onChange={(event) => setProgramForm((current) => ({ ...current, name: event.target.value }))} placeholder="Program name" required />
+              <input value={programForm.title} onChange={(event) => setProgramForm((current) => ({ ...current, title: event.target.value }))} placeholder="Program title" required />
               <textarea value={programForm.description} onChange={(event) => setProgramForm((current) => ({ ...current, description: event.target.value }))} placeholder="Description" rows={4} />
               <select value={programForm.organisation_id} onChange={(event) => setProgramForm((current) => ({ ...current, organisation_id: event.target.value }))} required>
                 <option value="">Select organisation</option>
@@ -271,10 +252,9 @@ function Programs() {
                 ))}
               </select>
               <input value={programForm.location} onChange={(event) => setProgramForm((current) => ({ ...current, location: event.target.value }))} placeholder="Location" />
-              <select value={programForm.status} onChange={(event) => setProgramForm((current) => ({ ...current, status: event.target.value }))}>
-                <option value="Draft">Draft</option>
-                <option value="Active">Active</option>
-                <option value="Completed">Completed</option>
+              <select value={programForm.active} onChange={(event) => setProgramForm((current) => ({ ...current, active: event.target.value === "true" }))}>
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
               </select>
             </div>
             <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 20 }}>
@@ -285,23 +265,6 @@ function Programs() {
         </div>
       )}
 
-      {statusProgram && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.5)", display: "grid", placeItems: "center", zIndex: 30 }}>
-          <div style={{ width: 360, background: "#fff", borderRadius: 14, padding: 24, boxShadow: "0 24px 60px rgba(15,23,42,0.22)" }}>
-            <h2 style={{ marginTop: 0 }}>Update status</h2>
-            <p>{statusProgram.title}</p>
-            <select value={statusDraft} onChange={(event) => setStatusDraft(event.target.value)}>
-              <option value="Draft">Draft</option>
-              <option value="Active">Active</option>
-              <option value="Completed">Completed</option>
-            </select>
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 20 }}>
-              <button type="button" onClick={() => setStatusProgram(null)}>Close</button>
-              <button type="button" onClick={updateStatus}>Save</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

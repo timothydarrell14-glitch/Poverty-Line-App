@@ -18,6 +18,8 @@
 
 .donation-popup {
   width: min(100%, 520px);
+  max-width: 520px;
+  overflow-x: hidden;
   max-height: 90vh;
   overflow-y: auto;
   padding: 28px;
@@ -50,6 +52,38 @@
   margin-bottom: 24px;
 }
 
+/* Navigation Bar */
+.donation-nav-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #eae7e7;
+  padding-bottom: 12px;
+}
+
+.nav-tab {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  color: #6e797b;
+  font: 700 14px/1.2 "Hanken Grotesk", sans-serif;
+  cursor: pointer;
+  border-radius: 8px 8px 0 0;
+  transition: all 0.2s ease;
+}
+
+.nav-tab:hover {
+  background: rgba(0, 117, 129, 0.1);
+  color: #007581;
+}
+
+.nav-tab.active {
+  background: #fff;
+  color: #007581;
+  border-bottom: 3px solid #007581;
+}
+
 .header-content h2 {
   margin: 0;
   color: #181c20;
@@ -60,7 +94,7 @@
 }
 
 .header-content h2 .material-symbols-outlined {
-  color: #953914;
+  color: #007581;
   font-size: 24px;
 }
 
@@ -129,7 +163,7 @@
 
 .program-select:hover,
 .program-select:focus {
-  border-color: #953914;
+  border-color: #007581;
   outline: none;
 }
 
@@ -159,15 +193,15 @@
 }
 
 .amount-button:hover {
-  border-color: #953914;
-  background: #ffefeb;
-  color: #953914;
+  border-color: #007581;
+  background: #d5f9ff;
+  color: #007581;
 }
 
 .amount-button.selected {
-  border-color: #953914;
-  background: #f4d1c7;
-  color: #953914;
+  border-color: #007581;
+  background: #005f6a;
+  color: #fff;
 }
 
 /* Custom Amount */
@@ -182,7 +216,7 @@
 }
 
 .custom-amount:focus-within {
-  border-color: #953914;
+  border-color: #007581;
 }
 
 .currency-symbol {
@@ -237,11 +271,172 @@
 
 .form-group input:hover,
 .form-group input:focus {
-  border-color: #953914;
+  border-color: #007581;
   outline: none;
 }
 
 .form-group input::placeholder {
+  color: #b8c5c7;
+}
+
+/* General Donation Form Inputs */
+.form-input {
+  width: 100%;
+  border: 2px solid #eae7e7;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #fff;
+  color: #3f4848;
+  font: 500 14px/1.2 "Hanken Grotesk", sans-serif;
+  transition: all 0.2s ease;
+}
+
+.form-select {
+  width: 100%;
+  border: 2px solid #eae7e7;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #fff;
+  color: #3f4848;
+  font: 500 14px/1.2 "Hanken Grotesk", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='%233f4848'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+  cursor: pointer;
+}
+
+/* Ensure emoji flags render properly in select options */
+option {
+  font-family: "Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", "Twemoji", inherit;
+}
+
+.form-input:hover,
+.form-input:focus,
+.form-select:hover,
+.form-select:focus,
+.country-code-select:hover,
+.country-code-select:focus {
+  border-color: #007581;
+  outline: none;
+}
+
+.phone-number-input:hover,
+.phone-number-input:focus,
+.country-code-input:hover,
+.country-code-input:focus {
+  border-color: #007581;
+  outline: none;
+}
+
+.form-input::placeholder {
+  color: #b8c5c7;
+}
+
+/* Phone Input with Country Code */
+.phone-input-container {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  background: #fff;
+}
+
+.country-code-select {
+  width: auto;
+  min-width: 80px;
+  max-width: 120px;
+  flex-shrink: 0;
+  /* Ensure consistent styling with form-select */
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='%233f4848'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+  padding: 12px 32px 12px 8px;
+  cursor: pointer;
+  border: 2px solid #eae7e7;
+  border-radius: 10px 0 0 10px;
+  background-color: #fff;
+  color: #3f4848;
+  font: 500 14px/1.2 "Hanken Grotesk", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  transition: all 0.2s ease;
+}
+
+.phone-number-input {
+  flex: 1;
+  min-width: 0; /* Allow input to shrink if needed */
+  border: 2px solid #eae7e7;
+  border-left: none;
+  border-radius: 0 10px 10px 0;
+  padding: 12px 14px;
+  background: #fff;
+  color: #3f4848;
+  font: 500 14px/1.2 "Hanken Grotesk", sans-serif;
+  outline: none;
+}
+
+/* Custom Country Code Input */
+.custom-country-input-container {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  flex: 1;
+}
+
+.country-code-input {
+  width: auto;
+  min-width: 80px;
+  flex-shrink: 0;
+  border: 2px solid #eae7e7;
+  border-radius: 10px 0 0 10px;
+  padding: 12px 14px;
+  background: #fff;
+  color: #3f4848;
+  font: 500 14px/1.2 "Hanken Grotesk", sans-serif;
+  outline: none;
+}
+
+.back-to-countries-btn {
+  border: none;
+  background: transparent;
+  color: #6e797b;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.back-to-countries-btn:hover {
+  color: #3f4848;
+}
+
+.form-textarea {
+  width: 100%;
+  border: 2px solid #eae7e7;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #fff;
+  color: #3f4848;
+  font: 500 14px/1.2 "Hanken Grotesk", sans-serif;
+  resize: vertical;
+  transition: all 0.2s ease;
+}
+
+.form-textarea:hover,
+.form-textarea:focus {
+  border-color: #007581;
+  outline: none;
+}
+
+.form-textarea::placeholder {
   color: #b8c5c7;
 }
 
@@ -285,6 +480,11 @@
   object-fit: contain;
 }
 
+.mpesa-logo-large {
+  height: 40px !important;
+  width: auto !important;
+}
+
 /* Submit Button */
 .submit-button {
   width: 100%;
@@ -295,18 +495,18 @@
   border: 0;
   border-radius: 14px;
   padding: 16px 24px;
-  background: linear-gradient(135deg, #8b4513, #a0522d);
+  background: linear-gradient(135deg, #007581, #005f6a);
   color: #fff;
   font: 700 16px/1.2 "Hanken Grotesk", sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 117, 129, 0.3);
 }
 
 .submit-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #a0522d, #8b4513);
+  background: linear-gradient(135deg, #005f6a, #007581);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 117, 129, 0.4);
 }
 
 .submit-button:disabled {
@@ -355,12 +555,51 @@
     height: 20px;
   }
 
+  .mpesa-logo-large {
+    height: 30px !important;
+  }
+
   .header-content h2 {
     font-size: 20px;
   }
 
   .tax-info {
     font-size: 11px;
+  }
+
+  .phone-input-container {
+    flex-direction: column;
+    gap: 5px;
+    background: #fff;
+  }
+
+  .country-code-select,
+  .country-code-input,
+  .custom-country-input-container {
+    width: 100%;
+  }
+
+  .country-code-select {
+    border: 2px solid #eae7e7;
+    border-radius: 10px;
+    padding: 12px 32px 12px 8px;
+    background-color: #fff;
+  }
+
+  .phone-number-input {
+    border: 2px solid #eae7e7;
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: #fff;
+  }
+
+  .back-to-countries-btn {
+    flex-shrink: 0;
+  }
+
+  .nav-tab {
+    padding: 10px 12px;
+    font-size: 13px;
   }
 }
 

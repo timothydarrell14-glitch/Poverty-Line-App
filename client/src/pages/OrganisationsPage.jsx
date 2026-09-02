@@ -69,7 +69,6 @@ const TESTIMONIALS = [
 function Organisations({
   onOpenPartnerApplication,
   onOpenLiveSimulation,
-  onOpenDonate,
   onOpenLogin,
 }) {
   const [logs, setLogs] = useState(INITIAL_LOGS);
@@ -80,12 +79,6 @@ function Organisations({
   const [activeTab, setActiveTab] = useState("organisations");
 
   // Safe handlers in case these functions are not passed from App.jsx
-  const handleOpenDonate = () => {
-    if (onOpenDonate) {
-      onOpenDonate();
-    }
-  };
-
   const handleOpenLogin = () => {
     if (onOpenLogin) {
       onOpenLogin();
@@ -154,7 +147,6 @@ function Organisations({
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        onOpenDonate={handleOpenDonate}
         onOpenLogin={handleOpenLogin}
       />
 

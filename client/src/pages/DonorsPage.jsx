@@ -40,11 +40,45 @@ export default function DonorsPage() {
   const [monthlyAmount, setMonthlyAmount] = useState(2500);
   const [subscriptionStatus, setSubscriptionStatus] = useState("Active");
   const [isDonationPopupOpen, setIsDonationPopupOpen] = useState(false);
+  const [selectedProgram, setSelectedProgram] = useState(null);
+  const [isLearnMoreOpen, setIsLearnMoreOpen] = useState(false);
+  const [learnMoreProgram, setLearnMoreProgram] = useState(null);
+  const [activeProgramFilter, setActiveProgramFilter] = useState("all");
   const totalGiven = donations.reduce((total, donation) => total + donation.amount, 0);
 
-  const showDonationNotice = () => {
+  const showDonationNotice = (programId = null) => {
+    if (programId) {
+      setSelectedProgram(programId);
+    } else {
+      setSelectedProgram(null);
+    }
     setIsDonationPopupOpen(true);
   };
+
+  const showLearnMore = (program) => {
+    setLearnMoreProgram(program);
+    setIsLearnMoreOpen(true);
+  };
+
+  const closeLearnMore = () => {
+    setIsLearnMoreOpen(false);
+    setLearnMoreProgram(null);
+  };
+
+  const handleProgramFilter = (filter) => {
+    setActiveProgramFilter(filter);
+  };
+
+  // Add type to existing programs for filtering
+  const programsWithTypes = publicPrograms.map(program => ({
+    ...program,
+    type: program.id === "wells" || program.id === "nutrition" || program.id === "health" ? "financial" : "non-financial"
+  }));
+
+  // Filter programs based on the active filter
+  const filteredPrograms = activeProgramFilter === "all" 
+    ? programsWithTypes 
+    : programsWithTypes.filter(program => program.type === activeProgramFilter);
 
   const handleDonationSubmit = (donationData) => {
     console.log("Donation submitted:", donationData);
@@ -68,21 +102,100 @@ export default function DonorsPage() {
               <span className="public-eyebrow"><span className="material-symbols-outlined material-symbols-fill">favorite</span> Empowering Resilient Futures</span>
               <h1>Together, We Bring Hope and <em>Change Lives</em></h1>
               <p>Your generous donations empower communities, provide essential resources, and create lasting sustainable change. Join us in making a difference today.</p>
-              <div className="public-hero-actions"><button type="button" className="public-primary-button" onClick={showDonationNotice}><span className="material-symbols-outlined">volunteer_activism</span> Make a Donation</button><button type="button" className="public-secondary-button" onClick={() => window.alert("The impact report will be available soon.")}><span className="material-symbols-outlined">description</span> View Impact Report</button></div>
-              <div className="public-stat-row"><div><b>10K+</b><span>Donations Received</span></div><div><b>50K+</b><span>Lives Impacted</span></div><div><b>520+</b><span>Active Volunteers</span></div></div>
+              <div className="public-hero-actions"><button type="button" className="public-primary-button" onClick={() => showDonationNotice()}><span className="material-symbols-outlined">volunteer_activism</span> Make a Donation</button></div>
             </div>
             <img className="public-hero-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBy3M80B5UbKEYaAg7SzGUdGfva1q6-sb_S_FpyZgCcVzlY3LwQjBEJ6Q2H21Fj6GLhM_2Eh4tS1BdFlkDf-xsfq65T608S7RqIEMbMui4tIA7Cgh5TAFbBN6uBBAZiHIn2VT2xR-TFiQgxW9oAQgu49O8EYBI8ljGOpLllhJkOuJwJ9pkTgqSPmUb0-ES1aLoJzfBTVO3MQXpTqML1MMgfoDV3_J0bGZLYz5UhQyfdA0NgVOwm8nmPpA" alt="Community food and essentials distribution" />
           </section>
-          <section className="public-programs" id="active-programs-section"><header><div><h2>Active Programs</h2><p>Choose where your support creates direct, transparent, and durable impact.</p></div><button type="button" onClick={showDonationNotice}>Custom allocation <span className="material-symbols-outlined">arrow_forward</span></button></header><div className="public-program-grid">{publicPrograms.map((program) => <article key={program.id} className="public-program-card"><div className="public-program-image"><img src={program.image} alt={program.title} /><span><span className="material-symbols-outlined">{program.icon}</span>{program.category}</span></div><div className="public-program-copy"><div><h3>{program.title}</h3><p>{program.description}</p></div>{program.id === "health" && <div className="public-progress"><p><span>Campaign Goal: $1,000,000</span><b>65% Funded ($650K)</b></p><i><i /></i></div>}<div className="public-program-footer"><p><span className="material-symbols-outlined">verified</span>{program.impact}</p><div><button type="button" onClick={showDonationNotice}>Support Program <span className="material-symbols-outlined">arrow_forward</span></button><button type="button" onClick={showDonationNotice}>Learn more</button></div></div></div></article>)}</div></section>
-          <section className="public-transparency"><div><span><span className="material-symbols-outlined">shield</span> 100% Transparency Commitment</span><h2>Every cent tracked with open accountability.</h2><p>All program logistics and expenditures are audited every month. Donors receive live updates and dispatch confirmations as provisions reach local distribution hubs.</p></div><button type="button" onClick={showDonationNotice}><span className="material-symbols-outlined">volunteer_activism</span> Make a Donation</button></section>
+          <section className="public-programs" id="active-programs-section">
+            <header>
+              <div>
+                <h2>Active Programs</h2>
+                <p>Choose where your support creates direct, transparent, and durable impact.</p>
+              </div>
+              <button type="button" onClick={() => showDonationNotice()}>Custom allocation <span className="material-symbols-outlined">arrow_forward</span></button>
+            </header>
+            
+            {/* Program Filter Navigation */}
+            <div className="program-filter-nav">
+              <button 
+                type="button" 
+                className={`filter-tab ${activeProgramFilter === "all" ? "active" : ""}`}
+                onClick={() => handleProgramFilter("all")}
+              >
+                All Programs
+              </button>
+              <button 
+                type="button" 
+                className={`filter-tab ${activeProgramFilter === "financial" ? "active" : ""}`}
+                onClick={() => handleProgramFilter("financial")}
+              >
+                Financial Programs
+              </button>
+              <button 
+                type="button" 
+                className={`filter-tab ${activeProgramFilter === "non-financial" ? "active" : ""}`}
+                onClick={() => handleProgramFilter("non-financial")}
+              >
+                Non-Financial Programs
+              </button>
+            </div>
+            
+            <div className="public-program-grid">
+              {filteredPrograms.map((program) => (
+                <article key={program.id} className="public-program-card">
+                  <div className="public-program-image">
+                    <img src={program.image} alt={program.title} />
+                    <span><span className="material-symbols-outlined">{program.icon}</span>{program.category}</span>
+                  </div>
+                  <div className="public-program-copy">
+                    <div>
+                      <h3>{program.title}</h3>
+                      <p>{program.description}</p>
+                    </div>
+                    {program.id === "health" && 
+                      <div className="public-progress">
+                        <p><span>Campaign Goal: $1,000,000</span><b>65% Funded ($650K)</b></p>
+                        <i><i /></i>
+                      </div>
+                    }
+                    <div className="public-program-footer">
+                      <p><span className="material-symbols-outlined">verified</span>{program.impact}</p>
+                      <div>
+                        <button type="button" onClick={() => showDonationNotice(program.id)}>Support Program <span className="material-symbols-outlined">arrow_forward</span></button>
+                        <button type="button" onClick={() => showLearnMore(program)}>Learn more</button>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+          <section className="public-transparency"><div><span><span className="material-symbols-outlined">shield</span> 100% Transparency Commitment</span><h2>Every cent tracked with open accountability.</h2><p>All program logistics and expenditures are audited every month. Donors receive live updates and dispatch confirmations as provisions reach local distribution hubs.</p></div><button type="button" onClick={() => showDonationNotice()}><span className="material-symbols-outlined">volunteer_activism</span> Make a Donation</button></section>
         </main>
         <Footer onSelectTab={(tab) => navigate(tab === "home" ? "/" : `/${tab}`)} />
 
+        {/* Learn More Popup */}
+        {isLearnMoreOpen && learnMoreProgram && (
+          <div className="learn-more-backdrop" onClick={closeLearnMore}>
+            <div className="learn-more-popup" onClick={(e) => e.stopPropagation()}>
+              <button className="learn-more-close" onClick={closeLearnMore}>
+                <span className="material-symbols-outlined">close</span>
+              </button>
+              <h3>{learnMoreProgram.title}</h3>
+              <p>{learnMoreProgram.description}</p>
+            </div>
+          </div>
+        )}
+
         <DonationPopup
           isOpen={isDonationPopupOpen}
-          onClose={() => setIsDonationPopupOpen(false)}
-          programs={publicPrograms}
+          onClose={() => {
+            setIsDonationPopupOpen(false);
+            setSelectedProgram(null);
+          }}
+          programs={programsWithTypes}
           onDonate={handleDonationSubmit}
+          selectedProgramId={selectedProgram}
         />
       </div>
     );
@@ -90,7 +203,7 @@ export default function DonorsPage() {
 
   return (
     <div className="donors-page">
-      <Navbar onOpenDonate={showDonationNotice} onOpenLogin={() => window.alert("Login will be available soon.")} />
+      <Navbar onOpenDonate={() => showDonationNotice()} onOpenLogin={() => window.alert("Login will be available soon.")} />
       <main className="donors-content">
         <section className="donor-welcome-card">
           <div className="donor-profile">
@@ -141,9 +254,13 @@ export default function DonorsPage() {
 
       <DonationPopup
         isOpen={isDonationPopupOpen}
-        onClose={() => setIsDonationPopupOpen(false)}
-        programs={publicPrograms}
+        onClose={() => {
+          setIsDonationPopupOpen(false);
+          setSelectedProgram(null);
+        }}
+        programs={programsWithTypes}
         onDonate={handleDonationSubmit}
+        selectedProgramId={selectedProgram}
       />
 
       {isSubscriptionOpen && <div className="donor-modal-backdrop" role="presentation" onMouseDown={() => setIsSubscriptionOpen(false)}><section className="donor-modal subscription-modal" role="dialog" aria-modal="true" aria-labelledby="subscription-title" onMouseDown={(event) => event.stopPropagation()}><header><h2 id="subscription-title">Manage Monthly Giving</h2><button type="button" aria-label="Close subscription management" onClick={() => setIsSubscriptionOpen(false)}><span className="material-symbols-outlined">close</span></button></header><label>Monthly Contribution (KSh)</label><div className="amount-options">{[1000, 2500, 5000].map((amount) => <button type="button" className={monthlyAmount === amount ? "selected" : ""} onClick={() => setMonthlyAmount(amount)} key={amount}>{formatCurrency(amount)}</button>)}</div><div className="status-control"><div><b>Subscription Status</b><small>Currently {subscriptionStatus}</small></div><button type="button" onClick={() => setSubscriptionStatus(subscriptionStatus === "Active" ? "Paused" : "Active")}>{subscriptionStatus === "Active" ? "Pause Giving" : "Resume Giving"}</button></div><button type="button" className="save-button" onClick={() => setIsSubscriptionOpen(false)}>Save Settings</button></section></div>}
