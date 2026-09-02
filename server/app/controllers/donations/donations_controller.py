@@ -63,7 +63,7 @@ def paypal_fastlane_create_order():
     if not fastlane_enabled():
         return jsonify({"message": "PayPal Fastlane is disabled."}), 404
     payload = request.get_json(silent=True) or {}
-    if payload.get("intent") != "CAPTURE" or not payload.get("purchaseUnits"):
+    if payload.get("intent") != "CAPTURE" or not payload.get("purchase_units"):
         return jsonify({"message": "A capture order with purchase units is required."}), 422
     try:
         order = create_paypal_fastlane_order(payload)

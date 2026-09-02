@@ -79,10 +79,10 @@ export default function FastlaneCheckout({ amount, programId, onCompleted }) {
         method: "POST",
         body: {
           intent: "CAPTURE",
-          paymentSource: { card: { singleUseToken: paymentToken } },
-          purchaseUnits: [{
-            customId: programId ? String(programId) : "general",
-            amount: { currencyCode: "USD", value: Number(amount).toFixed(2) },
+          payment_source: { card: { single_use_token: paymentToken } },
+          purchase_units: [{
+            custom_id: programId ? String(programId) : "general",
+            amount: { currency_code: "USD", value: Number(amount).toFixed(2) },
           }],
         },
       });

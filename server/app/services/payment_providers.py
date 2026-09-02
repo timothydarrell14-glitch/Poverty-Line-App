@@ -116,9 +116,18 @@ def get_paypal_browser_safe_client_token():
     environment = os.environ.get("PAYPAL_ENVIRONMENT", "sandbox")
     base_url = "https://api-m.paypal.com" if environment == "production" else "https://api-m.sandbox.paypal.com"
     credentials = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
+    token_payload = {
+        "grant_type": "client_credentials",
+        "response_type": "client_token",
+    }
+    domains = os.environ.get("PAYPAL_FASTLANE_DOMAINS", "")
+    if domains.strip():
+        token_payload["domains[]"] = ",".join(
+            domain.strip() for domain in domains.split(",") if domain.strip()
+        )
     request = Request(
         f"{base_url}/v1/oauth2/token",
-        data=b"grant_type=client_credentials&response_type=client_token",
+        data=urlencode(token_payload).encode("ascii"),
         headers={
             "Authorization": f"Basic {credentials}",
             "Content-Type": "application/x-www-form-urlencoded",
