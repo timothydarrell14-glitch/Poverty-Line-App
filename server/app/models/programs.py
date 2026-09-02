@@ -4,6 +4,7 @@ from app.extensions import db
 class Program(db.Model):
     __tablename__ = "programs"
 
+    id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
     summary = db.Column(db.String(500))
     description = db.Column(db.Text)
