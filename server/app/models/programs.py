@@ -20,19 +20,17 @@ class Program(db.Model):
     non_financial_donations = db.relationship("NonFinancialDonation", back_populates="program")
 
     @classmethod
-    def list_for_admin(cls, search=None, status=None, organisation_id=None):
+    def list_for_admin(cls, search=None, active=None, organisation_id=None):
         """Build a filtered program query for administrator management."""
         query = cls.query
         if search:
             term = f"%{search.strip()}%"
-            query = query.filter(
-                db.or_(cls.title.ilike(term), cls.description.ilike(term), cls.description.ilike(term))
-            )
-        if status:
-            query = query.filter(cls.active == status)
+            query = query.filter(db.or_(cls.title.ilike(term), cls.description.ilike(term)))
+        if active is not None:
+            query = query.filter(cls.active == active)
         if organisation_id:
             query = query.filter(cls.organisation_id == organisation_id)
-        return query.order_by(cls.type.desc())
+        return query.order_by(cls.title.asc())
 
     @classmethod
     def create_from_data(cls, data):

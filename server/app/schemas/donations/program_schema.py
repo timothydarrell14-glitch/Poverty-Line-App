@@ -1,7 +1,7 @@
-from marshmallow import fields, validate
+from marshmallow import fields, pre_load, validate
 
 from app.extensions import ma
-from server.app.models.programs import Program
+from app.models.programs import Program
 
 
 class ProgramSchema(ma.SQLAlchemyAutoSchema):
@@ -13,20 +13,32 @@ class ProgramSchema(ma.SQLAlchemyAutoSchema):
 
 class ProgramCreateSchema(ma.SQLAlchemyAutoSchema):
     organisation_id = fields.Integer(required=True)
-    name = fields.String(required=True, validate=validate.Length(min=1, max=255))
+    title = fields.String(required=True, validate=validate.Length(min=1, max=255))
+
+    @pre_load
+    def normalize_legacy_fields(self, data, **kwargs):
+        data = dict(data or {})
+        if "title" not in data and "name" in data:
+            data["title"] = data.pop("name")
+        if "type" not in data and "category" in data:
+            data["type"] = data.pop("category")
+        if "active" not in data and "status" in data:
+            data["active"] = str(data.pop("status")).lower() == "active"
+        for field in ("eligibility", "start_date", "end_date"):
+            data.pop(field, None)
+        return data
 
     class Meta:
         model = Program
         load_instance = False
         fields = (
             "organisation_id",
-            "name",
+            "title",
             "description",
-            "category",
+            "summary",
+            "type",
             "location",
-            "eligibility",
-            "start_date",
-            "end_date",
+            "active",
         )
 
 
@@ -35,14 +47,12 @@ class ProgramUpdateSchema(ma.SQLAlchemyAutoSchema):
         model = Program
         load_instance = False
         fields = (
-            "name",
+            "title",
             "description",
-            "category",
+            "summary",
+            "type",
             "location",
-            "eligibility",
-            "start_date",
-            "end_date",
-            "status",
+            "active",
         )
 
 

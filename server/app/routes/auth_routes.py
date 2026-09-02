@@ -6,7 +6,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.extensions import db
 from app.models.users.organisations import Organisation
-from models.programs import Program
+from app.models.programs import Program
 from app.models.users.users import User
 
 
@@ -28,11 +28,10 @@ def serialize_user(user):
 
 def serialize_program(program):
     return {
-        "id": program.program_id,
-        "title": program.name,
+        "id": program.id,
+        "title": program.title,
         "description": program.description or "No description provided.",
-        "status": program.status or "Draft",
-        "statusType": (program.status or "draft").lower().replace(" ", "-"),
+        "active": program.active,
         "location": program.location,
         "organisation_id": program.organisation_id,
     }
@@ -334,7 +333,7 @@ def list_programs():
         {
             "programs": [
                 serialize_program(program)
-                for program in Program.query.order_by(Program.program_id.desc()).all()
+                for program in Program.query.order_by(Program.id.desc()).all()
             ]
         }
     )
@@ -344,9 +343,9 @@ def list_programs():
 @admin_required
 def create_program():
     data = request.get_json(silent=True) or {}
-    required = ["name", "organisation_id"]
-    if not all(str(data.get(key, "")).strip() for key in required):
-        return jsonify({"message": "Program name and organisation are required."}), 400
+    title = str(data.get("title") or data.get("name") or "").strip()
+    if not title or not str(data.get("organisation_id", "")).strip():
+        return jsonify({"message": "Program title and organisation are required."}), 400
 
     organisation = db.session.get(Organisation, int(data["organisation_id"]))
     if organisation is None:
@@ -354,12 +353,12 @@ def create_program():
 
     program = Program(
         organisation_id=organisation.organisation_id,
-        name=str(data["name"]).strip(),
+        title=title,
         description=data.get("description"),
-        category=data.get("category"),
+        summary=data.get("summary"),
+        type=data.get("type") or data.get("category"),
         location=data.get("location"),
-        eligibility=data.get("eligibility"),
-        status=data.get("status") or "Draft",
+        active=data.get("active", str(data.get("status", "active")).lower() == "active"),
     )
     db.session.add(program)
     db.session.commit()
@@ -382,14 +381,9 @@ def update_program(program_id):
     if not program:
         return jsonify({"message": "Program not found."}), 404
     data = request.get_json(silent=True) or {}
-    if "status" in data:
-        program.status = data["status"]
-    if "name" in data:
-        program.name = data["name"]
-    if "description" in data:
-        program.description = data["description"]
-    if "location" in data:
-        program.location = data["location"]
+    for key in ("title", "description", "summary", "type", "location", "active"):
+        if key in data:
+            setattr(program, key, data[key])
     db.session.commit()
     return jsonify({"program": serialize_program(program)})
 

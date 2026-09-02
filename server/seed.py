@@ -11,7 +11,7 @@ from app.models.classification.assessment_responses import AssessmentResponse
 from app.models.users.organisations import Organisation
 from app.models.jobs import Job
 from app.models.classification.job_applications import JobApplication
-from server.app.models.programs import Program
+from app.models.programs import Program
 from app.models.communication.communities import Community
 from app.models.communication.community_posts import CommunityPost
 from app.models.communication.community_membership import CommunityMembership
@@ -344,47 +344,35 @@ def seed_programs(organisations):
     programs = [
         Program(
             organisation_id=organisations[0].organisation_id,
-            name="Kericho Smallholder Support",
+            title="Kericho Smallholder Support",
             description="Training and input support for small tea and vegetable farmers.",
-            category="Agriculture",
+            type="Agriculture",
             location="Kericho",
-            eligibility="Smallholder farmers with less than 2 acres",
-            start_date=date(2026, 1, 1),
-            end_date=date(2026, 12, 31),
-            status="active",
+            active=True,
         ),
         Program(
             organisation_id=organisations[1].organisation_id,
-            name="Kisumu Youth Skills",
+            title="Kisumu Youth Skills",
             description="Digital and vocational skills training for unemployed youth.",
-            category="Education",
+            type="Education",
             location="Kisumu",
-            eligibility="Ages 18-30, unemployed",
-            start_date=date(2026, 2, 1),
-            end_date=date(2026, 11, 30),
-            status="active",
+            active=True,
         ),
         Program(
             organisation_id=organisations[2].organisation_id,
-            name="Coastal Women Empowerment",
+            title="Coastal Women Empowerment",
             description="Business and craft training for women's savings groups.",
-            category="Livelihood",
+            type="Livelihood",
             location="Mombasa",
-            eligibility="Women aged 18+ in a registered savings group",
-            start_date=date(2026, 3, 1),
-            end_date=date(2026, 12, 31),
-            status="active",
+            active=True,
         ),
         Program(
             organisation_id=organisations[3].organisation_id,
-            name="Nairobi Digital Literacy",
+            title="Nairobi Digital Literacy",
             description="Basic computer and smartphone skills for job seekers.",
-            category="Education",
+            type="Education",
             location="Nairobi",
-            eligibility="Open to all unemployed adults",
-            start_date=date(2026, 1, 15),
-            end_date=date(2026, 6, 15),
-            status="active",
+            active=True,
         ),
     ]
     db.session.add_all(programs)

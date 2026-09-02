@@ -10,6 +10,7 @@ from app.models.donations.nonFInancialDonations import NonFinancialDonation
 from app.models.classification.job_applications import JobApplication
 from app.models.jobs import Job
 from app.models.users.organisations import Organisation
+from app.models.users.donors import Donor
 from app.models.programs import Program
 from app.models.settings import AppSetting
 from app.models.users.users import User
@@ -27,6 +28,7 @@ __all__ = [
     "JobApplication",
     "Job",
     "Organisation",
+    "Donor",
     "Program",
     "FinancialDonation",
     "NonFinancialDonation",

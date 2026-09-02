@@ -87,10 +87,6 @@ def create_app():
         return jsonify({"message": "Welcome to the BACKEND API!"})
 
     from app.routes.auth_routes import auth_bp
-
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(callback_bp)
-
     from app.controllers.classification.assessment_questions_controller import assessment_questions_bp
     from app.controllers.classification.assessment_responses_controller import assessment_responses_bp
     from app.controllers.communication.communities_controller import communities_bp
@@ -113,7 +109,6 @@ def create_app():
     app.register_blueprint(job_applications_bp)
     app.register_blueprint(programs_bp)
     app.register_blueprint(donations_bp)
-    app.register_blueprint(countries_bp)
     app.register_blueprint(countries_bp)
     app.register_blueprint(communities_bp)
     app.register_blueprint(community_memberships_bp)
