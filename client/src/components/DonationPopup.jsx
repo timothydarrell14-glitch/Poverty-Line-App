@@ -5,7 +5,7 @@ import paypalLogo from "../assets/paypal-logo.svg";
 
 const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId }) => {
 
-  const [selectedProgram, setSelectedProgram] = useState("");
+  const [selectedProgram, setSelectedProgram] = useState(() => selectedProgramId || "");
   const [amount, setAmount] = useState(0);
   const [customAmount, setCustomAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -30,15 +30,6 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
   const getProgramDetails = (programId) => {
     return programs?.find(p => p.id === programId) || { title: "General Community Fund" };
   };
-
-  // Update selected program when selectedProgramId prop changes
-  useEffect(() => {
-    if (selectedProgramId) {
-      setSelectedProgram(selectedProgramId);
-      // Switch to financial form when a program is selected
-      setActiveForm("financial");
-    }
-  }, [selectedProgramId]);
 
   const handleAmountSelect = (selectedAmount) => {
     setAmount(selectedAmount);
