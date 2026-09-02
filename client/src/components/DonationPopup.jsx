@@ -460,31 +460,41 @@ DonationPopup.defaultProps = {
       id: "general", 
       title: "General Community Fund (Where Most Needed)", 
       category: "General",
-      icon: "star"
+      icon: "star",
+      description: "Support our most critical initiatives where funding is needed most.",
+      impact: "Flexible support for emerging community needs"
     },
     { 
       id: "wells", 
       title: "Sustainable Wells Initiative", 
       category: "Clean Water",
-      icon: "water_drop"
+      icon: "water_drop",
+      description: "Building community-managed water infrastructure in drought-prone regions to ensure long-term health.",
+      impact: "38,000+ people with ongoing access to verified clean water"
     },
     { 
       id: "nutrition", 
       title: "Urban Nutrition Centers", 
       category: "Food Security",
-      icon: "restaurant"
+      icon: "restaurant",
+      description: "Providing dignified access to nutritious meals through community-led kitchens and local farm partnerships.",
+      impact: "14,200 nutritious hot meals served every single week"
     },
     { 
       id: "literacy", 
       title: "Digital Literacy Access", 
       category: "Education",
-      icon: "school"
+      icon: "school",
+      description: "Equipping adults and youth with essential tech skills to bridge the digital divide and open employment pathways.",
+      impact: "1,840 graduates placed in living-wage career pathways"
     },
     { 
       id: "health", 
       title: "Mobile Health Clinics", 
       category: "Healthcare Access",
-      icon: "medical_services"
+      icon: "medical_services",
+      description: "Bringing essential medical services and health education directly to underserved neighborhoods through our fleet of mobile units.",
+      impact: "65% funded • 9,400 clinic visits conducted this year"
     }
   ]
 };
