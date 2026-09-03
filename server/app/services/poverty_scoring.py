@@ -92,7 +92,7 @@ def classify_score(total_score):
     return "Low Poverty Risk"
 
 
-def calculate_poverty_score(user, responses, questions_by_id):
+def calculate_poverty_score(member, responses, questions_by_id):
     total_score = 0.0
 
     for response in responses:
@@ -110,7 +110,7 @@ def calculate_poverty_score(user, responses, questions_by_id):
 
     classification = classify_score(total_score)
 
-    user.poverty_score = round(total_score, 2)
-    user.poverty_classification = classification
+    member.poverty_score = round(total_score, 2)
+    member.poverty_classification = classification
 
-    return user
+    return member

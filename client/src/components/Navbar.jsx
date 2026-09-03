@@ -1,21 +1,33 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { FiSun, FiMoon } from "react-icons/fi";
 import Login from "./Login";
 import Signup from "./Signup";
+import DonationPopup from "./DonationPopup";
 import {
   clearAuthSession,
   getCurrentUser,
   isAuthenticated,
 } from "../utils/auth";
+import { apiRequest } from "../api/client";
+import { usePublicSettings } from "../hooks/usePublicSettings";
+import { useToast } from "../context/ToastContext";
+import { useTheme } from "../context/ThemeContext";
 
 export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
+  const [signupEmail, setSignupEmail] = useState("");
+  const [isDonationPopupOpen, setIsDonationPopupOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(getCurrentUser());
+  const [programs, setPrograms] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
+  const { orgName } = usePublicSettings();
+  const { showToast } = useToast();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handle = () => setIsScrolled(window.scrollY > 12);
@@ -41,6 +53,46 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   const signOut = () => {
     clearAuthSession();
     navigate("/");
+  };
+
+  const openDonationPopup = () => {
+    setIsDonationPopupOpen(true);
+  };
+
+  useEffect(() => {
+    apiRequest("/api/programs?active=true")
+      .then((data) => setPrograms(data.programs ?? []))
+      .catch(() => setPrograms([]));
+  }, []);
+
+  const handleDonationSubmit = async (donationData) => {
+    if (donationData.kind === "non_financial") {
+      showToast("Your non-financial donation request was submitted successfully.", "success");
+      return;
+    }
+    const response = await apiRequest("/api/donations", {
+      method: "POST",
+      body: donationData,
+    });
+    if (response.payment.approval_url) {
+      window.location.assign(response.payment.approval_url);
+      return;
+    }
+    if (response.donation?.payment_status === "completed" || response.payment?.status === "completed") {
+      showToast("Donation successful. Thank you for your contribution.", "success");
+    } else {
+      showToast(`Donation recorded. ${response.payment.provider} payment is pending confirmation.`, "info");
+    }
+  };
+
+  const handleDonateClick = () => {
+    // If onOpenDonate is provided (for pages that want custom behavior), use it
+    // Otherwise, use the built-in popup
+    if (onOpenDonate) {
+      onOpenDonate();
+    } else {
+      openDonationPopup();
+    }
   };
 
   const items = [
@@ -82,7 +134,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
             <span className="material-symbols-outlined material-symbols-fill">
               volunteer_activism
             </span>
-            Poverty Line
+            {orgName}
           </button>
           <div className="nav-links">
             {items.map(([path, id, label]) => (
@@ -96,10 +148,19 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
             ))}
           </div>
           <div className="nav-actions">
+            <button
+              className="theme-toggle-button"
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? <FiSun /> : <FiMoon />}
+            </button>
             {isAuthenticated() ? (
               <>
-                {currentUser?.role === "admin" && (
-                  <span className="admin-badge">Admin</span>
+                {currentUser?.role && (
+                  <span className="admin-badge" aria-label="Account type">
+                    {currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)}
+                  </span>
                 )}
                 <button className="login-button" onClick={signOut}>
                   Log out
@@ -110,7 +171,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
                 Login
               </button>
             )}
-            <button className="pill-button nav-donate" onClick={onOpenDonate}>
+            <button className="pill-button nav-donate" onClick={handleDonateClick}>
               <span className="material-symbols-outlined">favorite</span>Donate
               Now
             </button>
@@ -138,10 +199,17 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
         ))}
         <div className="nav-actions">
           <button
+            className="theme-toggle-button"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <FiSun /> : <FiMoon />}
+          </button>
+          <button
             className="pill-button"
             onClick={() => {
               setOpen(false);
-              onOpenDonate?.();
+              handleDonateClick();
             }}
           >
             Donate Now
@@ -158,7 +226,9 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
         </div>
       </div>
       <Login
+        key={signupEmail}
         isOpen={isLoginOpen}
+        initialEmail={signupEmail}
         onClose={() => setIsLoginOpen(false)}
         onShowSignup={() => {
           setIsLoginOpen(false);
@@ -169,10 +239,17 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
       <Signup
         isOpen={isSignupOpen}
         onClose={() => setIsSignupOpen(false)}
-        onShowLogin={() => {
+        onShowLogin={(email = "") => {
           setIsSignupOpen(false);
+          setSignupEmail(email);
           setIsLoginOpen(true);
         }}
+      />
+      <DonationPopup
+        isOpen={isDonationPopupOpen}
+        onClose={() => setIsDonationPopupOpen(false)}
+        programs={programs}
+        onDonate={handleDonationSubmit}
       />
     </>
   );

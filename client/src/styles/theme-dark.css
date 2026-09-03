@@ -1,0 +1,38 @@
+/* Dark theme tokens, applied when <html data-theme="dark"> is set */
+[data-theme='dark'] {
+  --bg-primary: #0a1614;
+  --bg-secondary: #12211d;
+  --bg-tertiary: #1e352d;
+  --bg-accent: #17453a;
+
+  --text-primary: #f2f7f4;
+  --text-secondary: #b6c8c0;
+  --text-muted: #90a89f;
+  --text-on-accent: #ffffff;
+
+  --accent-primary: #147d6a;
+  --accent-primary-hover: #1a9683;
+  --accent-secondary: #29b673;
+
+  --border-color: #325049;
+  --border-accent: rgba(56, 189, 165, 0.35);
+
+  --color-success: #2ecc71;
+  --color-error: #ff6b6b;
+  --color-purple: #a78bfa;
+  --color-brand-warm: #ff9466;
+  --color-brand-warm-hover: #ffab86;
+  --color-brand-warm-bg: rgba(255, 148, 102, 0.16);
+  --color-success-bg: rgba(46, 204, 113, 0.18);
+  --color-error-bg: rgba(255, 107, 107, 0.14);
+
+  --shadow: rgba(0, 0, 0, 0.45);
+  --shadow-strong: rgba(0, 0, 0, 0.65);
+
+  --bg-hover: #1e352d;
+  --bg-input: #12211d;
+  --bg-overlay: rgba(3, 9, 7, 0.72);
+  --bg-nav: rgba(10, 22, 20, 0.92);
+  --scrollbar-thumb: #3a5850;
+}
+

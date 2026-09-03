@@ -10,7 +10,9 @@ import {
 import AdminTopbar from "../../components/Admin/AdminTopbar";
 import SideBar from "../../components/Admin/SideBar";
 import { apiUrl } from "../../api/client";
+import { getAccessToken } from "../../utils/auth";
 import "../../styles/Admin/SettingsPage.css";
+import "../../styles/Admin/SettingsPage.dark.css";
 
 const settingsTabs = [
   { label: "General", icon: FiServer, id: "general" },
@@ -61,9 +63,9 @@ function Settings() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("general");
   const [orgDetails, setOrgDetails] = useState({
-    orgName: "Poverty Line Initiative",
+    orgName: "Poverty Line",
     supportEmail: "support@povertyline.org",
-    publicDescription: "Bridging the gap between communities in need and resources.",
+    publicDescription: "Dignity Through Efficiency",
   });
   const [preferences, setPreferences] = useState(
     communicationPreferences.reduce((acc, pref) => {
@@ -75,6 +77,7 @@ function Settings() {
     dataExport: "Admin & Managers",
     deletePrograms: "Super Admin",
   });
+  const [masterNotificationsEnabled, setMasterNotificationsEnabled] = useState(true);
   const [isExpanded, setIsExpanded] = useState({
     communication: true,
     permissions: true,
@@ -82,7 +85,7 @@ function Settings() {
   const [saveStatus, setSaveStatus] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
+    const token = getAccessToken();
     fetch(apiUrl("/api/auth/settings"), { headers: { Authorization: `Bearer ${token}` } })
       .then((response) => response.ok ? response.json() : null)
       .then((data) => {
@@ -91,6 +94,12 @@ function Settings() {
         const next = Object.fromEntries(generalSettings.map((setting) => [setting.key, setting.value]));
         if (next.orgName || next.supportEmail || next.publicDescription) {
           setOrgDetails((current) => ({ ...current, orgName: next.orgName ?? current.orgName, supportEmail: next.supportEmail ?? current.supportEmail, publicDescription: next.publicDescription ?? current.publicDescription }));
+        }
+
+        const notificationSettings = data.settings.filter((setting) => setting.category === "notifications");
+        const nextNotifs = Object.fromEntries(notificationSettings.map((setting) => [setting.key, setting.value]));
+        if (nextNotifs.masterNotificationsEnabled !== undefined) {
+          setMasterNotificationsEnabled(nextNotifs.masterNotificationsEnabled === 'true');
         }
       })
       .catch(() => undefined);
@@ -110,11 +119,12 @@ function Settings() {
   };
 
   const handleSave = async () => {
-    const token = localStorage.getItem("accessToken");
+    const token = getAccessToken();
     const payload = [
       { key: "orgName", value: orgDetails.orgName, category: "general" },
       { key: "supportEmail", value: orgDetails.supportEmail, category: "general" },
       { key: "publicDescription", value: orgDetails.publicDescription, category: "general" },
+      { key: "masterNotificationsEnabled", value: String(masterNotificationsEnabled), category: "notifications" },
       { key: "communicationPreferences", value: JSON.stringify(preferences), category: "notifications" },
       { key: "systemPermissions", value: JSON.stringify(permissions), category: "security" },
     ];
@@ -244,12 +254,55 @@ function Settings() {
                   <h2>Notification Settings</h2>
                   <div className="settings-panel__rule" />
                   <p className="settings-panel__description">
-                    Configure email and push notification preferences.
+                    Manage your overall notification preferences and specific delivery channels.
                   </p>
-                  <div className="settings-placeholder">
-                    <FiBell size={48} />
-                    <p>Notification settings coming soon...</p>
+                  <div className="settings-form__group">
+                    <label className="settings-toggle">
+                      <span className="settings-toggle__info">
+                        <strong>Master Notifications</strong>
+                        <span>Turn off all system notifications and emails.</span>
+                      </span>
+                      <button
+                        className={`settings-toggle__switch${masterNotificationsEnabled ? " settings-toggle__switch--on" : ""}`}
+                        type="button"
+                        onClick={() => setMasterNotificationsEnabled(!masterNotificationsEnabled)}
+                        aria-pressed={masterNotificationsEnabled}
+                      >
+                        <span className="settings-toggle__knob" />
+                      </button>
+                    </label>
                   </div>
+                  <div className="settings-panel__rule" style={{ margin: "20px 0" }} />
+                  <div className="settings-toggles">
+                    {communicationPreferences.map((pref) => (
+                      <label
+                        key={pref.id}
+                        className="settings-toggle"
+                      >
+                        <span className="settings-toggle__info">
+                          <strong>{pref.label}</strong>
+                          <span>{pref.description}</span>
+                        </span>
+                        <button
+                          className={`settings-toggle__switch${preferences[pref.id] ? " settings-toggle__switch--on" : ""}`}
+                          type="button"
+                          onClick={() => handleToggle(pref.id)}
+                          aria-pressed={preferences[pref.id]}
+                        >
+                          <span className="settings-toggle__knob" />
+                        </button>
+                      </label>
+                    ))}
+                  </div>
+                  <button
+                    className="settings-form__save"
+                    type="button"
+                    onClick={handleSave}
+                    style={{ marginTop: "24px" }}
+                  >
+                    Save Changes
+                  </button>
+                  {saveStatus && <span className="settings-form__save-status" role="status">{saveStatus}</span>}
                 </div>
               )}
 
@@ -268,48 +321,6 @@ function Settings() {
               )}
 
               <div className="settings-additional">
-                <div className="settings-additional__panel">
-                  <button
-                    className="settings-additional__header"
-                    type="button"
-                    onClick={() => handleExpand("communication")}
-                  >
-                    <h3>Communication Preferences</h3>
-                    <FiChevronDown
-                      className={`settings-additional__chevron${isExpanded.communication ? " settings-additional__chevron--rotated" : ""}`}
-                      aria-hidden="true"
-                    />
-                  </button>
-                  {isExpanded.communication && (
-                    <div className="settings-additional__content">
-                      <p className="settings-additional__description">
-                        Configure which notifications are sent via email.
-                      </p>
-                      <div className="settings-toggles">
-                        {communicationPreferences.map((pref) => (
-                          <label
-                            key={pref.id}
-                            className="settings-toggle"
-                          >
-                            <span className="settings-toggle__info">
-                              <strong>{pref.label}</strong>
-                              <span>{pref.description}</span>
-                            </span>
-                            <button
-                              className={`settings-toggle__switch${preferences[pref.id] ? " settings-toggle__switch--on" : ""}`}
-                              type="button"
-                              onClick={() => handleToggle(pref.id)}
-                              aria-pressed={preferences[pref.id]}
-                            >
-                              <span className="settings-toggle__knob" />
-                            </button>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
                 <div className="settings-additional__panel">
                   <button
                     className="settings-additional__header"

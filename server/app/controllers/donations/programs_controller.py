@@ -3,17 +3,29 @@ from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 
 from app.extensions import db
-from app.models.donations.programs import Program
+from app.models.programs import Program
 from app.models.users.organisations import Organisation
 from app.routes.authorization import admin_required
-from server.app.schemas.donations.program_schema import (
+from app.schemas.donations.program_schema import (
     program_schema,
-    programs_schema,
     program_create_schema,
     program_update_schema,
 )
+from app.services.notifications import notify
 
 programs_bp = Blueprint("programs", __name__, url_prefix="/api/programs")
+
+
+def serialize_program(program):
+    payload = program_schema.dump(program)
+    payload["funding_raised"] = float(
+        sum(
+            donation.amount
+            for donation in program.financial_donations
+            if donation.payment_status == "completed"
+        )
+    )
+    return payload
 
 
 @programs_bp.route("/admin", methods=["GET"])
@@ -24,12 +36,12 @@ def admin_list_programs():
     per_page = min(max(request.args.get("per_page", 20, type=int), 1), 100)
     pagination = Program.list_for_admin(
         search=request.args.get("search"),
-        status=request.args.get("status"),
+        active=request.args.get("active", type=lambda value: value.lower() == "true"),
         organisation_id=request.args.get("organisation_id", type=int),
     ).paginate(page=page, per_page=per_page, error_out=False)
     return jsonify(
         {
-            "programs": programs_schema.dump(pagination.items),
+            "programs": [serialize_program(program) for program in pagination.items],
             "total": pagination.total,
             "page": pagination.page,
             "per_page": pagination.per_page,
@@ -51,7 +63,7 @@ def admin_create_program():
     program = Program.create_from_data(data)
     db.session.add(program)
     db.session.commit()
-    return jsonify(program_schema.dump(program)), 201
+    return jsonify(serialize_program(program)), 201
 
 
 @programs_bp.route("/admin/<int:program_id>", methods=["GET", "PATCH", "DELETE"])
@@ -62,7 +74,7 @@ def admin_manage_program(program_id):
     if program is None:
         return jsonify({"message": "Program not found."}), 404
     if request.method == "GET":
-        return jsonify(program_schema.dump(program)), 200
+        return jsonify(serialize_program(program)), 200
     if request.method == "DELETE":
         db.session.delete(program)
         db.session.commit()
@@ -71,10 +83,19 @@ def admin_manage_program(program_id):
         data = program_update_schema.load(request.get_json())
     except ValidationError as err:
         return jsonify(err.messages), 422
+    was_active = program.active
     for key, value in data.items():
         setattr(program, key, value)
+    if was_active and "active" in data and not program.active:
+        notify(
+            "program_completed",
+            "Program completed",
+            f"{program.title} has been marked as completed.",
+            related_type="program",
+            related_id=program.id,
+        )
     db.session.commit()
-    return jsonify(program_schema.dump(program)), 200
+    return jsonify(serialize_program(program)), 200
 
 
 @programs_bp.route("", methods=["POST"])
@@ -87,14 +108,14 @@ def create_program():
 
     program = Program(
         organisation_id=data["organisation_id"],
-        name=data["name"],
+        title=data["title"],
         description=data.get("description"),
-        category=data.get("category"),
+        long_description=data.get("long_description"),
+        image_url=data.get("image_url"),
+        summary=data.get("summary"),
+        type=data.get("type"),
         location=data.get("location"),
-        eligibility=data.get("eligibility"),
-        start_date=data.get("start_date"),
-        end_date=data.get("end_date"),
-        status="active",
+        active=data.get("active", True),
     )
     db.session.add(program)
     db.session.commit()
@@ -107,8 +128,9 @@ def list_programs():
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 20, type=int)
     search = request.args.get("search")
-    status = request.args.get("status")
-    category = request.args.get("category")
+    active = request.args.get("active", type=lambda value: value.lower() == "true")
+    program_type = request.args.get("type")
+    program_kind = request.args.get("kind")
     organisation_id = request.args.get("organisation_id", type=int)
 
     query = Program.query
@@ -116,12 +138,14 @@ def list_programs():
     if search:
         like = f"%{search}%"
         query = query.filter(
-            (Program.name.ilike(like)) | (Program.description.ilike(like))
+            (Program.title.ilike(like)) | (Program.description.ilike(like))
         )
-    if status:
-        query = query.filter_by(status=status)
-    if category:
-        query = query.filter_by(category=category)
+    if active is not None:
+        query = query.filter_by(active=active)
+    if program_type:
+        query = query.filter_by(type=program_type)
+    if program_kind:
+        query = query.filter_by(program_kind=program_kind)
     if organisation_id:
         query = query.filter_by(organisation_id=organisation_id)
 
@@ -129,7 +153,7 @@ def list_programs():
 
     return jsonify(
         {
-            "programs": programs_schema.dump(pagination.items),
+            "programs": [serialize_program(program) for program in pagination.items],
             "total": pagination.total,
             "page": pagination.page,
             "per_page": pagination.per_page,
@@ -141,7 +165,7 @@ def list_programs():
 @programs_bp.route("/<int:program_id>", methods=["GET"])
 def get_program(program_id):
     program = db.get_or_404(Program, program_id)
-    return jsonify(program_schema.dump(program)), 200
+    return jsonify(serialize_program(program)), 200
 
 
 @programs_bp.route("/<int:program_id>", methods=["PATCH"])
@@ -158,7 +182,7 @@ def update_program(program_id):
         setattr(program, key, value)
 
     db.session.commit()
-    return jsonify(program_schema.dump(program)), 200
+    return jsonify(serialize_program(program)), 200
 
 
 @programs_bp.route("/<int:program_id>", methods=["DELETE"])

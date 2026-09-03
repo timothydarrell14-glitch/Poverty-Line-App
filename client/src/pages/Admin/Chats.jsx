@@ -3,7 +3,9 @@ import { FiSearch } from "react-icons/fi";
 import AdminTopbar from "../../components/Admin/AdminTopbar";
 import SideBar from "../../components/Admin/SideBar";
 import { apiUrl } from "../../api/client";
+import { getAccessToken } from "../../utils/auth";
 import "../../styles/Admin/ChatsPage.css";
+import "../../styles/Admin/ChatsPage.dark.css";
 
 const conversations = [
   {
@@ -61,7 +63,7 @@ function Chats() {
   const [draft, setDraft] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
+    const token = getAccessToken();
     fetch(apiUrl("/api/auth/chats"), { headers: { Authorization: `Bearer ${token}` } })
       .then((response) => response.ok ? response.json() : null)
       .then((data) => {

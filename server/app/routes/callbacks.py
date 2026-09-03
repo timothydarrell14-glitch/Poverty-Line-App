@@ -1,4 +1,6 @@
 from flask import Blueprint, request, jsonify
+from app.extensions import db
+from app.models.notifications import Notification
 
 # Create a dedicated Flask Blueprint for callback-related endpoints
 callback_bp = Blueprint("callbacks", __name__, url_prefix="/api")
@@ -19,6 +21,16 @@ def handle_callback_request():
         return jsonify(
             {"error": "Bad Request", "message": "Phone number is required."}
         ), 400
+
+    db.session.add(
+        Notification(
+            type="callback_request",
+            title="New callback request",
+            message=f"{name} requested a callback about {topic}.",
+            related_type="callback",
+        )
+    )
+    db.session.commit()
 
     # Option A: Notification & Alert Logging (No DB migration required)
     print("\n" + "=" * 55)

@@ -6,7 +6,7 @@ from werkzeug.exceptions import HTTPException
 from dotenv import load_dotenv
 
 from app.extensions import cors, db, jwt, ma, migrate
-import app.models  # noqa: F401
+from app.models import *  # noqa: F401, F403
 from app.routes.callbacks import callback_bp
 
 # Load .env.local first (if it exists) to override .env
@@ -87,31 +87,29 @@ def create_app():
         return jsonify({"message": "Welcome to the BACKEND API!"})
 
     from app.routes.auth_routes import auth_bp
+    from app.controllers.classification.assessment_questions_controller import assessment_questions_bp
+    from app.controllers.classification.assessment_responses_controller import assessment_responses_bp
+    from app.controllers.communication.communities_controller import communities_bp
+    from app.controllers.communication.community_memberships_controller import (
+        community_memberships_bp,
+    )
+    from app.controllers.communication.community_posts_controller import community_posts_bp
+    from app.controllers.donations.donations_controller import donations_bp
+    from app.controllers.job_applications_controller import job_applications_bp
+    from app.controllers.jobs_controller import jobs_bp
+    from app.controllers.users.organisations_controller import organisations_bp
+    from app.controllers.donations.programs_controller import programs_bp
+    from app.routes.users import users_bp
+    from app.controllers.countries_controller import countries_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(callback_bp)
-
-    from server.app.controllers.classification.assessment_questions_controller import assessment_questions_bp
-    from server.app.controllers.classification.assessment_responses_controller import assessment_responses_bp
-    from server.app.controllers.communication.communities_controller import communities_bp
-    from server.app.controllers.communication.community_memberships_controller import (
-        community_memberships_bp,
-    )
-    from server.app.controllers.communication.community_posts_controller import community_posts_bp
-    from server.app.controllers.donations.donations_controller import donations_bp
-    from app.controllers.job_applications_controller import job_applications_bp
-    from app.controllers.jobs_controller import jobs_bp
-    from server.app.controllers.users.organisations_controller import organisations_bp
-    from server.app.controllers.donations.program_memberships_controller import program_memberships_bp
-    from server.app.controllers.donations.programs_controller import programs_bp
-    from server.app.controllers.users.users_controller import users_bp
-
     app.register_blueprint(users_bp)
     app.register_blueprint(jobs_bp)
     app.register_blueprint(job_applications_bp)
     app.register_blueprint(programs_bp)
-    app.register_blueprint(program_memberships_bp)
     app.register_blueprint(donations_bp)
+    app.register_blueprint(countries_bp)
     app.register_blueprint(communities_bp)
     app.register_blueprint(community_memberships_bp)
     app.register_blueprint(community_posts_bp)
@@ -124,7 +122,7 @@ def create_app():
         """Create the initial administrator from ADMIN_* environment variables."""
         from werkzeug.security import generate_password_hash
 
-        from app.models.users.members import User
+        from app.models.users.users import User
 
         first_name = os.environ.get("ADMIN_FIRST_NAME", "Admin").strip()
         last_name = os.environ.get("ADMIN_LAST_NAME", "User").strip()
@@ -144,6 +142,8 @@ def create_app():
             is_active=True,
         )
         db.session.add(admin)
+        db.session.flush()
+        db.session.add(admin.sync_role_profile())
         db.session.commit()
         print(f"Created admin {email}.")
 

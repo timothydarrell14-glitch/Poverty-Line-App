@@ -12,7 +12,7 @@ class JobApplication(db.Model):
     )
     status = db.Column(db.String(50))
 
-    user = db.relationship("User", back_populates="job_applications")
+    user = db.relationship("User")
     job = db.relationship("Job", back_populates="applications")
 
     __table_args__ = (db.UniqueConstraint("user_id", "job_id"),)

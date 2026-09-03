@@ -1,0 +1,30 @@
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
+[data-theme='dark'] .admin-sidebar {
+  --sidebar-ink: var(--text-primary);
+  --sidebar-muted: var(--text-secondary);
+  --sidebar-border: var(--border-color);
+  --sidebar-teal: var(--accent-primary);
+  --sidebar-panel: var(--bg-tertiary);
+  background: var(--bg-secondary);
+}
+[data-theme='dark'] .admin-sidebar__identity {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+[data-theme='dark'] .admin-sidebar__avatar {
+  border-color: var(--border-color);
+}
+[data-theme='dark'] .admin-sidebar__role {
+  color: var(--text-secondary);
+}
+[data-theme='dark'] .admin-sidebar__link:hover {
+  background: var(--bg-hover);
+}
+[data-theme='dark'] .admin-sidebar__link--active {
+  background: var(--bg-accent);
+  color: var(--accent-primary);
+}
+

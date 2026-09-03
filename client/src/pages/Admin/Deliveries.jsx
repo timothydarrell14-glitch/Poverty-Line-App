@@ -9,7 +9,9 @@ import {
 import AdminTopbar from "../../components/Admin/AdminTopbar";
 import SideBar from "../../components/Admin/SideBar";
 import { apiUrl } from "../../api/client";
+import { getAccessToken } from "../../utils/auth";
 import "../../styles/Admin/DeliveriesPage.css";
+import "../../styles/Admin/DeliveriesPage.dark.css";
 
 const initialDeliveries = [
   {
@@ -59,7 +61,7 @@ function Deliveries() {
   const [isZoomed, setIsZoomed] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
+    const token = getAccessToken();
     fetch(apiUrl("/api/auth/deliveries"), { headers: { Authorization: `Bearer ${token}` } })
       .then((response) => response.ok ? response.json() : null)
       .then((data) => {

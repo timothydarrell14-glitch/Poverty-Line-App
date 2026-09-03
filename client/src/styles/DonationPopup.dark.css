@@ -1,0 +1,59 @@
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
+[data-theme='dark'] .donation-popup-backdrop {
+  background: var(--bg-overlay);
+}
+[data-theme='dark'] .donation-popup {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+[data-theme='dark'] .donation-popup-header,
+[data-theme='dark'] .donation-nav-bar {
+  border-bottom-color: var(--border-color);
+}
+[data-theme='dark'] .nav-tab {
+  color: var(--text-muted);
+}
+[data-theme='dark'] .form-input,
+[data-theme='dark'] .form-select,
+[data-theme='dark'] .country-code-select,
+[data-theme='dark'] .country-code-input,
+[data-theme='dark'] .phone-number-input {
+  background: var(--bg-input);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+[data-theme='dark'] .form-input:hover,
+[data-theme='dark'] .form-input:focus,
+[data-theme='dark'] .form-select:hover,
+[data-theme='dark'] .form-select:focus,
+[data-theme='dark'] .country-code-select:hover,
+[data-theme='dark'] .country-code-select:focus,
+[data-theme='dark'] .phone-number-input:hover,
+[data-theme='dark'] .phone-number-input:focus,
+[data-theme='dark'] .country-code-input:hover,
+[data-theme='dark'] .country-code-input:focus {
+  border-color: var(--accent-primary);
+}
+[data-theme='dark'] .form-input::placeholder {
+  color: var(--text-muted);
+}
+[data-theme='dark'] .payment-method {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+[data-theme='dark'] .payment-method:hover,
+[data-theme='dark'] .payment-method.selected {
+  border-color: var(--accent-primary);
+  background: var(--bg-accent);
+  color: var(--accent-primary);
+}
+[data-theme='dark'] .donation-popup::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+}
+[data-theme='dark'] .donation-popup::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+}

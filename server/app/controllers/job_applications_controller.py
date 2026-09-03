@@ -9,6 +9,7 @@ from app.schemas.job_application_schema import (
     job_applications_schema,
     job_application_create_schema,
 )
+from app.services.notifications import notify
 
 job_applications_bp = Blueprint(
     "job_applications", __name__, url_prefix="/api/job-applications"
@@ -37,6 +38,14 @@ def create_job_application():
         status="pending",
     )
     db.session.add(application)
+    db.session.flush()
+    notify(
+        "job_application",
+        "New job application",
+        f"A new application was submitted for job #{application.job_id}.",
+        related_type="job_application",
+        related_id=application.application_id,
+    )
     db.session.commit()
 
     return jsonify(job_application_schema.dump(application)), 201

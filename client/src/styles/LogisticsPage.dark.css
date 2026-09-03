@@ -1,0 +1,29 @@
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
+[data-theme='dark'] .logistics-page {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+[data-theme='dark'] .logistics-header h1 {
+  color: var(--text-primary);
+}
+[data-theme='dark'] .logistics-header p {
+  color: var(--text-secondary);
+}
+[data-theme='dark'] .logistics-card,
+[data-theme='dark'] .logistics-panel {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+[data-theme='dark'] .logistics-card strong {
+  color: var(--text-primary);
+}
+[data-theme='dark'] .logistics-card span,
+[data-theme='dark'] .logistics-card small {
+  color: var(--text-secondary);
+}
+[data-theme='dark'] .logistics-panel h2 {
+  color: var(--text-primary);
+}

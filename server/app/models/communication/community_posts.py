@@ -13,4 +13,4 @@ class CommunityPost(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
 
     community = db.relationship("Community", back_populates="posts")
-    user = db.relationship("User", back_populates="community_posts")
+    user = db.relationship("User")
