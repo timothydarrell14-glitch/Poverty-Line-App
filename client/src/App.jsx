@@ -20,6 +20,7 @@ import JobsPage from './pages/JobsPage'
 import ContactPage from './pages/ContactPage'
 import './styles/Admin/Scrollbar.css'
 import ComingSoon from './components/Admin/ComingSoon'
+import { ToastProvider } from './context/ToastContext'
 
 function PreviewGate({ feature, children }) {
   const [isPreviewing, setIsPreviewing] = useState(false)
@@ -39,7 +40,7 @@ function ScrollToTop() {
 
 function App() {
   return (
-    <>
+    <ToastProvider>
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -62,7 +63,7 @@ function App() {
         </Route>
         <Route path="*" element={<Navigate replace to="/" />} />
       </Routes>
-    </>
+    </ToastProvider>
   )
 }
 

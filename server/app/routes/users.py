@@ -12,6 +12,7 @@ from app.schemas.users.user_schema import (
     user_update_schema,
     admin_user_update_schema,
 )
+from app.services.notifications import notify
 
 
 users_bp = Blueprint("users", __name__, url_prefix="/api/users")
@@ -29,6 +30,14 @@ def register():
 
     user = User.create_from_registration(data)
     db.session.add(user)
+    db.session.flush()
+    notify(
+        "signup",
+        "New account created",
+        f"{user.first_name} {user.last_name} created a new account.",
+        related_type="user",
+        related_id=user.user_id,
+    )
     db.session.commit()
 
     return jsonify(user_schema.dump(user)), 201
