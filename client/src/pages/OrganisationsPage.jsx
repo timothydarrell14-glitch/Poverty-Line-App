@@ -704,6 +704,688 @@ function Organisations({
     }
   };
 
+
+const INITIAL_LOGS = [
+  {
+    id: "log-1",
+    title: "Shipment #402 delivered",
+    timestamp: "12 mins ago",
+    type: "delivery",
+    status: "completed",
+    details:
+      "1,200 kg staple grains and pantry provisions received at Central Hub.",
+  },
+  {
+    id: "log-2",
+    title: "Low inventory alert: Pantry B",
+    timestamp: "34 mins ago",
+    type: "inventory",
+    status: "warning",
+    details:
+      "Baby formula and dry legumes inventory under 15% threshold; replenishment triggered.",
+  },
+  {
+    id: "log-3",
+    title: "5 new volunteers onboarded",
+    timestamp: "1 hour ago",
+    type: "volunteer",
+    status: "info",
+    details:
+      "Completed food safety and route-dispatch safety certification.",
+  },
+  {
+    id: "log-4",
+    title: "Route optimized for Zone A",
+    timestamp: "2 hours ago",
+    type: "route",
+    status: "completed",
+    details:
+      "Dynamic routing reduced transit fuel expenditure by 18%.",
+  },
+];
+
+const TESTIMONIALS = [
+  {
+    id: 1,
+    quote:
+      "Integrating with Poverty Line's platform allowed us to reduce our resource wastage by 30% in the first quarter. The dashboard provides clarity in high-pressure situations.",
+    author: "Sarah Jenkins",
+    role: "Director of Operations",
+    organization: "FoodForward",
+    image: foodforwardImage,
+  },
+  {
+    id: 2,
+    quote:
+      "The onboarding process was incredibly structured. We were able to sync our volunteer database within days and immediately saw an improvement in allocation efficiency.",
+    author: "David Chen",
+    role: "Community Lead",
+    organization: "GlobalCare",
+    image: globalcareImage,
+  },
+];
+
+/* =========================================================
+   JOB API HELPERS
+   ========================================================= */
+
+const listJobs = (params = {}) => {
+  const query = new URLSearchParams(
+    Object.entries(params).filter(
+      ([, value]) =>
+        value !== undefined &&
+        value !== null &&
+        value !== ""
+    )
+  ).toString();
+
+  return apiRequest(`/api/jobs${query ? `?${query}` : ""}`);
+};
+
+const createJob = (job) =>
+  apiRequest("/api/jobs", {
+    method: "POST",
+    body: job,
+  });
+
+const updateJob = (jobId, changes) =>
+  apiRequest(`/api/jobs/${jobId}`, {
+    method: "PATCH",
+    body: changes,
+  });
+
+const deleteJob = (jobId) =>
+  apiRequest(`/api/jobs/${jobId}`, {
+    method: "DELETE",
+  });
+
+/*
+ * Applicant endpoint.
+ *
+ * If your backend exposes a different applicant endpoint,
+ * this is the only helper that needs to be changed.
+ */
+const listJobApplicants = (jobId) =>
+  apiRequest(`/api/jobs/${jobId}/applications`);
+
+/* =========================================================
+   EMPTY FORMS
+   ========================================================= */
+
+const EMPTY_ORGANISATION = {
+  name: "",
+  organisation_type: "",
+  description: "",
+  email: "",
+  phone: "",
+  website: "",
+  location: "",
+};
+
+/*
+ * These fields support the program model while keeping
+ * compatibility with the existing frontend where possible.
+ */
+const EMPTY_PROGRAM = {
+  name: "",
+  description: "",
+  category: "",
+  location: "",
+  eligibility: "",
+  start_date: "",
+  end_date: "",
+  funding_goal: "",
+  progress_target: "",
+  progress_value: "",
+  progress_unit: "%",
+};
+
+const EMPTY_JOB = {
+  title: "",
+  description: "",
+  requirements: "",
+  minimum_education: "",
+  experience: "",
+  application_deadline: "",
+};
+
+/* =========================================================
+   GENERAL HELPERS
+   ========================================================= */
+
+const getOrganisationId = (organisation) =>
+  organisation?.id ??
+  organisation?.organisation_id ??
+  organisation?.organization_id ??
+  null;
+
+const getProgramId = (program) =>
+  program?.id ??
+  program?.program_id ??
+  null;
+
+const getJobId = (job) =>
+  job?.id ??
+  job?.job_id ??
+  null;
+
+const isOrganisationApproved = (organisation) =>
+  Boolean(
+    organisation &&
+      (
+        organisation.verified === true ||
+        organisation.verified === 1 ||
+        organisation.verified === "true" ||
+        organisation.status === "approved"
+      )
+  );
+
+const getResponseList = (response, keys = []) => {
+  if (Array.isArray(response)) {
+    return response;
+  }
+
+  for (const key of keys) {
+    if (Array.isArray(response?.[key])) {
+      return response[key];
+    }
+  }
+
+  if (Array.isArray(response?.data)) {
+    return response.data;
+  }
+
+  return [];
+};
+
+const getProgramTitle = (program) =>
+  program?.title ||
+  program?.name ||
+  "Untitled Program";
+
+const getProgramDescription = (program) =>
+  program?.description ||
+  program?.summary ||
+  program?.long_description ||
+  "";
+
+const getProgramCategory = (program) =>
+  program?.type ||
+  program?.program_kind ||
+  program?.category ||
+  "";
+
+const getApplicantStatus = (application) =>
+  String(
+    application?.status ||
+      application?.application_status ||
+      "pending"
+  ).toLowerCase();
+
+const getApplicantName = (application) =>
+  application?.user?.name ||
+  application?.user?.full_name ||
+  application?.name ||
+  application?.full_name ||
+  application?.username ||
+  application?.email ||
+  "Applicant";
+
+/* =========================================================
+   COMPONENT
+   ========================================================= */
+
+function Organisations({
+  onOpenPartnerApplication,
+  onOpenLiveSimulation,
+  onOpenLogin,
+  onOpenDonate,
+}) {
+  const [logs, setLogs] = useState(INITIAL_LOGS);
+  const [selectedTimeframe, setSelectedTimeframe] =
+    useState("7d");
+
+  const [isSimulatingDispatch, setIsSimulatingDispatch] =
+    useState(false);
+
+  // Controls the active Navbar item
+  const [activeTab, setActiveTab] =
+    useState("organisations");
+
+  /* =========================================================
+     AUTH / ORGANISATION STATE
+     ========================================================= */
+
+  const [currentUser, setCurrentUser] = useState(
+    () => getCurrentUser()
+  );
+
+  const [, setOrganisations] = useState([]);
+
+  const [selectedOrganisation, setSelectedOrganisation] =
+    useState(null);
+
+  const [organisationForm, setOrganisationForm] =
+    useState(EMPTY_ORGANISATION);
+
+  const [isOrganisationEditing, setIsOrganisationEditing] =
+    useState(false);
+
+  const [organisationLoading, setOrganisationLoading] =
+    useState(false);
+
+  const [organisationError, setOrganisationError] =
+    useState("");
+
+  /* =========================================================
+     PARTNER DASHBOARD STATE
+     ========================================================= */
+
+  const [partnerDashboardTab, setPartnerDashboardTab] =
+    useState("organisation");
+
+  const [showPartnerDashboard, setShowPartnerDashboard] =
+    useState(false);
+
+  /* =========================================================
+     PROGRAM STATE
+     ========================================================= */
+
+  const [programs, setPrograms] = useState([]);
+
+  const [programForm, setProgramForm] =
+    useState(EMPTY_PROGRAM);
+
+  const [editingProgramId, setEditingProgramId] =
+    useState(null);
+
+  const [programLoading, setProgramLoading] =
+    useState(false);
+
+  const [programError, setProgramError] =
+    useState("");
+
+  const [showProgramModal, setShowProgramModal] =
+    useState(false);
+
+  /* =========================================================
+     JOB STATE
+     ========================================================= */
+
+  const [jobs, setJobs] = useState([]);
+
+  const [jobForm, setJobForm] =
+    useState(EMPTY_JOB);
+
+  const [editingJobId, setEditingJobId] =
+    useState(null);
+
+  const [jobLoading, setJobLoading] =
+    useState(false);
+
+  const [jobError, setJobError] =
+    useState("");
+
+  const [showJobModal, setShowJobModal] =
+    useState(false);
+
+  /* =========================================================
+     APPLICANTS
+     ========================================================= */
+
+  const [selectedJob, setSelectedJob] =
+    useState(null);
+
+  const [jobApplicants, setJobApplicants] =
+    useState([]);
+
+  const [applicantLoading, setApplicantLoading] =
+    useState(false);
+
+  const [applicantError, setApplicantError] =
+    useState("");
+
+  const [showApplicantCards, setShowApplicantCards] =
+    useState(false);
+
+  /* =========================================================
+     NOTIFICATIONS
+     ========================================================= */
+
+  const [notifications, setNotifications] =
+    useState([]);
+
+  const [notificationLoading, setNotificationLoading] =
+    useState(false);
+
+  const [notificationError, setNotificationError] =
+    useState("");
+
+  const [showNotifications, setShowNotifications] =
+    useState(false);
+
+  /* =========================================================
+     UI STATE
+     ========================================================= */
+
+  const [showManagement, setShowManagement] =
+    useState(false);
+
+  /* =========================================================
+     AUTH ROLE CHECK
+     ========================================================= */
+
+  const isLoggedIn = Boolean(currentUser);
+
+  const userRole = String(
+    currentUser?.role || ""
+  )
+    .trim()
+    .toLowerCase();
+
+  const isPartner = userRole === "partner";
+
+  const hasApprovedOrganisation =
+    isOrganisationApproved(selectedOrganisation);
+
+  const hasPendingOrganisation =
+    Boolean(
+      selectedOrganisation &&
+        !hasApprovedOrganisation
+    );
+
+  /* =========================================================
+     AUTH CHANGE LISTENER
+     ========================================================= */
+
+  useEffect(() => {
+    const handleAuthChange = () => {
+      setCurrentUser(getCurrentUser());
+    };
+
+    window.addEventListener(
+      "povertyline-auth-change",
+      handleAuthChange
+    );
+
+    return () => {
+      window.removeEventListener(
+        "povertyline-auth-change",
+        handleAuthChange
+      );
+    };
+  }, []);
+
+  /* =========================================================
+     SAFE LOGIN HANDLER
+     ========================================================= */
+
+  const handleOpenLogin = () => {
+    if (onOpenLogin) {
+      onOpenLogin();
+    }
+  };
+
+  /* =========================================================
+     CHART DATA
+     ========================================================= */
+
+  const chartData = {
+    "7d": [
+      { day: "Mon", height: "68%", value: "18.4K units" },
+      { day: "Tue", height: "82%", value: "22.1K units" },
+      { day: "Wed", height: "74%", value: "19.8K units" },
+      { day: "Thu", height: "94%", value: "25.6K units" },
+      { day: "Fri", height: "88%", value: "24.0K units" },
+      { day: "Sat", height: "98%", value: "26.8K units" },
+      { day: "Sun", height: "62%", value: "16.5K units" },
+    ],
+
+    "30d": [
+      { day: "Wk 1", height: "72%", value: "88.2K units" },
+      { day: "Wk 2", height: "86%", value: "104.5K units" },
+      { day: "Wk 3", height: "91%", value: "112.0K units" },
+      { day: "Wk 4", height: "95%", value: "118.4K units" },
+    ],
+
+    ytd: [
+      { day: "Q1", height: "65%", value: "310K units" },
+      { day: "Q2", height: "78%", value: "375K units" },
+      { day: "Q3", height: "90%", value: "430K units" },
+      { day: "Q4", height: "96%", value: "462K units" },
+    ],
+  };
+
+  /* =========================================================
+     LOAD ORGANISATIONS
+     ========================================================= */
+
+  useEffect(() => {
+    const loadOrganisations = async () => {
+      try {
+        setOrganisationLoading(true);
+        setOrganisationError("");
+
+        const response = await listOrganisations();
+
+        const organisationList =
+          getResponseList(response, [
+            "organisations",
+            "organizations",
+          ]);
+
+        setOrganisations(organisationList);
+
+        const user = getCurrentUser();
+
+        const userOrganisationId =
+          user?.organisation_id ??
+          user?.organization_id ??
+          user?.organisationId ??
+          user?.organizationId;
+
+        if (userOrganisationId) {
+          let matchedOrganisation =
+            organisationList.find(
+              (organisation) =>
+                String(
+                  getOrganisationId(
+                    organisation
+                  )
+                ) ===
+                String(userOrganisationId)
+            );
+
+          /*
+           * If the organisation is not in the public list,
+           * try loading it directly. This allows the owner
+           * to see the pending status of their own request.
+           */
+          if (!matchedOrganisation) {
+            try {
+              const directResponse =
+                await apiRequest(
+                  `/api/organisations/${userOrganisationId}`
+                );
+
+              matchedOrganisation =
+                directResponse?.organisation ||
+                directResponse?.data ||
+                directResponse;
+            } catch (directError) {
+              console.warn(
+                "Could not load user's organisation directly:",
+                directError
+              );
+            }
+          }
+
+          if (matchedOrganisation) {
+            setSelectedOrganisation(
+              matchedOrganisation
+            );
+
+            setOrganisationForm({
+              name:
+                matchedOrganisation.name || "",
+              organisation_type:
+                matchedOrganisation.organisation_type ||
+                matchedOrganisation.organization_type ||
+                "",
+              description:
+                matchedOrganisation.description ||
+                "",
+              email:
+                matchedOrganisation.email || "",
+              phone:
+                matchedOrganisation.phone || "",
+              website:
+                matchedOrganisation.website || "",
+              location:
+                matchedOrganisation.location || "",
+            });
+          }
+        }
+      } catch (error) {
+        console.error(
+          "Failed to load organisations:",
+          error
+        );
+
+        setOrganisationError(
+          error.message ||
+            "Failed to load organisations."
+        );
+      } finally {
+        setOrganisationLoading(false);
+      }
+    };
+
+    loadOrganisations();
+  }, []);
+
+  /* =========================================================
+     LOAD PROGRAMS AND JOBS
+     ========================================================= */
+
+  useEffect(() => {
+    const organisationId =
+      getOrganisationId(
+        selectedOrganisation
+      );
+
+    /*
+     * Programs and jobs are only available to an approved
+     * organisation.
+     */
+    if (
+      !organisationId ||
+      !hasApprovedOrganisation ||
+      !isLoggedIn ||
+      !isPartner
+    ) {
+      return;
+    }
+
+    const loadProgramsAndJobs = async () => {
+      try {
+        setProgramLoading(true);
+        setJobLoading(true);
+
+        setProgramError("");
+        setJobError("");
+
+        const [
+          programResponse,
+          jobResponse,
+        ] = await Promise.all([
+          listPrograms({
+            organisation_id: organisationId,
+          }),
+          listJobs({
+            organisation_id: organisationId,
+          }),
+        ]);
+
+        const programList =
+          getResponseList(programResponse, [
+            "programs",
+          ]);
+
+        const jobList =
+          getResponseList(jobResponse, [
+            "jobs",
+          ]);
+
+        setPrograms(programList);
+        setJobs(jobList);
+      } catch (error) {
+        console.error(
+          "Failed to load organisation resources:",
+          error
+        );
+
+        setProgramError(
+          error.message ||
+            "Failed to load programs."
+        );
+
+        setJobError(
+          error.message ||
+            "Failed to load jobs."
+        );
+      } finally {
+        setProgramLoading(false);
+        setJobLoading(false);
+      }
+    };
+
+    loadProgramsAndJobs();
+  }, [
+    selectedOrganisation,
+    hasApprovedOrganisation,
+    isLoggedIn,
+    isPartner,
+  ]);
+
+  /* =========================================================
+     LOAD NOTIFICATIONS
+     ========================================================= */
+
+  const loadNotifications = async () => {
+    if (!isLoggedIn) {
+      setNotifications([]);
+      return;
+    }
+
+    try {
+      setNotificationLoading(true);
+      setNotificationError("");
+
+      const response =
+        await apiRequest("/notifications");
+
+      const notificationList =
+        getResponseList(response, [
+          "notifications",
+        ]);
+
+      setNotifications(notificationList);
+    } catch (error) {
+      console.error(
+        "Failed to load notifications:",
+        error
+      );
+
+      setNotificationError(
+        error.message ||
+          "Failed to load notifications."
+      );
+    } finally {
+      setNotificationLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!isLoggedIn) {
       return;
@@ -5667,7 +6349,6 @@ function Organisations({
         </div>
       </main>
     </>
-  );
+  ); 
 }
-
 export default Organisations;
