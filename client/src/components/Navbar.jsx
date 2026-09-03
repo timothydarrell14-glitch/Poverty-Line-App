@@ -157,27 +157,35 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
             </button>
             {isAuthenticated() ? (
               <>
-                <button
-                  className="nav-link portal-link-btn"
-                  onClick={() => handleSelect("/member-portal", "member-portal")}
-                  style={{
-                    backgroundColor: "#d1f2ed",
-                    color: "#0a574e",
-                    fontWeight: "600",
-                    borderRadius: "20px",
-                    padding: "0.4rem 0.9rem",
-                    border: "none",
-                    cursor: "pointer",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "0.3rem",
-                  }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: "1.1rem" }}>
-                    account_circle
-                  </span>
-                  Member Portal
-                </button>
+                {(() => {
+                  const isOrgUser = currentUser?.role === 'partner' || currentUser?.role === 'organisation';
+                  const portalPath = isOrgUser ? '/organisations/portal' : '/member-portal';
+                  const portalLabel = isOrgUser ? 'Organisation Portal' : 'Member Portal';
+                  const portalIcon = isOrgUser ? 'corporate_fare' : 'account_circle';
+                  return (
+                    <button
+                      className="nav-link portal-link-btn"
+                      onClick={() => handleSelect(portalPath, isOrgUser ? 'organisation-portal' : 'member-portal')}
+                      style={{
+                        backgroundColor: "#d1f2ed",
+                        color: "#0a574e",
+                        fontWeight: "600",
+                        borderRadius: "20px",
+                        padding: "0.4rem 0.9rem",
+                        border: "none",
+                        cursor: "pointer",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.3rem",
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: "1.1rem" }}>
+                        {portalIcon}
+                      </span>
+                      {portalLabel}
+                    </button>
+                  );
+                })()}
                 {currentUser?.role && (
                   <span className="admin-badge" aria-label="Account type">
                     {currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)}

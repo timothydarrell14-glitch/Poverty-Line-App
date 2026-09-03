@@ -15,6 +15,7 @@ import HomePage from './pages/Homepage'
 import GetHelpPage from './pages/GetHelpPage'
 import CommunityPage from './pages/CommunityPage'
 import OrganisationsPage from './pages/OrganisationsPage'
+import OrganisationPortalPage from './pages/OrganisationPortalPage'
 import DonorsPage from './pages/DonorsPage'
 import LogisticsPage from './pages/LogisticsPage'
 import JobsPage from './pages/JobsPage'
@@ -51,6 +52,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/get-help" element={<GetHelpPage />} />
           <Route path="/organisations" element={<OrganisationsPage />} />
+          <Route path="/organisations/portal" element={<OrganisationPortalPage />} />
           <Route path="/donors" element={<DonorsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/logistics" element={<LogisticsPage />} />
