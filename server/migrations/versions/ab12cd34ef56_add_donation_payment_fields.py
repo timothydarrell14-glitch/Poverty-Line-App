@@ -24,7 +24,7 @@ def upgrade():
     tables = set(inspector.get_table_names())
 
     if "programs" in tables and "program_id" in _columns("programs"):
-        with op.batch_alter_table("programs", recreate="always") as batch:
+        with op.batch_alter_table("programs") as batch:
             batch.alter_column("program_id", new_column_name="id")
             batch.alter_column("name", new_column_name="title")
             batch.alter_column("category", new_column_name="type")
@@ -37,7 +37,7 @@ def upgrade():
             batch.drop_column("end_date")
             batch.drop_column("status")
         op.execute("UPDATE programs SET active = 1 WHERE active IS NULL")
-        with op.batch_alter_table("programs", recreate="always") as batch:
+        with op.batch_alter_table("programs") as batch:
             batch.alter_column("active", nullable=False, server_default=sa.true())
 
     if "donors" not in tables:
