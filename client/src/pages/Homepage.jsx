@@ -4,16 +4,19 @@ import Herosection from '../components/Herosection';
 import EcosystemSection from '../components/EcosystemSection';
 import ProgressSection from '../components/ProgressSection';
 import Footer from '../components/Footer';
+import { usePublicSettings } from '../hooks/usePublicSettings';
 import '../styles/Homepage.css';
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const { publicDescription } = usePublicSettings();
 
   return (
     <div className="site-shell">
       <Navbar activeTab="home" />
       <main>
         <Herosection
+          publicDescription={publicDescription}
           onExploreImpact={() => navigate('/donors')}
           onReadStory={() => window.scrollTo({ top: 800, behavior: 'smooth' })}
         />

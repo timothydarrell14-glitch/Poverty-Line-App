@@ -1,0 +1,108 @@
+.admin-chats__body,
+.admin-deliveries__body,
+.admin-home__body,
+.admin-programs__body,
+.admin-settings__body,
+.admin-users__body,
+.chats-list__conversations,
+.chat-messages__messages,
+.delivery-list__cards,
+.admin-topbar__panel,
+.admin-programs__modal {
+  scrollbar-color: transparent transparent;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+}
+
+.admin-chats__body:hover,
+.admin-chats__body:focus-within,
+.admin-deliveries__body:hover,
+.admin-deliveries__body:focus-within,
+.admin-home__body:hover,
+.admin-home__body:focus-within,
+.admin-programs__body:hover,
+.admin-programs__body:focus-within,
+.admin-settings__body:hover,
+.admin-settings__body:focus-within,
+.admin-users__body:hover,
+.admin-users__body:focus-within,
+.chats-list__conversations:hover,
+.chats-list__conversations:focus-within,
+.chat-messages__messages:hover,
+.chat-messages__messages:focus-within,
+.delivery-list__cards:hover,
+.delivery-list__cards:focus-within,
+.admin-topbar__panel:hover,
+.admin-programs__modal:hover {
+  scrollbar-color: #7d9ca3 transparent;
+}
+
+.admin-chats__body::-webkit-scrollbar,
+.admin-deliveries__body::-webkit-scrollbar,
+.admin-home__body::-webkit-scrollbar,
+.admin-programs__body::-webkit-scrollbar,
+.admin-settings__body::-webkit-scrollbar,
+.admin-users__body::-webkit-scrollbar,
+.chats-list__conversations::-webkit-scrollbar,
+.chat-messages__messages::-webkit-scrollbar,
+.delivery-list__cards::-webkit-scrollbar,
+.admin-topbar__panel::-webkit-scrollbar,
+.admin-programs__modal::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.admin-chats__body::-webkit-scrollbar-track,
+.admin-deliveries__body::-webkit-scrollbar-track,
+.admin-home__body::-webkit-scrollbar-track,
+.admin-programs__body::-webkit-scrollbar-track,
+.admin-settings__body::-webkit-scrollbar-track,
+.admin-users__body::-webkit-scrollbar-track,
+.chats-list__conversations::-webkit-scrollbar-track,
+.chat-messages__messages::-webkit-scrollbar-track,
+.delivery-list__cards::-webkit-scrollbar-track,
+.admin-topbar__panel::-webkit-scrollbar-track,
+.admin-programs__modal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-chats__body::-webkit-scrollbar-thumb,
+.admin-deliveries__body::-webkit-scrollbar-thumb,
+.admin-home__body::-webkit-scrollbar-thumb,
+.admin-programs__body::-webkit-scrollbar-thumb,
+.admin-settings__body::-webkit-scrollbar-thumb,
+.admin-users__body::-webkit-scrollbar-thumb,
+.chats-list__conversations::-webkit-scrollbar-thumb,
+.chat-messages__messages::-webkit-scrollbar-thumb,
+.delivery-list__cards::-webkit-scrollbar-thumb,
+.admin-topbar__panel::-webkit-scrollbar-thumb,
+.admin-programs__modal::-webkit-scrollbar-thumb {
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+.admin-chats__body:hover::-webkit-scrollbar-thumb,
+.admin-chats__body:focus-within::-webkit-scrollbar-thumb,
+.admin-deliveries__body:hover::-webkit-scrollbar-thumb,
+.admin-deliveries__body:focus-within::-webkit-scrollbar-thumb,
+.admin-home__body:hover::-webkit-scrollbar-thumb,
+.admin-home__body:focus-within::-webkit-scrollbar-thumb,
+.admin-programs__body:hover::-webkit-scrollbar-thumb,
+.admin-programs__body:focus-within::-webkit-scrollbar-thumb,
+.admin-settings__body:hover::-webkit-scrollbar-thumb,
+.admin-settings__body:focus-within::-webkit-scrollbar-thumb,
+.admin-users__body:hover::-webkit-scrollbar-thumb,
+.admin-users__body:focus-within::-webkit-scrollbar-thumb,
+.chats-list__conversations:hover::-webkit-scrollbar-thumb,
+.chats-list__conversations:focus-within::-webkit-scrollbar-thumb,
+.chat-messages__messages:hover::-webkit-scrollbar-thumb,
+.chat-messages__messages:focus-within::-webkit-scrollbar-thumb,
+.delivery-list__cards:hover::-webkit-scrollbar-thumb,
+.delivery-list__cards:focus-within::-webkit-scrollbar-thumb,
+.admin-topbar__panel:hover::-webkit-scrollbar-thumb,
+.admin-programs__modal:hover::-webkit-scrollbar-thumb {
+  background: #7d9ca3;
+  background-clip: padding-box;
+}

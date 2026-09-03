@@ -9,6 +9,8 @@ import {
   isAuthenticated,
 } from "../utils/auth";
 import { apiRequest } from "../api/client";
+import { usePublicSettings } from "../hooks/usePublicSettings";
+import { useToast } from "../context/ToastContext";
 
 export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -20,6 +22,8 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   const [programs, setPrograms] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
+  const { orgName } = usePublicSettings();
+  const { showToast } = useToast();
 
   useEffect(() => {
     const handle = () => setIsScrolled(window.scrollY > 12);
@@ -59,7 +63,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
 
   const handleDonationSubmit = async (donationData) => {
     if (donationData.kind === "non_financial") {
-      alert("Non-financial donation details received.");
+      showToast("Your non-financial donation request was submitted successfully.", "success");
       return;
     }
     const response = await apiRequest("/api/donations", {
@@ -70,7 +74,11 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
       window.location.assign(response.payment.approval_url);
       return;
     }
-    alert(`Donation recorded. ${response.payment.provider} payment is pending confirmation.`);
+    if (response.donation?.payment_status === "completed" || response.payment?.status === "completed") {
+      showToast("Donation successful. Thank you for your contribution.", "success");
+    } else {
+      showToast(`Donation recorded. ${response.payment.provider} payment is pending confirmation.`, "info");
+    }
   };
 
   const handleDonateClick = () => {
@@ -122,7 +130,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
             <span className="material-symbols-outlined material-symbols-fill">
               volunteer_activism
             </span>
-            Poverty Line
+            {orgName}
           </button>
           <div className="nav-links">
             {items.map(([path, id, label]) => (

@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import DonationPopup from "../components/DonationPopup";
 import { apiRequest } from "../api/client";
+import { useToast } from "../context/ToastContext";
 import "../styles/Donors.css";
 
 const impactUpdates = [
@@ -34,6 +35,7 @@ export default function DonorsPage() {
   const [programsError, setProgramsError] = useState("");
   const [donationHistory, setDonationHistory] = useState([]);
   const totalGiven = donationHistory.reduce((total, donation) => total + Number(donation.amount), 0);
+  const { showToast } = useToast();
 
   const showDonationNotice = (programId = null) => {
     if (programId) {
@@ -72,7 +74,7 @@ export default function DonorsPage() {
 
   const handleDonationSubmit = async (donationData) => {
     if (donationData.kind === "non_financial") {
-      window.alert("Non-financial donation details received.");
+      showToast("Your non-financial donation request was submitted successfully.", "success");
       return;
     }
     const response = await apiRequest("/api/donations", {
@@ -83,9 +85,11 @@ export default function DonorsPage() {
       window.location.assign(response.payment.approval_url);
       return;
     }
-    window.alert(
-      `Donation recorded. ${response.payment.provider} payment is pending confirmation.`
-    );
+    if (response.donation?.payment_status === "completed" || response.payment?.status === "completed") {
+      showToast("Donation successful. Thank you for your contribution.", "success");
+    } else {
+      showToast(`Donation recorded. ${response.payment.provider} payment is pending confirmation.`, "info");
+    }
   };
 
   useEffect(() => {
@@ -111,6 +115,7 @@ export default function DonorsPage() {
       .catch(() => setDonationHistory([]));
   }, [isLoggedIn]);
 
+  // This effect only runs when PayPal returns with a payment to confirm.
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     const donationId = query.get("donation_id");
@@ -120,16 +125,18 @@ export default function DonorsPage() {
       method: "POST",
       body: { donation_id: Number(donationId), order_id: orderId },
     }).then(() => {
+      showToast("Donation successful. Thank you for your contribution.", "success");
       window.history.replaceState({}, "", window.location.pathname);
     }).catch(() => {
-      window.alert("PayPal payment could not be confirmed.");
+      showToast("PayPal payment could not be confirmed.", "error");
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!isLoggedIn) {
     return (
       <div className="donors-page">
-        <Navbar onOpenLogin={() => window.alert("Please log in to access your donor dashboard.")} />
+        <Navbar onOpenLogin={() => showToast("Please log in to access your donor dashboard.", "info")} />
         <main className="public-donors-content">
           <section className="public-donors-hero">
             <div className="public-donors-copy">
@@ -247,7 +254,7 @@ export default function DonorsPage() {
 
   return (
     <div className="donors-page">
-      <Navbar onOpenDonate={() => showDonationNotice()} onOpenLogin={() => window.alert("Login will be available soon.")} />
+      <Navbar onOpenDonate={() => showDonationNotice()} onOpenLogin={() => showToast("Please sign in to access your donor dashboard.", "info")} />
       <main className="donors-content">
         <section className="donor-welcome-card">
           <div className="donor-profile">

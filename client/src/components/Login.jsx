@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiUrl } from "../api/client";
+import { useToast } from "../context/ToastContext";
 import "../styles/Auth.css";
 
 const Login = ({ isOpen, onClose, onShowSignup, onAuthenticated }) => {
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [email, setEmail] = useState(() => localStorage.getItem("povertyLineSavedEmail") || "");
   const [password, setPassword] = useState(() => localStorage.getItem("povertyLineSavedPassword") || "");
@@ -57,9 +59,11 @@ const Login = ({ isOpen, onClose, onShowSignup, onAuthenticated }) => {
       }
 
       onClose?.();
+      showToast("Welcome back. You are signed in successfully.", "success");
       navigate(data.user?.role?.trim().toLowerCase() === "admin" ? "/admin" : "/get-help");
     } catch (err) {
       setError(err.message || "Unable to log in.");
+      showToast(err.message || "Unable to sign in.", "error");
     } finally {
       setIsSubmitting(false);
     }

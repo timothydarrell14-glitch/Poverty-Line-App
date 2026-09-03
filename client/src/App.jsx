@@ -1,5 +1,5 @@
 import './App.css'
-import { useLayoutEffect } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import AdminRoute from './components/AdminRoute'
 import AccessDeniedPage from './pages/AccessDeniedPage'
@@ -18,6 +18,15 @@ import DonorsPage from './pages/DonorsPage'
 import LogisticsPage from './pages/LogisticsPage'
 import JobsPage from './pages/JobsPage'
 import ContactPage from './pages/ContactPage'
+import './styles/Admin/Scrollbar.css'
+import ComingSoon from './components/Admin/ComingSoon'
+import { ToastProvider } from './context/ToastContext'
+
+function PreviewGate({ feature, children }) {
+  const [isPreviewing, setIsPreviewing] = useState(false)
+
+  return isPreviewing ? children : <ComingSoon feature={feature} onPreview={() => setIsPreviewing(true)} />
+}
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -31,7 +40,7 @@ function ScrollToTop() {
 
 function App() {
   return (
-    <>
+    <ToastProvider>
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -48,13 +57,13 @@ function App() {
           <Route path="/admin" element={<Home />} />
           <Route path="/admin/users" element={<Users />} />
           <Route path="/admin/programs" element={<Programs />} />
-          <Route path="/admin/deliveries" element={<Deliveries />} />
-          <Route path="/admin/chats" element={<Chats />} />
+          <Route path="/admin/deliveries" element={<PreviewGate feature="Deliveries"><Deliveries /></PreviewGate>} />
+          <Route path="/admin/chats" element={<PreviewGate feature="Chats"><Chats /></PreviewGate>} />
           <Route path="/admin/settings" element={<Settings />} />
         </Route>
         <Route path="*" element={<Navigate replace to="/" />} />
       </Routes>
-    </>
+    </ToastProvider>
   )
 }
 

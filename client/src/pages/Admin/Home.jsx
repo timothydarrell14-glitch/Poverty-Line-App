@@ -1,62 +1,72 @@
 import {
-  FiBox,
+  FiCheckCircle,
   FiChevronRight,
+  FiDollarSign,
   FiEdit2,
   FiFileText,
   FiMessageSquare,
-  FiUser,
-  FiUsers,
+  FiUserPlus,
+  FiX,
 } from "react-icons/fi";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminTopbar from "../../components/Admin/AdminTopbar";
 import { useAdminSession } from "../../components/AdminSession";
 import SideBar from "../../components/Admin/SideBar"
+import { mediaUrl } from "../../api/client";
+import { getDashboardStats } from "../../api/dashboard";
+import { listNotifications, markNotificationRead } from "../../api/notifications";
+import { formatRelativeTime } from "../../utils/formatRelativeTime";
+import { capitalize } from "../../utils/capitalize";
 import "../../styles/Admin/Home.css";
 
-const activities = [
-  {
-    type: "delivery",
-    title: "Shipment #402 Delivered",
-    time: "2 hours ago",
-    description:
-      "Essential medical supplies successfully delivered to the North District Community Center.",
-    icon: FiBox,
-  },
-  {
-    type: "program",
-    title: "New Program Launched",
-    time: "Yesterday",
-    description:
-      "The 'Urban Nutrition Center' initiative is now live and accepting volunteer registrations.",
-    icon: FiUser,
-    tags: ["Nutrition", "Urban"],
-  },
-  {
-    type: "partner",
-    title: "Partner Onboarded",
-    time: "Oct 12",
-    description:
-      "Global Aid Corp has officially signed the partnership agreement for Q4 initiatives.",
-    icon: FiUsers,
-  },
-];
+const notificationIcons = {
+  donation: FiDollarSign,
+  program_completed: FiCheckCircle,
+  new_partner: FiUserPlus,
+};
+
+const currencyFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "KES",
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
 
 function Home() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [showAllActivities, setShowAllActivities] = useState(false);
+  const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
   const [profileError, setProfileError] = useState("");
   const [isSavingProfile, setIsSavingProfile] = useState(false);
-  const { user, updateUser } = useAdminSession();
-  const visibleActivities = useMemo(() => {
+  const [stats, setStats] = useState({ activePrograms: 0, totalDonations: 0, partnerships: 0 });
+  const [notifications, setNotifications] = useState([]);
+  const { user, updateUser, uploadAvatar, uploadCover } = useAdminSession();
+  const avatarFileRef = useRef(null);
+  const coverFileRef = useRef(null);
+
+  useEffect(() => {
+    getDashboardStats().then(setStats).catch(() => undefined);
+    listNotifications().then((data) => setNotifications(data.notifications ?? [])).catch(() => undefined);
+  }, []);
+
+  const filteredActivities = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
-    const matchingActivities = activities.filter((activity) =>
-      [activity.title, activity.description, ...(activity.tags ?? [])].join(" ").toLowerCase().includes(term),
-    );
-    return (showAllActivities ? matchingActivities : matchingActivities.slice(0, 2));
-  }, [searchTerm, showAllActivities]);
+    if (!term) return notifications;
+    return notifications.filter((item) => `${item.title} ${item.message}`.toLowerCase().includes(term));
+  }, [notifications, searchTerm]);
+  const visibleActivities = filteredActivities.slice(0, 4);
+
+  async function handleActivityClick(notification) {
+    if (notification.isRead) return;
+    setNotifications((current) => current.map((item) => item.id === notification.id ? { ...item, isRead: true } : item));
+    try {
+      await markNotificationRead(notification.id);
+    } catch {
+      // Keep the optimistic update; the next refresh will reconcile state.
+    }
+  }
 
   async function handleProfileSave(event) {
     event.preventDefault();
@@ -64,6 +74,10 @@ function Home() {
     setProfileError("");
     setIsSavingProfile(true);
     try {
+      const avatarFile = avatarFileRef.current?.files?.[0];
+      const coverFile = coverFileRef.current?.files?.[0];
+      if (avatarFile) await uploadAvatar(avatarFile);
+      if (coverFile) await uploadCover(coverFile);
       await updateUser({
         first_name: form.get("firstName"),
         last_name: form.get("lastName"),
@@ -86,7 +100,6 @@ function Home() {
         placeholder="Search..."
         searchTerm={searchTerm}
         onSearchChange={(event) => setSearchTerm(event.target.value)}
-        showNotificationDot
       />
 
       <div className="admin-home__body">
@@ -99,17 +112,18 @@ function Home() {
           >
             <img
               className="admin-home__cover-image"
-              src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1600&q=80"
-              alt="City skyline at sunset"
+              src={mediaUrl(user?.coverUrl) || "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1600&q=80"}
+              alt="Dashboard cover"
             />
             <div className="admin-home__profile-content">
               <img
                 className="admin-home__profile-avatar"
-                src="https://i.pravatar.cc/144?img=12"
+                src={mediaUrl(user?.avatarUrl) || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(user?.name || "Admin")}`}
+                alt=""
               />
               <div className="admin-home__profile-copy">
                 <h1 id="admin-profile-name">{user?.name}</h1>
-                <p>{user?.role}</p>
+                <p>{capitalize(user?.role)}</p>
               </div>
               <button className="admin-home__edit-profile" type="button" onClick={() => setIsEditingProfile(true)}>
                 <FiEdit2 aria-hidden="true" />
@@ -127,16 +141,16 @@ function Home() {
                 <h2 id="global-impact-heading">Global Impact</h2>
                 <div className="admin-home__panel-rule" />
                 <div className="admin-home__program-total">
-                  <strong>42</strong>
+                  <strong>{stats.activePrograms}</strong>
                   <span>Active Programs</span>
                 </div>
                 <div className="admin-home__impact-stats">
                   <div>
-                    <strong>$1.2M</strong>
+                    <strong>{currencyFormatter.format(stats.totalDonations)}</strong>
                     <span>Donations</span>
                   </div>
                   <div>
-                    <strong>156</strong>
+                    <strong>{stats.partnerships}</strong>
                     <span>Partnerships</span>
                   </div>
                 </div>
@@ -172,37 +186,35 @@ function Home() {
             >
               <div className="admin-home__activities-heading">
                 <h2 id="recent-activity-heading">Recent Activity</h2>
-                <button className="admin-home__view-all" type="button" onClick={() => setShowAllActivities((showAll) => !showAll)}>
-                  {showAllActivities ? "Show Less" : "View All"}
+                <button className="admin-home__view-all" type="button" onClick={() => setIsActivityModalOpen(true)}>
+                  View All
                 </button>
               </div>
               <div className="admin-home__panel-rule" />
               <ol className="admin-home__activity-list">
-                {visibleActivities.length ? visibleActivities.map(
-                  ({ type, title, time, description, icon: Icon, tags }) => (
-                    <li className="admin-home__activity" key={title}>
-                      <span
-                        className={`admin-home__activity-icon admin-home__activity-icon--${type}`}
+                {visibleActivities.length ? visibleActivities.map((notification) => {
+                  const Icon = notificationIcons[notification.type] ?? FiFileText;
+                  return (
+                    <li className="admin-home__activity" key={notification.id}>
+                      <button
+                        type="button"
+                        className={`admin-home__activity-trigger${notification.isRead ? "" : " admin-home__activity-trigger--unread"}`}
+                        onClick={() => handleActivityClick(notification)}
                       >
-                        <Icon aria-hidden="true" />
-                      </span>
-                      <article>
-                        <div className="admin-home__activity-title-row">
-                          <h3>{title}</h3>
-                          <time>{time}</time>
-                        </div>
-                        <p>{description}</p>
-                        {tags && (
-                          <div className="admin-home__activity-tags">
-                            {tags.map((tag) => (
-                              <span key={tag}>{tag}</span>
-                            ))}
+                        <span className={`admin-home__activity-icon admin-home__activity-icon--${notification.type}`}>
+                          <Icon aria-hidden="true" />
+                        </span>
+                        <article>
+                          <div className="admin-home__activity-title-row">
+                            <h3>{notification.title}</h3>
+                            <time>{formatRelativeTime(notification.createdAt)}</time>
                           </div>
-                        )}
-                      </article>
+                          <p>{notification.message}</p>
+                        </article>
+                      </button>
                     </li>
-                  ),
-                ) : <li className="admin-home__empty-state">No dashboard items match “{searchTerm}”.</li>}
+                  );
+                }) : <li className="admin-home__empty-state">No dashboard items match “{searchTerm}”.</li>}
               </ol>
             </section>
           </div>
@@ -216,12 +228,49 @@ function Home() {
             <label>First name<input name="firstName" defaultValue={user?.name?.split(" ")[0] ?? ""} required /></label>
             <label>Last name<input name="lastName" defaultValue={user?.name?.split(" ").slice(1).join(" ") ?? ""} required /></label>
             <label>Email<input name="email" type="email" defaultValue={user?.email ?? ""} required /></label>
+            <label>Profile picture<input ref={avatarFileRef} name="avatarFile" type="file" accept="image/*" /></label>
+            <label>Dashboard cover image<input ref={coverFileRef} name="coverFile" type="file" accept="image/*" /></label>
             {profileError && <p className="admin-home__form-error" role="alert">{profileError}</p>}
             <div className="admin-home__form-actions">
               <button type="button" onClick={() => setIsEditingProfile(false)}>Cancel</button>
               <button type="submit" disabled={isSavingProfile}>{isSavingProfile ? "Saving…" : "Save changes"}</button>
             </div>
           </form>
+        </div>
+      )}
+      {isActivityModalOpen && (
+        <div className="admin-home__modal-backdrop" role="presentation" onClick={() => setIsActivityModalOpen(false)}>
+          <div className="admin-home__activity-modal" role="dialog" aria-labelledby="all-activity-heading" onClick={(event) => event.stopPropagation()}>
+            <div className="admin-home__activity-modal-heading">
+              <h2 id="all-activity-heading">All Activity</h2>
+              <button type="button" aria-label="Close" onClick={() => setIsActivityModalOpen(false)}><FiX aria-hidden="true" /></button>
+            </div>
+            <ol className="admin-home__activity-list">
+              {filteredActivities.length ? filteredActivities.map((notification) => {
+                const Icon = notificationIcons[notification.type] ?? FiFileText;
+                return (
+                  <li className="admin-home__activity" key={notification.id}>
+                    <button
+                      type="button"
+                      className={`admin-home__activity-trigger${notification.isRead ? "" : " admin-home__activity-trigger--unread"}`}
+                      onClick={() => handleActivityClick(notification)}
+                    >
+                      <span className={`admin-home__activity-icon admin-home__activity-icon--${notification.type}`}>
+                        <Icon aria-hidden="true" />
+                      </span>
+                      <article>
+                        <div className="admin-home__activity-title-row">
+                          <h3>{notification.title}</h3>
+                          <time>{formatRelativeTime(notification.createdAt)}</time>
+                        </div>
+                        <p>{notification.message}</p>
+                      </article>
+                    </button>
+                  </li>
+                );
+              }) : <li className="admin-home__empty-state">No notifications yet.</li>}
+            </ol>
+          </div>
         </div>
       )}
     </div>

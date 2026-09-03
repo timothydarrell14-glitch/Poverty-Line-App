@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom';
+import { usePublicSettings } from '../hooks/usePublicSettings';
 
 export const Footer = () => {
   const navigate = useNavigate();
+  const { orgName, supportEmail } = usePublicSettings();
   const goTo = (path) => {
     navigate(path);
     window.scrollTo(0, 0);
@@ -11,8 +13,8 @@ export const Footer = () => {
     <footer className="site-footer">
       <div className="content-wrap footer-grid">
         <div className="footer-brand-column">
-          <div className="brand font-heading"><span className="material-symbols-outlined material-symbols-fill">volunteer_activism</span>Poverty Line</div>
-          <p>&copy; 2026 Poverty Line. All rights reserved. Providing dignity through efficiency.</p>
+          <div className="brand font-heading"><span className="material-symbols-outlined material-symbols-fill">volunteer_activism</span>{orgName}</div>
+          <p>&copy; 2026 {orgName}. All rights reserved. Providing dignity through efficiency.</p>
         </div>
         <div>
           <h5 className="font-heading">Organization</h5>
@@ -25,6 +27,7 @@ export const Footer = () => {
         <div className="footer-connect-column">
           <h5 className="font-heading">Connect</h5>
           <button type="button" className="footer-connect-link" onClick={() => goTo('/contact')}>Contact us</button>
+          <a className="footer-connect-email" href={`mailto:${supportEmail}`}>{supportEmail}</a>
         </div>
       </div>
     </footer>

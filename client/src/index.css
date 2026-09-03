@@ -109,7 +109,7 @@ body {
   transform: translate(-50%, -4px);
   transition: opacity 150ms ease, transform 150ms ease;
   visibility: hidden;
-  white-space: normal;
+  white-space: pre-line;
   width: max-content;
   z-index: 20;
 }
@@ -122,6 +122,32 @@ body {
   opacity: 1;
   transform: translate(-50%, 0);
   visibility: visible;
+}
+
+.tooltip--help-mode:hover::after,
+.tooltip--help-mode:focus-visible::after {
+  content: attr(data-help);
+}
+
+.tooltip--pinned::after {
+  content: attr(data-help);
+  display: block;
+  height: auto;
+  min-height: 0;
+  opacity: 1;
+  transform: translate(-50%, 0);
+  visibility: visible;
+}
+
+.tooltip--pinned::before {
+  border: 5px solid transparent;
+  border-bottom-color: #17242a;
+  content: "";
+  left: 50%;
+  position: absolute;
+  top: calc(100% + 3px);
+  transform: translateX(-50%);
+  z-index: 21;
 }
 
 a {

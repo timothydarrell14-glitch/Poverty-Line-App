@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { apiUrl } from "../api/client";
+import { useToast } from "../context/ToastContext";
 
 const TalkToSomeone = () => {
   const [activeModal, setActiveModal] = useState(null); // 'callback' | 'chat' | null
@@ -10,19 +11,19 @@ const TalkToSomeone = () => {
     timeSlot: "Within 15 minutes (Immediate Queue)",
   });
   const [submitted, setSubmitted] = useState(false);
+  const { showToast } = useToast();
 
   const handleSubmitCallback = async (e) => {
     e.preventDefault();
 
     try {
-      await fetch(apiUrl("/api/callbacks"), {
+      const response = await fetch(apiUrl("/api/callbacks"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-    } catch (err) {
-      console.warn("Backend unavailable, proceeding with local fallback.", err);
-    } finally {
+      if (!response.ok) throw new Error("Your callback request could not be submitted.");
+      showToast("Callback request submitted successfully.", "success");
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);
@@ -34,6 +35,8 @@ const TalkToSomeone = () => {
           timeSlot: "Within 15 minutes (Immediate Queue)",
         });
       }, 2500);
+    } catch (err) {
+      showToast(err.message || "Your callback request could not be submitted.", "error");
     }
   };
 

@@ -11,6 +11,7 @@ from app.schemas.donations.program_schema import (
     program_create_schema,
     program_update_schema,
 )
+from app.services.notifications import notify
 
 programs_bp = Blueprint("programs", __name__, url_prefix="/api/programs")
 
@@ -82,8 +83,17 @@ def admin_manage_program(program_id):
         data = program_update_schema.load(request.get_json())
     except ValidationError as err:
         return jsonify(err.messages), 422
+    was_active = program.active
     for key, value in data.items():
         setattr(program, key, value)
+    if was_active and "active" in data and not program.active:
+        notify(
+            "program_completed",
+            "Program completed",
+            f"{program.title} has been marked as completed.",
+            related_type="program",
+            related_id=program.id,
+        )
     db.session.commit()
     return jsonify(serialize_program(program)), 200
 

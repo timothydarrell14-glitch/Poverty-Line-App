@@ -3,6 +3,8 @@ import secrets
 from app.extensions import db
 from werkzeug.security import check_password_hash, generate_password_hash
 
+USER_STATUSES = ("Active", "Inactive", "On Leave", "Retired")
+
 
 class User(db.Model):
     __tablename__ = "users"
@@ -18,6 +20,10 @@ class User(db.Model):
     is_active = db.Column(
         db.Boolean, nullable=False, default=True, server_default=db.true()
     )
+    status = db.Column(
+        db.String(30), nullable=False, default="Active", server_default="Active"
+    )
+    last_active_at = db.Column(db.DateTime, nullable=True)
     phone = db.Column(db.String(50))
     date_of_birth = db.Column(db.Date)
     gender = db.Column(db.String(50))
@@ -28,6 +34,7 @@ class User(db.Model):
     poverty_score = db.Column(db.Numeric(10, 2), nullable=True)
     location = db.Column(db.String(255))
     avatar_url = db.Column(db.String(500))
+    cover_url = db.Column(db.String(500))
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
 
     assessment_responses = db.relationship("AssessmentResponse", back_populates="user")

@@ -1,0 +1,127 @@
+.admin-topbar__menu {
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.admin-topbar__panel {
+  background: #fff;
+  border: 1px solid #e4e8eb;
+  border-radius: 12px;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16);
+  max-height: 420px;
+  overflow-y: auto;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 12px);
+  width: 320px;
+  z-index: 40;
+}
+
+.admin-topbar__panel-header {
+  align-items: center;
+  border-bottom: 1px solid #eef1f3;
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 16px;
+}
+
+.admin-topbar__panel-header h3 {
+  color: #111c20;
+  font-size: 15px;
+  margin: 0;
+}
+
+.admin-topbar__panel-header button {
+  background: none;
+  border: 0;
+  color: #006878;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin-topbar__notification-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+}
+
+.admin-topbar__notification {
+  align-items: flex-start;
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.admin-topbar__notification:hover {
+  background: #f5f7fb;
+}
+
+.admin-topbar__notification--unread {
+  background: #eef8fa;
+}
+
+.admin-topbar__notification-icon {
+  align-items: center;
+  border-radius: 999px;
+  color: #fff;
+  display: grid;
+  flex-shrink: 0;
+  height: 32px;
+  place-items: center;
+  width: 32px;
+}
+
+.admin-topbar__notification-icon--donation {
+  background: #1f9d63;
+}
+
+.admin-topbar__notification-icon--program_completed {
+  background: #006878;
+}
+
+.admin-topbar__notification-icon--new_partner {
+  background: #7c5cff;
+}
+
+.admin-topbar__notification-body {
+  color: #111c20;
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  gap: 2px;
+}
+
+.admin-topbar__notification-body strong {
+  font-size: 13px;
+}
+
+.admin-topbar__notification-body span {
+  color: #4c5b62;
+}
+
+.admin-topbar__notification-body time {
+  color: #8b98a0;
+  font-size: 11px;
+}
+
+.admin-topbar__empty {
+  color: #63717c;
+  font-size: 13px;
+  padding: 20px 16px;
+  text-align: center;
+}
+
+.admin-topbar__help-toggle--on {
+  background: rgba(0, 104, 120, 0.14) !important;
+  border-radius: 999px;
+  color: #006878 !important;
+}
+
