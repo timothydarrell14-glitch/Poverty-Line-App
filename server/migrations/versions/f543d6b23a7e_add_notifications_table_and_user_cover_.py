@@ -25,7 +25,7 @@ def upgrade():
     sa.Column('message', sa.Text(), nullable=False),
     sa.Column('related_type', sa.String(length=50), nullable=True),
     sa.Column('related_id', sa.Integer(), nullable=True),
-    sa.Column('is_read', sa.Boolean(), server_default=sa.text('0'), nullable=False),
+    sa.Column('is_read', sa.Boolean(), server_default=sa.text('false'), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.PrimaryKeyConstraint('notification_id')
     )
