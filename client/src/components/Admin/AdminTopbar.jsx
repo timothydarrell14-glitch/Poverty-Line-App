@@ -38,6 +38,7 @@ function AdminTopbar({ pageClass, searchClass = `${pageClass}__global-search`, s
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [notificationError, setNotificationError] = useState("");
   const { user, theme, toggleTheme, logout, helpMode, toggleHelpMode } = useAdminSession();
   const navigate = useNavigate();
   const panelRef = useRef(null);
@@ -50,7 +51,7 @@ function AdminTopbar({ pageClass, searchClass = `${pageClass}__global-search`, s
         setNotifications(data.notifications ?? []);
         setUnreadCount(data.unreadCount ?? 0);
       })
-      .catch(() => undefined);
+      .catch(() => setNotificationError("Could not load notifications. Check that the server is running."));
   }, []);
 
   useEffect(() => {
@@ -112,7 +113,9 @@ function AdminTopbar({ pageClass, searchClass = `${pageClass}__global-search`, s
                   <h3>Notifications</h3>
                   {unreadCount > 0 && <button type="button" onClick={handleMarkAllRead}>Mark all read</button>}
                 </div>
-                {notifications.length ? (
+                {notificationError ? (
+                  <p className="admin-topbar__empty" role="alert">{notificationError}</p>
+                ) : notifications.length ? (
                   <ul className="admin-topbar__notification-list">
                     {notifications.map((notification) => {
                       const Icon = notificationIcons[notification.type] ?? FiBell;

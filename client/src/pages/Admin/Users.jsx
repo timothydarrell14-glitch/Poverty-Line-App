@@ -17,8 +17,10 @@ import {
 import AdminTopbar from "../../components/Admin/AdminTopbar";
 import SideBar from "../../components/Admin/SideBar";
 import { apiUrl } from "../../api/client";
+import { getAccessToken } from "../../utils/auth";
 import { listMembers } from "../../api/members";
 import { listDonations } from "../../api/donations";
+import { listDonors } from "../../api/donors";
 import "../../styles/Admin/UsersPage.css";
 
 const defaultUserDraft = {
@@ -35,6 +37,7 @@ const formatCurrency = (amount, currency = "KES") => new Intl.NumberFormat("en-U
 const usersTabs = [
   { id: "staff", label: "Staff", icon: FiUsers },
   { id: "members", label: "Members", icon: FiUserCheck },
+  { id: "donors", label: "Donors", icon: FiHeart },
   { id: "donations", label: "Donations", icon: FiHeart },
 ];
 
@@ -44,8 +47,10 @@ function Users() {
   const [users, setUsers] = useState([]);
   const [members, setMembers] = useState([]);
   const [donations, setDonations] = useState([]);
+  const [donors, setDonors] = useState([]);
   const [membersLoaded, setMembersLoaded] = useState(false);
   const [donationsLoaded, setDonationsLoaded] = useState(false);
+  const [donorsLoaded, setDonorsLoaded] = useState(false);
   const [roleFilter, setRoleFilter] = useState("All Roles");
   const [page, setPage] = useState(0);
   const [message, setMessage] = useState("");
@@ -55,7 +60,7 @@ function Users() {
   const [manageAction, setManageAction] = useState("role");
   const [newRole, setNewRole] = useState("Field Agent");
   const [newStatus, setNewStatus] = useState("Active");
-  const token = localStorage.getItem("accessToken");
+  const token = getAccessToken();
   const loadUsers = () => fetch(apiUrl("/api/auth/users"), { headers: { Authorization: `Bearer ${token}` } }).then((response) => response.json()).then((data) => setUsers(data.users ?? []));
   // The access token is read once when this protected page mounts.
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -74,6 +79,10 @@ function Users() {
       setDonationsLoaded(true);
       listDonations().then((data) => setDonations(data.donations ?? [])).catch(() => setMessage("Could not load donations."));
     }
+    if (tabId === "donors" && !donorsLoaded) {
+      setDonorsLoaded(true);
+      listDonors().then((data) => setDonors(data.donors ?? [])).catch(() => setMessage("Could not load donors."));
+    }
   }
 
   const filteredUsers = useMemo(() => users.filter((user) => (roleFilter === "All Roles" || user.role === roleFilter) && `${user.name} ${user.email}`.toLowerCase().includes(searchTerm.toLowerCase())), [users, roleFilter, searchTerm]);
@@ -84,6 +93,8 @@ function Users() {
 
   const filteredDonations = useMemo(() => donations.filter((donation) => `${donation.donorName} ${donation.programTitle}`.toLowerCase().includes(searchTerm.toLowerCase())), [donations, searchTerm]);
   const pageDonations = filteredDonations.slice(page * pageSize, (page + 1) * pageSize);
+  const filteredDonors = useMemo(() => donors.filter((donor) => `${donor.name} ${donor.email}`.toLowerCase().includes(searchTerm.toLowerCase())), [donors, searchTerm]);
+  const pageDonors = filteredDonors.slice(page * pageSize, (page + 1) * pageSize);
 
   async function createUser(event) {
     event.preventDefault();
@@ -318,6 +329,40 @@ function Users() {
                 <button className="tooltip" type="button" aria-label="Next page" data-tooltip="Next page" disabled={(page + 1) * pageSize >= filteredMembers.length} onClick={() => setPage((current) => current + 1)}>
                   <FiChevronRight aria-hidden="true" />
                 </button>
+              </div>
+            </footer>
+          </section>
+          )}
+
+          {activeTab === "donors" && (
+          <section className="admin-users__table-panel" aria-label="Donors">
+            <div className="admin-users__table-scroll">
+              <table>
+                <thead>
+                  <tr><th>Donor</th><th>Phone</th><th>Completed donations</th><th>Total donated</th></tr>
+                </thead>
+                <tbody>
+                  {pageDonors.length ? pageDonors.map((donor) => (
+                    <tr key={donor.id}>
+                      <td>
+                        <div className="admin-users__person">
+                          <span className="admin-users__initials">{donor.name.split(" ").map((part) => part[0]).slice(0, 2).join("")}</span>
+                          <div><strong>{donor.name}</strong><span>{donor.email}</span></div>
+                        </div>
+                      </td>
+                      <td>{donor.phone || "—"}</td>
+                      <td>{donor.donationCount}</td>
+                      <td>{formatCurrency(donor.totalDonated)}</td>
+                    </tr>
+                  )) : <tr><td className="admin-users__empty-cell" colSpan={4}>{message || "No donors found."}</td></tr>}
+                </tbody>
+              </table>
+            </div>
+            <footer className="admin-users__pagination">
+              <span>Showing {filteredDonors.length ? page * pageSize + 1 : 0} to {Math.min((page + 1) * pageSize, filteredDonors.length)} of {filteredDonors.length} donors</span>
+              <div>
+                <button className="tooltip" type="button" aria-label="Previous page" data-tooltip="Previous page" disabled={page === 0} onClick={() => setPage((current) => current - 1)}><FiChevronLeft aria-hidden="true" /></button>
+                <button className="tooltip" type="button" aria-label="Next page" data-tooltip="Next page" disabled={(page + 1) * pageSize >= filteredDonors.length} onClick={() => setPage((current) => current + 1)}><FiChevronRight aria-hidden="true" /></button>
               </div>
             </footer>
           </section>

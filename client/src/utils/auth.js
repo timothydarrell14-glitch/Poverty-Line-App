@@ -13,18 +13,30 @@ export const clearAuthSession = () => {
   sessionStorage.removeItem(AUTH_TOKEN_KEY);
   sessionStorage.removeItem(AUTH_USER_KEY);
   sessionStorage.removeItem(LOGIN_STATUS_KEY);
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("povertyLineToken");
+  localStorage.removeItem("currentUser");
+  localStorage.removeItem("user");
   window.dispatchEvent(new Event("povertyline-auth-change"));
 };
 
 export const getCurrentUser = () => {
   try {
-    return JSON.parse(sessionStorage.getItem(AUTH_USER_KEY) || "null");
+    return JSON.parse(
+      sessionStorage.getItem(AUTH_USER_KEY) ||
+        localStorage.getItem("currentUser") ||
+        localStorage.getItem("user") ||
+        "null",
+    );
   } catch {
     return null;
   }
 };
 
-export const getAccessToken = () => sessionStorage.getItem(AUTH_TOKEN_KEY);
+export const getAccessToken = () =>
+  sessionStorage.getItem(AUTH_TOKEN_KEY) ||
+  localStorage.getItem("accessToken") ||
+  localStorage.getItem("povertyLineToken");
 
 export const isAuthenticated = () =>
 	Boolean(getAccessToken() && getCurrentUser());

@@ -526,6 +526,39 @@ def list_non_financial_donations():
     )
 
 
+@auth_bp.get("/donors")
+@admin_required
+def list_donors():
+    from app.models.users.donors import Donor
+
+    donors = Donor.query.order_by(Donor.id.desc()).all()
+    return jsonify(
+        {
+            "donors": [
+                {
+                    "id": donor.id,
+                    "name": donor.name,
+                    "email": donor.email,
+                    "phone": donor.phone_number,
+                    "totalDonated": float(
+                        sum(
+                            donation.amount
+                            for donation in donor.financial_donations
+                            if donation.payment_status == "completed"
+                        )
+                    ),
+                    "donationCount": sum(
+                        1
+                        for donation in donor.financial_donations
+                        if donation.payment_status == "completed"
+                    ),
+                }
+                for donor in donors
+            ]
+        }
+    )
+
+
 @auth_bp.post("/users")
 @admin_required
 def create_user():

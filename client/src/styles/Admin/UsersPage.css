@@ -295,13 +295,23 @@
   align-items: center;
   background: #b34b24;
   color: #fff;
-  display: grid;
+  display: flex;
   font-size: 14px;
-  place-items: center;
+  justify-content: center;
+  line-height: 1;
+  text-align: center;
+  vertical-align: middle;
 }
 .admin-users__person strong,
 .admin-users__person span {
   display: block;
+}
+.admin-users__person .admin-users__initials {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  line-height: 1;
+  text-align: center;
 }
 .admin-users__person strong {
   color: #17242a;

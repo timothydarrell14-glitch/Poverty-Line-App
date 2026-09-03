@@ -12,6 +12,7 @@ import {
 import AdminTopbar from "../../components/Admin/AdminTopbar";
 import SideBar from "../../components/Admin/SideBar";
 import { apiUrl } from "../../api/client";
+import { getAccessToken } from "../../utils/auth";
 import { getDashboardStats } from "../../api/dashboard";
 import { listDonations, listNonFinancialDonations } from "../../api/donations";
 import "../../styles/Admin/ProgramsPage.css";
@@ -86,7 +87,7 @@ function Programs() {
   const [nonFinancialDonations, setNonFinancialDonations] = useState([]);
   const [donationsLoaded, setDonationsLoaded] = useState(false);
   const [donationsPage, setDonationsPage] = useState(0);
-  const token = localStorage.getItem("accessToken");
+  const token = getAccessToken();
 
   const loadPrograms = () => fetch(apiUrl("/api/auth/programs"), { headers: { Authorization: `Bearer ${token}` } }).then((response) => response.json()).then((data) => setPrograms(data.programs ?? []));
 

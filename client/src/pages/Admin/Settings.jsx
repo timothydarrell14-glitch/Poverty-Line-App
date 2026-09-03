@@ -10,6 +10,7 @@ import {
 import AdminTopbar from "../../components/Admin/AdminTopbar";
 import SideBar from "../../components/Admin/SideBar";
 import { apiUrl } from "../../api/client";
+import { getAccessToken } from "../../utils/auth";
 import "../../styles/Admin/SettingsPage.css";
 
 const settingsTabs = [
@@ -61,9 +62,9 @@ function Settings() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("general");
   const [orgDetails, setOrgDetails] = useState({
-    orgName: "Poverty Line Initiative",
+    orgName: "Poverty Line",
     supportEmail: "support@povertyline.org",
-    publicDescription: "# Dignity Through Efficiency",
+    publicDescription: "Dignity Through Efficiency",
   });
   const [preferences, setPreferences] = useState(
     communicationPreferences.reduce((acc, pref) => {
@@ -82,7 +83,7 @@ function Settings() {
   const [saveStatus, setSaveStatus] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
+    const token = getAccessToken();
     fetch(apiUrl("/api/auth/settings"), { headers: { Authorization: `Bearer ${token}` } })
       .then((response) => response.ok ? response.json() : null)
       .then((data) => {
@@ -110,7 +111,7 @@ function Settings() {
   };
 
   const handleSave = async () => {
-    const token = localStorage.getItem("accessToken");
+    const token = getAccessToken();
     const payload = [
       { key: "orgName", value: orgDetails.orgName, category: "general" },
       { key: "supportEmail", value: orgDetails.supportEmail, category: "general" },
