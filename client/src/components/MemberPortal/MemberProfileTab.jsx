@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { apiRequest } from "../../api/client";
 import { useToast } from "../../context/ToastContext";
 
-const MemberProfileTab = ({ user, onUserUpdated, onRequestCallback }) => {
+const MemberProfileTab = ({ user, onUserUpdated, onRequestCallback, onEditProfileClick }) => {
   const [skills, setSkills] = useState([]);
   const [newSkillInput, setNewSkillInput] = useState("");
   const [savingSkills, setSavingSkills] = useState(false);
@@ -65,7 +65,7 @@ const MemberProfileTab = ({ user, onUserUpdated, onRequestCallback }) => {
             <h2>Member Profile & Case File</h2>
             <p>Your details and active case management record.</p>
           </div>
-          <button className="btn-edit-profile" onClick={() => showToast("Profile edit mode enabled", "info")}>
+          <button className="btn-edit-profile" onClick={onEditProfileClick}>
             Edit Profile
           </button>
         </div>
