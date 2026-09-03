@@ -152,10 +152,17 @@ const MemberPortalPage = () => {
       return;
     }
 
+    const payload = {};
+    if (editProfileForm.first_name?.trim()) payload.first_name = editProfileForm.first_name.trim();
+    if (editProfileForm.last_name?.trim()) payload.last_name = editProfileForm.last_name.trim();
+    if (editProfileForm.phone?.trim()) payload.phone = editProfileForm.phone.trim();
+    if (editProfileForm.location?.trim()) payload.location = editProfileForm.location.trim();
+    if (editProfileForm.avatar_url?.trim()) payload.avatar_url = editProfileForm.avatar_url.trim();
+
     try {
       const updatedUser = await apiRequest(`/api/users/${currentUser.user_id}`, {
         method: "PATCH",
-        body: editProfileForm,
+        body: payload,
       });
       setCurrentUser(updatedUser);
       showToast("Profile & Photo updated in database!", "success");

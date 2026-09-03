@@ -49,6 +49,8 @@ class UserUpdateSchema(ma.SQLAlchemyAutoSchema):
             "employment_status",
             "skills",
             "location",
+            "avatar_url",
+            "cover_url",
         )
 
 
