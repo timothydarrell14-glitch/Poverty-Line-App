@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { apiUrl } from "../api/client";
 import { useToast } from "../context/ToastContext";
 import "../styles/Auth.css";
+import "../styles/Auth.dark.css";
 
 const Login = ({ isOpen, onClose, onShowSignup, onAuthenticated }) => {
   const navigate = useNavigate();

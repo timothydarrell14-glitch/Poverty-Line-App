@@ -2,6 +2,7 @@ import { useState } from "react";
 import { apiUrl } from "../api/client";
 import { useToast } from "../context/ToastContext";
 import "../styles/Auth.css";
+import "../styles/Auth.dark.css";
 
 export default function Signup({ isOpen, onClose, onShowLogin }) {
   const [form, setForm] = useState({ first_name: "", last_name: "", email: "", password: "" });

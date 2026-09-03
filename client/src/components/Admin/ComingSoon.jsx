@@ -1,6 +1,7 @@
 import { FiArrowRight, FiClock } from "react-icons/fi";
 import SideBar from "./SideBar";
 import "../../styles/Admin/ComingSoon.css";
+import "../../styles/Admin/ComingSoon.dark.css";
 
 function ComingSoon({ feature, onPreview }) {
   return (

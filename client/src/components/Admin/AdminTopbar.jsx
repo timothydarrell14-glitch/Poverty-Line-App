@@ -12,6 +12,7 @@ import {
 } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { useAdminSession } from "../AdminSession";
+import { useTheme } from "../../context/ThemeContext";
 import { useHelpTour } from "../../utils/useHelpTour";
 import { formatRelativeTime } from "../../utils/formatRelativeTime";
 import {
@@ -39,7 +40,8 @@ function AdminTopbar({ pageClass, searchClass = `${pageClass}__global-search`, s
   const [unreadCount, setUnreadCount] = useState(0);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [notificationError, setNotificationError] = useState("");
-  const { user, theme, toggleTheme, logout, helpMode, toggleHelpMode } = useAdminSession();
+  const { user, logout, helpMode, toggleHelpMode } = useAdminSession();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const panelRef = useRef(null);
   const helpTourStep = useHelpTour(helpMode, helpSteps.length);

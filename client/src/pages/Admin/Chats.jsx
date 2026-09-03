@@ -5,6 +5,7 @@ import SideBar from "../../components/Admin/SideBar";
 import { apiUrl } from "../../api/client";
 import { getAccessToken } from "../../utils/auth";
 import "../../styles/Admin/ChatsPage.css";
+import "../../styles/Admin/ChatsPage.dark.css";
 
 const conversations = [
   {

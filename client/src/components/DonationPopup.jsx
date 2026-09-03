@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "../styles/DonationPopup.css";
+import "../styles/DonationPopup.dark.css";
 import mpesaLogo from "../assets/mpesa-logo.png";
 import paypalLogo from "../assets/paypal-logo.svg";
 import FastlaneCheckout from "./FastlaneCheckout";

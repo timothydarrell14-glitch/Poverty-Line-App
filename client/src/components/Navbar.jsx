@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { FiSun, FiMoon } from "react-icons/fi";
 import Login from "./Login";
 import Signup from "./Signup";
 import DonationPopup from "./DonationPopup";
@@ -11,6 +12,7 @@ import {
 import { apiRequest } from "../api/client";
 import { usePublicSettings } from "../hooks/usePublicSettings";
 import { useToast } from "../context/ToastContext";
+import { useTheme } from "../context/ThemeContext";
 
 export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -24,6 +26,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   const location = useLocation();
   const { orgName } = usePublicSettings();
   const { showToast } = useToast();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handle = () => setIsScrolled(window.scrollY > 12);
@@ -144,6 +147,13 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
             ))}
           </div>
           <div className="nav-actions">
+            <button
+              className="theme-toggle-button"
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? <FiSun /> : <FiMoon />}
+            </button>
             {isAuthenticated() ? (
               <>
                 {currentUser?.role === "admin" && (
@@ -185,6 +195,13 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
           </button>
         ))}
         <div className="nav-actions">
+          <button
+            className="theme-toggle-button"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <FiSun /> : <FiMoon />}
+          </button>
           <button
             className="pill-button"
             onClick={() => {

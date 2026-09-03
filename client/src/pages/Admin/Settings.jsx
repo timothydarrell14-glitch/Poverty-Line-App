@@ -12,6 +12,7 @@ import SideBar from "../../components/Admin/SideBar";
 import { apiUrl } from "../../api/client";
 import { getAccessToken } from "../../utils/auth";
 import "../../styles/Admin/SettingsPage.css";
+import "../../styles/Admin/SettingsPage.dark.css";
 
 const settingsTabs = [
   { label: "General", icon: FiServer, id: "general" },
