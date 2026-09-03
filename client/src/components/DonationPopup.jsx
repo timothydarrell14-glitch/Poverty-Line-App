@@ -95,7 +95,7 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
     const fetchCountries = async () => {
       try {
         // Try to fetch from backend first
-        const response = await fetch(apiUrl('/countries'));
+        const response = await fetch(apiUrl('/api/countries'));
         if (response.ok) {
           const data = await response.json();
           setCountries(data);
