@@ -10,12 +10,11 @@ const queryString = (params = {}) =>
     )
   ).toString();
 
-// ============================================================
 // PUBLIC ORGANISATION ENDPOINTS
-// ============================================================
 
 export const listOrganisations = (params = {}) => {
   const query = queryString(params);
+
   return apiRequest(
     `/api/organisations${query ? `?${query}` : ""}`
   );
@@ -24,23 +23,14 @@ export const listOrganisations = (params = {}) => {
 export const getOrganisation = (organisationId) =>
   apiRequest(`/api/organisations/${organisationId}`);
 
+// LOGGED-IN ORGANISATION ENDPOINTS
 
-// ============================================================
-// LOGGED-IN USER ORGANISATION ENDPOINTS
-// ============================================================
-
-// Get organisations belonging to the currently logged-in user
-export const listMyOrganisations = () =>
-  apiRequest("/api/organisations/mine");
-
-// Create an organisation for the currently logged-in user
 export const createOrganisation = (organisation) =>
   apiRequest("/api/organisations", {
     method: "POST",
     body: organisation,
   });
 
-// Update an organisation owned by the current user
 export const updateOrganisation = (
   organisationId,
   changes
@@ -50,16 +40,12 @@ export const updateOrganisation = (
     body: changes,
   });
 
-// Delete an organisation owned by the current user
 export const deleteOrganisation = (organisationId) =>
   apiRequest(`/api/organisations/${organisationId}`, {
     method: "DELETE",
   });
 
-
-// ============================================================
 // ADMIN ORGANISATION ENDPOINTS
-// ============================================================
 
 export const listAdminOrganisations = (params = {}) => {
   const query = queryString(params);
@@ -76,28 +62,20 @@ export const createAdminOrganisation = (organisation) =>
   });
 
 export const getAdminOrganisation = (organisationId) =>
-  apiRequest(
-    `/api/organisations/admin/${organisationId}`
-  );
+  apiRequest(`/api/organisations/admin/${organisationId}`);
 
 export const updateAdminOrganisation = (
   organisationId,
   changes
 ) =>
-  apiRequest(
-    `/api/organisations/admin/${organisationId}`,
-    {
-      method: "PATCH",
-      body: changes,
-    }
-  );
+  apiRequest(`/api/organisations/admin/${organisationId}`, {
+    method: "PATCH",
+    body: changes,
+  });
 
 export const deleteAdminOrganisation = (
   organisationId
 ) =>
-  apiRequest(
-    `/api/organisations/admin/${organisationId}`,
-    {
-      method: "DELETE",
-    }
-  );
+  apiRequest(`/api/organisations/admin/${organisationId}`, {
+    method: "DELETE",
+  });
