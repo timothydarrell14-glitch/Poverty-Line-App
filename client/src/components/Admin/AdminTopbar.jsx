@@ -14,6 +14,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAdminSession } from "../AdminSession";
 import { useHelpTour } from "../../utils/useHelpTour";
 import { formatRelativeTime } from "../../utils/formatRelativeTime";
+import { useTheme } from "../../context/ThemeContext";
 import {
   listNotifications,
   markAllNotificationsRead,
