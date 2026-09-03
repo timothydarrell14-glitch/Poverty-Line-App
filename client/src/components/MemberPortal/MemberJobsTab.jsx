@@ -8,7 +8,7 @@ const MemberJobsTab = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState("All");
-  const [applyingJobId, setApplyingJobId] = useState(null);
+  const [processingJobId, setProcessingJobId] = useState(null);
   const [selectedJobDetails, setSelectedJobDetails] = useState(null);
   const { showToast } = useToast();
 
@@ -32,23 +32,39 @@ const MemberJobsTab = () => {
     fetchData();
   }, []);
 
-  const appliedJobIds = new Set(
-    activeApplications.map((app) => app.job_id)
+  // Map of job_id -> application_id for easy lookup & withdrawal
+  const applicationByJobId = new Map(
+    activeApplications.map((app) => [app.job_id, app.application_id])
   );
 
   const handleApply = async (jobId) => {
-    setApplyingJobId(jobId);
+    setProcessingJobId(jobId);
     try {
       await apiRequest("/api/job-applications", {
         method: "POST",
         body: { job_id: jobId },
       });
       showToast("Job application submitted successfully!", "success");
-      fetchData();
+      await fetchData();
     } catch (err) {
       showToast(err.message || "Failed to submit application.", "error");
     } finally {
-      setApplyingJobId(null);
+      setProcessingJobId(null);
+    }
+  };
+
+  const handleWithdraw = async (applicationId, jobId) => {
+    setProcessingJobId(jobId);
+    try {
+      await apiRequest(`/api/job-applications/${applicationId}`, {
+        method: "DELETE",
+      });
+      showToast("Application withdrawn successfully.", "info");
+      await fetchData();
+    } catch (err) {
+      showToast(err.message || "Failed to withdraw application.", "error");
+    } finally {
+      setProcessingJobId(null);
     }
   };
 
@@ -81,7 +97,24 @@ const MemberJobsTab = () => {
           <div className="active-applications-grid">
             {activeApplications.map((app) => (
               <div key={app.application_id} className="application-card">
-                <h4>{app.job?.title || `Job #${app.job_id}`}</h4>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                  <h4>{app.job?.title || `Job #${app.job_id}`}</h4>
+                  <button
+                    onClick={() => handleWithdraw(app.application_id, app.job_id)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#ef4444",
+                      fontSize: "0.82rem",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      padding: 0,
+                    }}
+                    title="Withdraw this application"
+                  >
+                    Withdraw &times;
+                  </button>
+                </div>
                 <span className="app-date">
                   Applied on {new Date(app.application_date || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </span>
@@ -134,7 +167,10 @@ const MemberJobsTab = () => {
       ) : (
         <div className="jobs-grid">
           {filteredJobs.map((job) => {
-            const hasApplied = appliedJobIds.has(job.job_id);
+            const applicationId = applicationByJobId.get(job.job_id);
+            const hasApplied = applicationId !== undefined;
+            const isProcessing = processingJobId === job.job_id;
+
             return (
               <div key={job.job_id} className="job-opportunity-card">
                 <div className="job-card-header">
@@ -170,17 +206,25 @@ const MemberJobsTab = () => {
                 )}
 
                 <div className="job-actions-row">
-                  <button
-                    className="btn-apply-oneclick"
-                    disabled={hasApplied || applyingJobId === job.job_id}
-                    onClick={() => handleApply(job.job_id)}
-                  >
-                    {hasApplied
-                      ? "Applied ✓"
-                      : applyingJobId === job.job_id
-                      ? "Applying..."
-                      : "1-Click Apply with Profile"}
-                  </button>
+                  {hasApplied ? (
+                    <button
+                      className="btn-apply-oneclick"
+                      style={{ backgroundColor: "#0284c7" }}
+                      disabled={isProcessing}
+                      onClick={() => handleWithdraw(applicationId, job.job_id)}
+                      title="Click to un-apply / withdraw application"
+                    >
+                      {isProcessing ? "Withdrawing..." : "Applied ✓ (Click to Un-apply)"}
+                    </button>
+                  ) : (
+                    <button
+                      className="btn-apply-oneclick"
+                      disabled={isProcessing}
+                      onClick={() => handleApply(job.job_id)}
+                    >
+                      {isProcessing ? "Applying..." : "1-Click Apply with Profile"}
+                    </button>
+                  )}
                   <button
                     className="btn-job-details"
                     onClick={() => setSelectedJobDetails(job)}
