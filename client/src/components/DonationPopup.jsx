@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { apiUrl } from "../api/client";
 import "../styles/DonationPopup.css";
 import "../styles/DonationPopup.dark.css";
 import mpesaLogo from "../assets/mpesa-logo.png";
@@ -94,7 +95,7 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
     const fetchCountries = async () => {
       try {
         // Try to fetch from backend first
-        const response = await fetch('/api/countries');
+        const response = await fetch(`${apiUrl}/countries`);
         if (response.ok) {
           const data = await response.json();
           setCountries(data);
