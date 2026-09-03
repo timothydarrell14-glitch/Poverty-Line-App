@@ -1,0 +1,37 @@
+/* Light theme tokens (default, no [data-theme] attribute required) */
+:root {
+  --bg-primary: #f7f9f8;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #dfe9e5;
+  --bg-accent: #e8f5f2;
+
+  --text-primary: #1a2e26;
+  --text-secondary: #53645e;
+  --text-muted: #7a8581;
+  --text-on-accent: #ffffff;
+
+  --accent-primary: #0f6258;
+  --accent-primary-hover: #0b5149;
+  --accent-secondary: #18a66a;
+
+  --border-color: #dfe7e3;
+  --border-accent: rgba(15, 98, 88, 0.16);
+
+  --color-success: #238453;
+  --color-error: #c33a3a;
+  --color-purple: #7c5cff;
+  --color-brand-warm: #953914;
+  --color-brand-warm-hover: #802a05;
+  --color-brand-warm-bg: #ffefeb;
+  --color-success-bg: rgba(35, 132, 83, 0.12);
+  --color-error-bg: rgba(195, 58, 58, 0.12);
+
+  --shadow: rgba(20, 45, 37, 0.05);
+  --shadow-strong: rgba(23, 48, 40, 0.12);
+
+  --bg-hover: #eef4f2;
+  --bg-input: #ffffff;
+  --bg-overlay: rgba(15, 26, 22, 0.55);
+  --bg-nav: rgba(255, 255, 255, 0.95);
+  --scrollbar-thumb: #aab8bd;
+}

@@ -12,6 +12,9 @@ from app.models.jobs import Job
 from app.models.notifications import Notification
 from app.models.users.organisations import Organisation
 from app.models.users.donors import Donor
+from app.models.users.members import Member
+from app.models.users.admins import Admin
+from app.models.users.partners import Partner
 from app.models.programs import Program
 from app.models.settings import AppSetting
 from app.models.users.users import User
@@ -31,6 +34,9 @@ __all__ = [
     "Notification",
     "Organisation",
     "Donor",
+    "Member",
+    "Admin",
+    "Partner",
     "Program",
     "FinancialDonation",
     "NonFinancialDonation",

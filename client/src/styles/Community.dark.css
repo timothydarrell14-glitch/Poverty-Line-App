@@ -1,0 +1,49 @@
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
+[data-theme='dark'] .community-page-wrapper,
+[data-theme='dark'] .community-grid-container {
+  background-color: var(--bg-primary);
+}
+[data-theme='dark'] .community-sidebar,
+[data-theme='dark'] .chat-header,
+[data-theme='dark'] .chat-input-bar,
+[data-theme='dark'] .community-modal-card {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+[data-theme='dark'] .channel-search-box,
+[data-theme='dark'] .form-input,
+[data-theme='dark'] .form-select,
+[data-theme='dark'] .form-textarea,
+[data-theme='dark'] .chat-text-input {
+  background-color: var(--bg-input);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+[data-theme='dark'] .channel-item-btn:hover,
+[data-theme='dark'] .channel-item-btn.active {
+  background-color: var(--bg-hover);
+}
+[data-theme='dark'] .chat-header-title,
+[data-theme='dark'] .modal-title,
+[data-theme='dark'] .form-label {
+  color: var(--text-primary);
+}
+[data-theme='dark'] .chat-header-subtitle,
+[data-theme='dark'] .modal-subtitle {
+  color: var(--text-secondary);
+}
+[data-theme='dark'] .modal-header-row,
+[data-theme='dark'] .modal-actions-row {
+  border-color: var(--border-color);
+}
+[data-theme='dark'] .btn-cancel {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+[data-theme='dark'] .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+}
+

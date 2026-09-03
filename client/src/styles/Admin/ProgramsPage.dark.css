@@ -1,0 +1,126 @@
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
+[data-theme='dark'] .admin-programs {
+  --ink: var(--text-primary);
+  --muted: var(--text-secondary);
+  --teal: var(--accent-primary);
+  --line: var(--border-color);
+  background: var(--bg-primary);
+}
+[data-theme='dark'] .admin-programs__topbar {
+  background: var(--bg-nav);
+  border-bottom-color: var(--border-color);
+}
+[data-theme='dark'] .admin-programs__global-search {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+[data-theme='dark'] .admin-programs__global-search input::placeholder {
+  color: var(--text-muted);
+}
+[data-theme='dark'] .admin-programs__topbar-actions button {
+  color: var(--accent-primary);
+}
+[data-theme='dark'] .admin-programs__logout {
+  color: var(--color-error) !important;
+}
+[data-theme='dark'] .admin-programs__heading p,
+[data-theme='dark'] .programs-impact__description,
+[data-theme='dark'] .admin-programs__message,
+[data-theme='dark'] .admin-programs__donations-pagination {
+  color: var(--text-secondary);
+}
+[data-theme='dark'] .admin-programs__add-button {
+  background: var(--accent-primary);
+  box-shadow: 0 5px 12px var(--shadow);
+}
+[data-theme='dark'] .admin-programs__add-button:hover {
+  background: var(--accent-primary-hover);
+}
+[data-theme='dark'] .programs-list,
+[data-theme='dark'] .programs-impact,
+[data-theme='dark'] .admin-programs__modal,
+[data-theme='dark'] .admin-programs__donations {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+[data-theme='dark'] .programs-list__filter,
+[data-theme='dark'] .admin-programs__tab,
+[data-theme='dark'] .admin-programs__subtab {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+[data-theme='dark'] .programs-list__filter:hover,
+[data-theme='dark'] .programs-list__filter--active,
+[data-theme='dark'] .admin-programs__subtab--active {
+  background: var(--bg-accent);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+[data-theme='dark'] .programs-list__card {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+[data-theme='dark'] .programs-list__card:hover,
+[data-theme='dark'] .programs-list__card--selected {
+  border-color: var(--accent-primary);
+}
+[data-theme='dark'] .programs-list__card-content h3 {
+  color: var(--text-primary);
+}
+[data-theme='dark'] .programs-list__card-description,
+[data-theme='dark'] .programs-list__progress-header {
+  color: var(--text-secondary);
+}
+[data-theme='dark'] .programs-list__progress-bar {
+  background: var(--border-color);
+}
+[data-theme='dark'] .programs-list__view-details {
+  border-color: var(--border-color);
+  color: var(--accent-primary);
+}
+[data-theme='dark'] .programs-list__view-details:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent-primary);
+}
+[data-theme='dark'] .programs-impact h2 {
+  color: var(--text-primary);
+}
+[data-theme='dark'] .programs-impact__generate-report {
+  background: var(--bg-secondary);
+  color: var(--accent-primary);
+}
+[data-theme='dark'] .programs-impact__generate-report:hover {
+  background: var(--bg-hover);
+}
+[data-theme='dark'] .admin-programs__modal-body input,
+[data-theme='dark'] .admin-programs__modal-body textarea,
+[data-theme='dark'] .admin-programs__modal-body select {
+  background: var(--bg-input);
+}
+[data-theme='dark'] .admin-programs__modal-cancel {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+[data-theme='dark'] .admin-programs__modal-danger {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}
+[data-theme='dark'] .admin-programs__modal-header button,
+[data-theme='dark'] .admin-programs__donations-pagination button {
+  color: var(--text-muted);
+}
+[data-theme='dark'] .admin-programs__modal-backdrop {
+  background: var(--bg-overlay);
+}
+[data-theme='dark'] .admin-programs__donations-table th {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+[data-theme='dark'] .admin-programs__donations-table td {
+  color: var(--text-primary);
+}
+

@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState } from "react";
-import { clearAuthSession, getAccessToken } from "../utils/auth";
+import { clearAuthSession, getAccessToken } from "../../utils/auth";
 
 const AdminSessionContext = createContext(null);
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "";
@@ -12,13 +12,7 @@ export function isAdmin(role) {
 export function AdminSessionProvider({ children }) {
   const [status, setStatus] = useState(() => getAccessToken() ? "checking" : "denied");
   const [user, setUser] = useState(null);
-  const [theme, setTheme] = useState(() => localStorage.getItem("adminTheme") ?? "light");
   const [helpMode, setHelpMode] = useState(() => localStorage.getItem("adminHelpMode") === "on");
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem("adminTheme", theme);
-  }, [theme]);
 
   useEffect(() => {
     localStorage.setItem("adminHelpMode", helpMode ? "on" : "off");
@@ -46,8 +40,7 @@ export function AdminSessionProvider({ children }) {
   }, []);
 
   const value = {
-    status, user, theme,
-    toggleTheme: () => setTheme((current) => current === "dark" ? "light" : "dark"),
+    status, user,
     helpMode,
     toggleHelpMode: () => setHelpMode((current) => !current),
     logout: async () => {

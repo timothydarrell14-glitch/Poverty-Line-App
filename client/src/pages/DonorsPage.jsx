@@ -6,6 +6,7 @@ import DonationPopup from "../components/DonationPopup";
 import { apiRequest } from "../api/client";
 import { useToast } from "../context/ToastContext";
 import "../styles/Donors.css";
+import "../styles/Donors.dark.css";
 
 const impactUpdates = [
   { time: "Today", county: "Machakos County", title: "Clean water & solar pump commissioned in Machakos", summary: "Your contribution helped fund 3 new solar boreholes and a sand dam in Mwala, serving over 1,200 families with clean potable water.", image: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=700&q=80", auditor: "Maji Safi Kenya Quality Inspector #41" },

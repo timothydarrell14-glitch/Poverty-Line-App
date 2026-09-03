@@ -4,6 +4,7 @@ from marshmallow import ValidationError
 
 from app.extensions import db
 from app.models.users.users import User
+from app.models.users.members import Member
 from app.routes.authorization import admin_required, get_authenticated_user
 from app.schemas.users.user_schema import (
     user_schema,
@@ -29,8 +30,13 @@ def register():
         return jsonify({"error": "Email already registered"}), 409
 
     user = User.create_from_registration(data)
+    for field in ("date_of_birth", "gender", "education_level", "employment_status", "skills", "location"):
+        setattr(user, f"_registration_{field}", data.get(field))
     db.session.add(user)
     db.session.flush()
+    profile = user.sync_role_profile()
+    if profile is not None:
+        db.session.add(profile)
     notify(
         "signup",
         "New account created",
@@ -109,6 +115,10 @@ def admin_create_user():
         return jsonify({"error": "Email already registered"}), 409
     user = User.create_from_registration(data)
     db.session.add(user)
+    db.session.flush()
+    profile = user.sync_role_profile()
+    if profile is not None:
+        db.session.add(profile)
     db.session.commit()
     return jsonify(user_schema.dump(user)), 201
 
@@ -136,7 +146,14 @@ def admin_update_user(user_id):
         if email_owner and email_owner.user_id != user.user_id:
             return jsonify({"error": "Email already registered"}), 409
     for key, value in data.items():
-        setattr(user, key, value)
+        if key in {"date_of_birth", "gender", "education_level", "employment_status", "skills", "location"}:
+            if user.member is not None:
+                setattr(user.member, key, value)
+        else:
+            setattr(user, key, value)
+    profile = user.sync_role_profile()
+    if profile is not None:
+        db.session.add(profile)
     db.session.commit()
     return jsonify(user_schema.dump(user)), 200
 
@@ -175,11 +192,11 @@ def list_users():
             | (User.email.ilike(like))
         )
     if location:
-        query = query.filter(User.location.ilike(f"%{location}%"))
+        query = query.join(User.member).filter(Member.location.ilike(f"%{location}%"))
     if education_level:
-        query = query.filter_by(education_level=education_level)
+        query = query.join(User.member).filter(Member.education_level == education_level)
     if poverty_classification:
-        query = query.filter_by(poverty_classification=poverty_classification)
+        query = query.join(User.member).filter(Member.poverty_classification == poverty_classification)
 
     pagination = query.paginate(page=page, per_page=per_page, error_out=False)
 

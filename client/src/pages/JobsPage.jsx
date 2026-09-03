@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { apiUrl } from "../api/client";
+import { saveAuthSession } from "../utils/auth";
 import { useToast } from "../context/ToastContext";
 import "../styles/JobsPage.css";
 import jobsHero from "../assets/organisations-hero.jpg";
@@ -95,7 +96,7 @@ export default function JobsPage() {
         localStorage.removeItem("povertyLineSavedPassword");
         localStorage.removeItem("povertyLineRememberMe");
       }
-      localStorage.setItem("povertyLineToken", loginData.access_token); setToken(loginData.access_token); setView(selectedJob ? "eligibility" : null);
+      saveAuthSession(loginData); setToken(loginData.access_token); setView(selectedJob ? "eligibility" : null);
       showToast(isSignUp ? "Account created and signed in successfully." : "Welcome back. You are signed in successfully.", "success");
     } catch (error) { setMessage(error instanceof TypeError ? "We cannot reach the account service. Start the backend and try again." : error.message); showToast(error.message || "Account process failed.", "error"); } finally { setLoading(false); }
   };

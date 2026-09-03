@@ -13,5 +13,5 @@ class AssessmentResponse(db.Model):
     score = db.Column(db.Numeric(10, 2))
     answered_at = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
 
-    user = db.relationship("User", back_populates="assessment_responses")
+    user = db.relationship("User")
     question = db.relationship("AssessmentQuestion", back_populates="responses")

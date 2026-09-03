@@ -18,6 +18,7 @@ from app.models.communication.community_membership import CommunityMembership
 from app.models.donations.financialDonations import FinancialDonation
 from app.models.donations.nonFInancialDonations import NonFinancialDonation
 from app.models.users.donors import Donor
+from app.models.users.members import Member
 from app.models.communication.chats import Chat
 from app.models.donations.deliveries import Delivery
 from app.models.settings import AppSetting
@@ -36,9 +37,7 @@ def seed_users():
             email="carolineoriama@gmail.com",
             password_hash=generate_password_hash("password123"),
             phone="+254712345000",
-            gender="Female",
             avatar_url="https://i.pinimg.com/736x/b1/11/5e/b1115e983068837364e923b1ebc0c8f1.jpg",
-            location="Nairobi",
         ),
         User(
             first_name="Keith",
@@ -46,9 +45,7 @@ def seed_users():
             email="keithaustine@gmail.com",
             password_hash=generate_password_hash("password123"),
             phone="+254712345010",
-            gender="Female",
             avatar_url="https://gizmodo.com/app/uploads/2017/07/kmmcfzf47kjtcbhfqbqr.jpg",
-            location="Nairobi",
         ),
         User(
             first_name="Chipphirah",
@@ -56,9 +53,7 @@ def seed_users():
             email="chipphirahwambugu@gmail.com",
             password_hash=generate_password_hash("password123"),
             phone="+254712345011",
-            gender="Male",
             avatar_url="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScZySnNo4yMVk-Ke45uFXElrG13UvgOABjhIt3RCwvDA&s=10",
-            location="Nairobi",
         ),
         User(
             first_name="Grace",
@@ -66,12 +61,6 @@ def seed_users():
             email="grace.cherono@example.com",
             password_hash=generate_password_hash("password123"),
             phone="+254712345001",
-            date_of_birth=date(1990, 3, 12),
-            gender="Female",
-            education_level="Secondary",
-            employment_status="Unemployed",
-            skills="Tailoring, farming",
-            location="Kericho",
         ),
         User(
             first_name="Brian",
@@ -79,12 +68,6 @@ def seed_users():
             email="brian.otieno@example.com",
             password_hash=generate_password_hash("password123"),
             phone="+254712345002",
-            date_of_birth=date(1988, 7, 22),
-            gender="Male",
-            education_level="Tertiary",
-            employment_status="Self-employed",
-            skills="Fishing, boat repair",
-            location="Kisumu",
         ),
         User(
             first_name=os.environ.get("SEED_ADMIN_FIRST_NAME", "Admin"),
@@ -95,7 +78,6 @@ def seed_users():
             ),
             role="admin",
             is_active=True,
-            location="Nairobi",
         ),
     ]
     for index in range(4):
@@ -106,10 +88,21 @@ def seed_users():
                 email=f"member{index + 1}@example.com",
                 password_hash=generate_password_hash("password123"),
                 phone=f"+2547123451{index:02d}",
-                location=("Nakuru", "Eldoret", "Machakos", "Kakamega")[index],
             )
         )
     db.session.add_all(users)
+    db.session.commit()
+    member_profiles = [
+        {"gender": "Female", "location": "Nairobi"},
+        {"gender": "Female", "location": "Nairobi"},
+        {"gender": "Male", "location": "Nairobi"},
+        {"date_of_birth": date(1990, 3, 12), "gender": "Female", "education_level": "Secondary", "employment_status": "Unemployed", "skills": "Tailoring, farming", "location": "Kericho"},
+        {"date_of_birth": date(1988, 7, 22), "gender": "Male", "education_level": "Tertiary", "employment_status": "Self-employed", "skills": "Fishing, boat repair", "location": "Kisumu"},
+    ]
+    for user, profile_data in zip(users[:5], member_profiles):
+        db.session.add(Member(user_id=user.user_id, **profile_data))
+    for user, location in zip(users[6:], ("Nakuru", "Eldoret", "Machakos", "Kakamega")):
+        db.session.add(Member(user_id=user.user_id, location=location))
     db.session.commit()
     return users
 

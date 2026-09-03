@@ -16,6 +16,7 @@ import { getAccessToken } from "../../utils/auth";
 import { getDashboardStats } from "../../api/dashboard";
 import { listDonations, listNonFinancialDonations } from "../../api/donations";
 import "../../styles/Admin/ProgramsPage.css";
+import "../../styles/Admin/ProgramsPage.dark.css";
 
 const filters = ["All", "Active", "Inactive"];
 const pageSize = 6;

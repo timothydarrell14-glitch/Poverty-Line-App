@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { FiSun, FiMoon } from "react-icons/fi";
 import Login from "./Login";
 import Signup from "./Signup";
 import DonationPopup from "./DonationPopup";
@@ -11,12 +12,14 @@ import {
 import { apiRequest } from "../api/client";
 import { usePublicSettings } from "../hooks/usePublicSettings";
 import { useToast } from "../context/ToastContext";
+import { useTheme } from "../context/ThemeContext";
 
 export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
+  const [signupEmail, setSignupEmail] = useState("");
   const [isDonationPopupOpen, setIsDonationPopupOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(getCurrentUser());
   const [programs, setPrograms] = useState([]);
@@ -24,6 +27,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   const location = useLocation();
   const { orgName } = usePublicSettings();
   const { showToast } = useToast();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handle = () => setIsScrolled(window.scrollY > 12);
@@ -144,6 +148,13 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
             ))}
           </div>
           <div className="nav-actions">
+            <button
+              className="theme-toggle-button"
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? <FiSun /> : <FiMoon />}
+            </button>
             {isAuthenticated() ? (
               <>
                 <button
@@ -159,14 +170,18 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
                     cursor: "pointer",
                     display: "inline-flex",
                     alignItems: "center",
-                    gap: "0.3rem"
+                    gap: "0.3rem",
                   }}
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: "1.1rem" }}>account_circle</span>
+                  <span className="material-symbols-outlined" style={{ fontSize: "1.1rem" }}>
+                    account_circle
+                  </span>
                   Member Portal
                 </button>
-                {currentUser?.role === "admin" && (
-                  <span className="admin-badge">Admin</span>
+                {currentUser?.role && (
+                  <span className="admin-badge" aria-label="Account type">
+                    {currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)}
+                  </span>
                 )}
                 <button className="login-button" onClick={signOut}>
                   Log out
@@ -205,6 +220,13 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
         ))}
         <div className="nav-actions">
           <button
+            className="theme-toggle-button"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <FiSun /> : <FiMoon />}
+          </button>
+          <button
             className="pill-button"
             onClick={() => {
               setOpen(false);
@@ -234,7 +256,9 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
         </div>
       </div>
       <Login
+        key={signupEmail}
         isOpen={isLoginOpen}
+        initialEmail={signupEmail}
         onClose={() => setIsLoginOpen(false)}
         onShowSignup={() => {
           setIsLoginOpen(false);
@@ -245,8 +269,9 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
       <Signup
         isOpen={isSignupOpen}
         onClose={() => setIsSignupOpen(false)}
-        onShowLogin={() => {
+        onShowLogin={(email = "") => {
           setIsSignupOpen(false);
+          setSignupEmail(email);
           setIsLoginOpen(true);
         }}
       />

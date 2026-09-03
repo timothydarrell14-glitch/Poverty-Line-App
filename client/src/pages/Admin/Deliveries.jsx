@@ -11,6 +11,7 @@ import SideBar from "../../components/Admin/SideBar";
 import { apiUrl } from "../../api/client";
 import { getAccessToken } from "../../utils/auth";
 import "../../styles/Admin/DeliveriesPage.css";
+import "../../styles/Admin/DeliveriesPage.dark.css";
 
 const initialDeliveries = [
   {

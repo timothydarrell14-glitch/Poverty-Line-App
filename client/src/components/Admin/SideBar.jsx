@@ -12,11 +12,12 @@ import {
   FiUsers,
 } from "react-icons/fi";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useAdminSession } from "../AdminSession";
+import { useAdminSession } from "./AdminSession";
 import { useHelpTour } from "../../utils/useHelpTour";
 import { mediaUrl } from "../../api/client";
 import { capitalize } from "../../utils/capitalize";
 import "../../styles/Admin/SideBar.css";
+import "../../styles/Admin/SideBar.dark.css";
 
 const navigationItems = [
   { label: "Dashboard", icon: FiGrid, to: "/admin", help: "Overview of programs, donations, and recent activity." },
