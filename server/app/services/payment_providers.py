@@ -69,11 +69,11 @@ def initiate_mpesa(donation, phone_number):
         formatted_phone = "254" + raw_phone
 
     # Check if Safaricom live/sandbox API can be called
+    daraja_credentials_configured = _configured(
+        "MPESA_CONSUMER_KEY", "MPESA_CONSUMER_SECRET"
+    )
     can_call_api = (
-        cfg["consumer_key"]
-        and not cfg["consumer_key"].lower().startswith("replace-with-")
-        and cfg["consumer_secret"]
-        and not cfg["consumer_secret"].lower().startswith("replace-with-")
+        daraja_credentials_configured
         and cfg["shortcode"]
         and cfg["passkey"]
         and cfg["callback_url"]
@@ -127,10 +127,10 @@ def initiate_mpesa(donation, phone_number):
                 "message": result.get("CustomerMessage") or "Success. Request accepted for processing.",
             }
         except Exception as error:
-            # If in production, re-raise error
-            if cfg["environment"] == "production":
-                raise PaymentProviderError(f"M-Pesa request failed: {error}") from error
-            # In sandbox / dev mode, log and fall through to sandbox simulator
+            # Never mask a configured Daraja integration failure as a successful
+            # local STK request. The caller needs the provider error to correct
+            # credentials, callback URLs, or network access.
+            raise PaymentProviderError(f"M-Pesa STK push failed: {error}") from error
 
     # Sandbox / Local Development Simulated STK Push
     import uuid
