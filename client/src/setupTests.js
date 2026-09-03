@@ -3,4 +3,5 @@ import { vi } from 'vitest'
 
 if (typeof window !== 'undefined') {
   window.HTMLElement.prototype.scrollIntoView = vi.fn()
+  window.scrollTo = vi.fn()
 }
