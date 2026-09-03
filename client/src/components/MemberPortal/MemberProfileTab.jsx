@@ -1,23 +1,30 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { apiRequest } from "../../api/client";
 import { useToast } from "../../context/ToastContext";
 
 const MemberProfileTab = ({ user, onUserUpdated, onRequestCallback, onEditProfileClick }) => {
-  const [skills, setSkills] = useState([]);
+  const [skills, setSkills] = useState(() => {
+    if (user?.skills) {
+      return typeof user.skills === "string"
+        ? user.skills.split(",").map((s) => s.trim()).filter(Boolean)
+        : Array.isArray(user.skills) ? user.skills : [];
+    }
+    return ["Customer Service", "Inventory Sorting", "Digital Literacy"];
+  });
+  const [prevSkillsProp, setPrevSkillsProp] = useState(user?.skills);
   const [newSkillInput, setNewSkillInput] = useState("");
   const [savingSkills, setSavingSkills] = useState(false);
   const { showToast } = useToast();
 
-  useEffect(() => {
+  if (user?.skills !== prevSkillsProp) {
+    setPrevSkillsProp(user?.skills);
     if (user?.skills) {
       const parsed = typeof user.skills === "string"
         ? user.skills.split(",").map((s) => s.trim()).filter(Boolean)
         : Array.isArray(user.skills) ? user.skills : [];
       setSkills(parsed);
-    } else {
-      setSkills(["Customer Service", "Inventory Sorting", "Digital Literacy"]);
     }
-  }, [user]);
+  }
 
   const updateSkillsInDatabase = async (updatedSkills) => {
     if (!user?.user_id) return;

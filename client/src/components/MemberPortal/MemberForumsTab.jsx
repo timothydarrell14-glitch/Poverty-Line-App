@@ -47,7 +47,7 @@ const MemberForumsTab = () => {
       } else {
         setPosts(SAMPLE_POSTS);
       }
-    } catch (err) {
+    } catch {
       setPosts(SAMPLE_POSTS);
     } finally {
       setLoading(false);
@@ -55,7 +55,28 @@ const MemberForumsTab = () => {
   };
 
   useEffect(() => {
-    fetchPosts();
+    let isMounted = true;
+    const loadPosts = async () => {
+      try {
+        const res = await apiRequest("/api/community-posts");
+        const fetched = res.posts || [];
+        if (isMounted) {
+          setPosts(fetched.length > 0 ? fetched : SAMPLE_POSTS);
+        }
+      } catch {
+        if (isMounted) {
+          setPosts(SAMPLE_POSTS);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+    loadPosts();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleCreateTopic = async (e) => {
@@ -63,7 +84,7 @@ const MemberForumsTab = () => {
     if (!newTopic.content.trim()) return;
 
     try {
-      const created = await apiRequest("/api/community-posts", {
+      await apiRequest("/api/community-posts", {
         method: "POST",
         body: {
           community_id: 1,
@@ -74,7 +95,7 @@ const MemberForumsTab = () => {
       setShowNewTopicModal(false);
       setNewTopic({ title: "", content: "", category: "Housing" });
       fetchPosts();
-    } catch (err) {
+    } catch {
       // Fallback add to UI state
       const newEntry = {
         post_id: Date.now(),
@@ -156,7 +177,9 @@ const MemberForumsTab = () => {
                 <span className="forum-cat-badge">{post.category || post.community_name || "General"}</span>
                 <span className="post-author-text">
                   Posted by <strong>{post.author_name || "Community Member"}</strong> &bull;{" "}
-                  {new Date(post.created_at || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  {post.created_at
+                    ? new Date(post.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    : "Recently"}
                 </span>
               </div>
 

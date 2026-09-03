@@ -99,7 +99,7 @@ const MemberPortalPage = () => {
       });
       showToast("Support session scheduled and sent to Admin navigation team!", "success");
       setActiveModal(null);
-    } catch (err) {
+    } catch {
       showToast("Scheduled session recorded!", "success");
       setActiveModal(null);
     }

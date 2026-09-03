@@ -29,8 +29,32 @@ const MemberJobsTab = () => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    let isMounted = true;
+    const loadData = async () => {
+      try {
+        const [appsRes, jobsRes] = await Promise.all([
+          apiRequest("/api/job-applications"),
+          apiRequest("/api/jobs"),
+        ]);
+        if (isMounted) {
+          setActiveApplications(appsRes.applications || []);
+          setJobs(jobsRes.jobs || []);
+        }
+      } catch (err) {
+        if (isMounted) {
+          showToast(err.message || "Failed to load job data.", "error");
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+    loadData();
+    return () => {
+      isMounted = false;
+    };
+  }, [showToast]);
 
   // Map of job_id -> application_id for easy lookup & withdrawal
   const applicationByJobId = new Map(
@@ -116,7 +140,7 @@ const MemberJobsTab = () => {
                   </button>
                 </div>
                 <span className="app-date">
-                  Applied on {new Date(app.application_date || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  Applied on {app.application_date ? new Date(app.application_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : "Recently"}
                 </span>
                 <span
                   className={`status-badge ${
