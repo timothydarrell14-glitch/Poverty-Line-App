@@ -65,10 +65,14 @@ function progressPercent(program) {
   return Math.min(100, Math.round((program.progress_value / program.progress_target) * 100));
 }
 
+function hasValue(value) {
+  return value !== null && value !== undefined && String(value).trim() !== "";
+}
+
 function Programs() {
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState("programs");
   const [donationsTab, setDonationsTab] = useState("financial");
-  const [activeFilter, setActiveFilter] = useState("Active");
+  const [activeFilter, setActiveFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [programs, setPrograms] = useState([]);
   const [organisations, setOrganisations] = useState([]);
@@ -208,7 +212,14 @@ function Programs() {
                 role="tab"
                 aria-selected={activeTab === id}
                 className={`admin-programs__tab${activeTab === id ? " admin-programs__tab--active" : ""}`}
-                onClick={() => id === "donations" ? goToDonations() : setActiveTab(id)}
+                onClick={() => {
+                  if (id === "donations") {
+                    goToDonations();
+                    return;
+                  }
+                  setActiveTab(id);
+                  setActiveFilter("All");
+                }}
               >
                 {label}
               </button>
@@ -477,63 +488,54 @@ function Programs() {
               <button type="button" aria-label="Close" onClick={() => setDetailProgram(null)}><FiX aria-hidden="true" /></button>
             </div>
             <div className="admin-programs__modal-body">
-              <label>Title
+              {hasValue(detailForm.title) && <label>Title
                 <input value={detailForm.title} onChange={(event) => setDetailForm((current) => ({ ...current, title: event.target.value }))} required />
-              </label>
-              <label>Summary
-                <input value={detailForm.summary} onChange={(event) => setDetailForm((current) => ({ ...current, summary: event.target.value }))} />
-              </label>
-              <label>Description
+              </label>}
+              {hasValue(detailForm.description) && <label>Description
                 <textarea value={detailForm.description} onChange={(event) => setDetailForm((current) => ({ ...current, description: event.target.value }))} rows={3} />
-              </label>
-              <label>Long description
+              </label>}
+              {hasValue(detailForm.long_description) && <label>Long description
                 <textarea value={detailForm.long_description} onChange={(event) => setDetailForm((current) => ({ ...current, long_description: event.target.value }))} rows={4} />
-              </label>
-              <label>Poster image URL
+              </label>}
+              {hasValue(detailForm.image_url) && <label>Poster image URL
                 <input type="url" value={detailForm.image_url} onChange={(event) => setDetailForm((current) => ({ ...current, image_url: event.target.value }))} placeholder="https://…" />
-              </label>
-              <label>Type
+              </label>}
+              {hasValue(detailForm.type) && <label>Type
                 <input value={detailForm.type} onChange={(event) => setDetailForm((current) => ({ ...current, type: event.target.value }))} />
-              </label>
-              <label>Organisation
-                <select value={detailForm.organisation_id} onChange={(event) => setDetailForm((current) => ({ ...current, organisation_id: event.target.value }))} required>
-                  {organisations.map((organisation) => (
+              </label>}
+              {hasValue(detailForm.organisation_id) && organisations.some((organisation) => String(organisation.id) === String(detailForm.organisation_id)) && <label>Organisation
+                <select value={detailForm.organisation_id} onChange={(event) => setDetailForm((current) => ({ ...current, organisation_id: event.target.value }))}>
+                  {organisations.filter((organisation) => String(organisation.id) === String(detailForm.organisation_id)).map((organisation) => (
                     <option key={organisation.id} value={organisation.id}>{organisation.name}</option>
                   ))}
                 </select>
-              </label>
-              <label>Location
+              </label>}
+              {hasValue(detailForm.location) && <label>Location
                 <input value={detailForm.location} onChange={(event) => setDetailForm((current) => ({ ...current, location: event.target.value }))} />
-              </label>
-              <label>Program kind
-                <select value={detailForm.program_kind} onChange={(event) => setDetailForm((current) => ({ ...current, program_kind: event.target.value }))}>
-                  <option value="financial">Financial (funding goal)</option>
-                  <option value="non_financial">Non-financial (progress target)</option>
-                </select>
-              </label>
-              {detailForm.program_kind === "financial" ? (
+              </label>}
+              {detailForm.program_kind === "financial" && hasValue(detailForm.funding_goal) ? (
                 <label>Funding goal
                   <input type="number" min="0" value={detailForm.funding_goal} onChange={(event) => setDetailForm((current) => ({ ...current, funding_goal: event.target.value }))} />
                 </label>
-              ) : (
+              ) : detailForm.program_kind === "non_financial" && (
                 <>
-                  <label>Progress target
+                  {hasValue(detailForm.progress_target) && <label>Progress target
                     <input type="number" min="0" value={detailForm.progress_target} onChange={(event) => setDetailForm((current) => ({ ...current, progress_target: event.target.value }))} />
-                  </label>
-                  <label>Progress value
+                  </label>}
+                  {hasValue(detailForm.progress_value) && <label>Progress value
                     <input type="number" min="0" value={detailForm.progress_value} onChange={(event) => setDetailForm((current) => ({ ...current, progress_value: event.target.value }))} />
-                  </label>
-                  <label>Progress unit
+                  </label>}
+                  {hasValue(detailForm.progress_unit) && <label>Progress unit
                     <input value={detailForm.progress_unit} onChange={(event) => setDetailForm((current) => ({ ...current, progress_unit: event.target.value }))} />
-                  </label>
+                  </label>}
                 </>
               )}
-              <label>Status
+              {hasValue(detailForm.active) && <label>Status
                 <select value={detailForm.active} onChange={(event) => setDetailForm((current) => ({ ...current, active: event.target.value === "true" }))}>
                   <option value="true">Active</option>
                   <option value="false">Inactive</option>
                 </select>
-              </label>
+              </label>}
             </div>
             <div className="admin-programs__modal-actions admin-programs__modal-actions--split">
               <button type="button" className="admin-programs__modal-danger" onClick={deleteProgram}><FiTrash2 aria-hidden="true" /> Delete</button>
