@@ -1,0 +1,27 @@
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
+[data-theme='dark'] .coming-soon-page,
+[data-theme='dark'] .coming-soon {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+[data-theme='dark'] .coming-soon__panel {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+[data-theme='dark'] .coming-soon__eyebrow {
+  color: var(--accent-primary);
+}
+[data-theme='dark'] .coming-soon p {
+  color: var(--text-secondary);
+}
+[data-theme='dark'] .coming-soon__preview {
+  background: var(--accent-primary);
+  box-shadow: 0 8px 18px var(--shadow);
+}
+[data-theme='dark'] .coming-soon__preview:hover {
+  background: var(--accent-primary-hover);
+}
+

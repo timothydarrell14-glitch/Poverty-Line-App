@@ -5,10 +5,10 @@
 }
 
 .admin-topbar__panel {
-  background: #fff;
-  border: 1px solid #e4e8eb;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
-  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16);
+  box-shadow: 0 18px 45px var(--shadow-strong);
   max-height: 420px;
   overflow-y: auto;
   position: absolute;
@@ -20,14 +20,14 @@
 
 .admin-topbar__panel-header {
   align-items: center;
-  border-bottom: 1px solid #eef1f3;
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   padding: 14px 16px;
 }
 
 .admin-topbar__panel-header h3 {
-  color: #111c20;
+  color: var(--text-primary);
   font-size: 15px;
   margin: 0;
 }
@@ -35,7 +35,7 @@
 .admin-topbar__panel-header button {
   background: none;
   border: 0;
-  color: #006878;
+  color: var(--accent-primary);
   cursor: pointer;
   font-size: 12px;
   font-weight: 600;
@@ -61,17 +61,17 @@
 }
 
 .admin-topbar__notification:hover {
-  background: #f5f7fb;
+  background: var(--bg-accent);
 }
 
 .admin-topbar__notification--unread {
-  background: #eef8fa;
+  background: var(--bg-accent);
 }
 
 .admin-topbar__notification-icon {
   align-items: center;
   border-radius: 999px;
-  color: #fff;
+  color: var(--text-on-accent);
   display: grid;
   flex-shrink: 0;
   height: 32px;
@@ -80,19 +80,19 @@
 }
 
 .admin-topbar__notification-icon--donation {
-  background: #1f9d63;
+  background: var(--color-success);
 }
 
 .admin-topbar__notification-icon--program_completed {
-  background: #006878;
+  background: var(--accent-primary);
 }
 
 .admin-topbar__notification-icon--new_partner {
-  background: #7c5cff;
+  background: var(--color-purple);
 }
 
 .admin-topbar__notification-body {
-  color: #111c20;
+  color: var(--text-primary);
   display: flex;
   flex-direction: column;
   font-size: 13px;
@@ -104,16 +104,16 @@
 }
 
 .admin-topbar__notification-body span {
-  color: #4c5b62;
+  color: var(--text-secondary);
 }
 
 .admin-topbar__notification-body time {
-  color: #8b98a0;
+  color: var(--text-muted);
   font-size: 11px;
 }
 
 .admin-topbar__empty {
-  color: #63717c;
+  color: var(--text-muted);
   font-size: 13px;
   padding: 20px 16px;
   text-align: center;
@@ -122,6 +122,6 @@
 .admin-topbar__help-toggle--on {
   background: rgba(0, 104, 120, 0.14) !important;
   border-radius: 999px;
-  color: #006878 !important;
+  color: var(--accent-primary) !important;
 }
 

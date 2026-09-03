@@ -19,6 +19,7 @@ import { listNotifications, markNotificationRead } from "../../api/notifications
 import { formatRelativeTime } from "../../utils/formatRelativeTime";
 import { capitalize } from "../../utils/capitalize";
 import "../../styles/Admin/Home.css";
+import "../../styles/Admin/Home.dark.css";
 
 const notificationIcons = {
   donation: FiDollarSign,

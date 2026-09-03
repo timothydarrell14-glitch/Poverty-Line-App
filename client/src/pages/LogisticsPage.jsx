@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import "../styles/LogisticsPage.css";
+import "../styles/LogisticsPage.dark.css";
 
 function LogisticsPage() {
   const [selectedTimeframe, setSelectedTimeframe] = useState("7d");

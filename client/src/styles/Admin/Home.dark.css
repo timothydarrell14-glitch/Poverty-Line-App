@@ -1,0 +1,101 @@
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
+[data-theme='dark'] .admin-home {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+[data-theme='dark'] .admin-home__topbar {
+  background: var(--bg-nav);
+  border-bottom-color: var(--border-color);
+}
+[data-theme='dark'] .admin-home__brand,
+[data-theme='dark'] .admin-home__topbar-actions button,
+[data-theme='dark'] .admin-home__activities-heading a,
+[data-theme='dark'] .admin-home__view-all {
+  color: var(--accent-primary);
+}
+[data-theme='dark'] .admin-home__topbar-actions .admin-home__logout {
+  color: var(--color-error);
+}
+[data-theme='dark'] .admin-home__search {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+[data-theme='dark'] .admin-home__search input {
+  color: var(--text-primary);
+}
+[data-theme='dark'] .admin-home__search input::placeholder {
+  color: var(--text-muted);
+}
+[data-theme='dark'] .admin-home__profile,
+[data-theme='dark'] .admin-home__panel,
+[data-theme='dark'] .admin-home__quick-action-list button,
+[data-theme='dark'] .admin-home__activity-modal,
+[data-theme='dark'] .admin-home__profile-form {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+[data-theme='dark'] .admin-home__profile-avatar {
+  background: var(--bg-tertiary);
+  border-color: var(--bg-secondary);
+}
+[data-theme='dark'] .admin-home__profile-copy h1,
+[data-theme='dark'] .admin-home__panel h2,
+[data-theme='dark'] .admin-home__quick-action-list button,
+[data-theme='dark'] .admin-home__activity h3,
+[data-theme='dark'] .admin-home__activity-modal-heading h2 {
+  color: var(--text-primary);
+}
+[data-theme='dark'] .admin-home__profile-copy p,
+[data-theme='dark'] .admin-home__empty-state,
+[data-theme='dark'] .admin-home__activity time,
+[data-theme='dark'] .admin-home__activity p,
+[data-theme='dark'] .admin-home__profile-form label {
+  color: var(--text-secondary);
+}
+[data-theme='dark'] .admin-home__panel-rule {
+  background: var(--border-color);
+}
+[data-theme='dark'] .admin-home__program-total,
+[data-theme='dark'] .admin-home__impact-stats div,
+[data-theme='dark'] .admin-home__activity article {
+  background: var(--bg-tertiary);
+}
+[data-theme='dark'] .admin-home__activity:not(:last-child)::after {
+  background: var(--border-color);
+}
+[data-theme='dark'] .admin-home__quick-action-list button {
+  color: var(--text-primary);
+}
+[data-theme='dark'] .admin-home__quick-action-list button > svg {
+  color: var(--text-muted);
+}
+[data-theme='dark'] .admin-home__activity-trigger--unread article {
+  background: var(--bg-accent);
+  border-color: var(--accent-primary);
+}
+[data-theme='dark'] .admin-home__activity-tags span {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+[data-theme='dark'] .admin-home__modal-backdrop {
+  background: var(--bg-overlay);
+}
+[data-theme='dark'] .admin-home__profile-form label {
+  color: var(--text-primary);
+}
+[data-theme='dark'] .admin-home__profile-form input {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+[data-theme='dark'] .admin-home__form-actions button[type="button"] {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+[data-theme='dark'] .admin-home__activity-modal-heading button {
+  color: var(--text-muted);
+}
+

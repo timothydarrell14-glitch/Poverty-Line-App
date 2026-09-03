@@ -6,6 +6,7 @@ import ProgressSection from '../components/ProgressSection';
 import Footer from '../components/Footer';
 import { usePublicSettings } from '../hooks/usePublicSettings';
 import '../styles/Homepage.css';
+import '../styles/Homepage.dark.css';
 
 export default function HomePage() {
   const navigate = useNavigate();

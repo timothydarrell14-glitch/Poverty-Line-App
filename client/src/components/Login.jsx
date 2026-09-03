@@ -4,6 +4,7 @@ import { apiUrl } from "../api/client";
 import { useToast } from "../context/ToastContext";
 import { saveAuthSession } from "../utils/auth";
 import "../styles/Auth.css";
+import "../styles/Auth.dark.css";
 
 const Login = ({ isOpen, onClose, onShowSignup, onAuthenticated, initialEmail = "" }) => {
   const navigate = useNavigate();

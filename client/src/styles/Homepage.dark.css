@@ -1,0 +1,29 @@
+[data-theme='dark'] .hero-section:after {
+  background: linear-gradient(to top, var(--bg-primary), rgba(13, 26, 22, .6) 52%, transparent), linear-gradient(to bottom, rgba(0, 0, 0, .35), transparent 50%, var(--bg-primary));
+}
+[data-theme='dark'] .hero-card {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+[data-theme='dark'] .hero-card p,
+[data-theme='dark'] .section-heading p,
+[data-theme='dark'] .progress-copy > p {
+  color: var(--text-secondary);
+}
+[data-theme='dark'] .outline-button {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+[data-theme='dark'] .outline-button:hover {
+  background: var(--bg-hover);
+}
+[data-theme='dark'] .ecosystem-section {
+  background: var(--bg-primary);
+}
+[data-theme='dark'] .ecosystem-card {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+[data-theme='dark'] .progress-section {
+  background: var(--bg-tertiary);
+}
