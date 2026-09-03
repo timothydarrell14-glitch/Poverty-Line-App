@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
 import { apiUrl } from "../api/client";
 import "../styles/Community.css";
+import "../styles/Community.dark.css";
 
 const CATEGORY_ICONS = {
   "General Support": "chat",

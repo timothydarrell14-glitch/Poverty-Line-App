@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState } from "react";
+import { clearAuthSession, getAccessToken } from "../../utils/auth";
 
 const AdminSessionContext = createContext(null);
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "";
@@ -9,17 +10,16 @@ export function isAdmin(role) {
 }
 
 export function AdminSessionProvider({ children }) {
-  const [status, setStatus] = useState(() => localStorage.getItem("accessToken") ? "checking" : "denied");
+  const [status, setStatus] = useState(() => getAccessToken() ? "checking" : "denied");
   const [user, setUser] = useState(null);
-  const [theme, setTheme] = useState(() => localStorage.getItem("adminTheme") ?? "light");
+  const [helpMode, setHelpMode] = useState(() => localStorage.getItem("adminHelpMode") === "on");
 
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem("adminTheme", theme);
-  }, [theme]);
+    localStorage.setItem("adminHelpMode", helpMode ? "on" : "off");
+  }, [helpMode]);
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
+    const token = getAccessToken();
     if (!token) return undefined;
     const controller = new AbortController();
 
@@ -40,10 +40,11 @@ export function AdminSessionProvider({ children }) {
   }, []);
 
   const value = {
-    status, user, theme,
-    toggleTheme: () => setTheme((current) => current === "dark" ? "light" : "dark"),
+    status, user,
+    helpMode,
+    toggleHelpMode: () => setHelpMode((current) => !current),
     logout: async () => {
-      const token = localStorage.getItem("accessToken");
+      const token = getAccessToken();
       if (token) {
         try {
           await fetch(`${apiBaseUrl}/api/auth/logout`, {
@@ -54,9 +55,10 @@ export function AdminSessionProvider({ children }) {
           // Ignore logout API failures and clear local session anyway.
         }
       }
+      clearAuthSession();
     },
     updateUser: async (profile) => {
-      const token = localStorage.getItem("accessToken");
+      const token = getAccessToken();
       const response = await fetch(`${apiBaseUrl}/api/auth/me`, {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
@@ -66,6 +68,34 @@ export function AdminSessionProvider({ children }) {
       if (!response.ok) throw new Error(payload.message ?? "Could not update profile.");
       setUser(payload.user);
       return payload.user;
+    },
+    uploadAvatar: async (file) => {
+      const token = getAccessToken();
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await fetch(`${apiBaseUrl}/api/auth/me/avatar`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.message ?? "Could not upload profile picture.");
+      setUser((current) => ({ ...current, avatarUrl: payload.avatarUrl }));
+      return payload.avatarUrl;
+    },
+    uploadCover: async (file) => {
+      const token = getAccessToken();
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await fetch(`${apiBaseUrl}/api/auth/me/cover`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.message ?? "Could not upload cover image.");
+      setUser((current) => ({ ...current, coverUrl: payload.coverUrl }));
+      return payload.coverUrl;
     },
   };
 

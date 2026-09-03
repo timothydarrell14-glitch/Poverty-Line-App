@@ -924,7 +924,6 @@ function Organisations({
                   View Dashboard Preview
                 </button>
 
-                {/* DONATE BUTTON */}
                 <button
                   type="button"
                   className="org-secondary-button"
@@ -936,7 +935,6 @@ function Organisations({
                   Donate
                 </button>
 
-                {/* ORGANISATION MANAGEMENT */}
                 <button
                   type="button"
                   className="org-secondary-button"

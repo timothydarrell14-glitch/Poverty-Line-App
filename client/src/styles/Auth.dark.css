@@ -1,0 +1,43 @@
+[data-theme='dark'] .auth-backdrop { background: var(--bg-overlay); }
+[data-theme='dark'] .auth-modal { background: var(--bg-secondary); border-color: var(--border-color); }
+[data-theme='dark'] .auth-modal header { background: var(--bg-tertiary); border-bottom-color: var(--border-color); }
+[data-theme='dark'] .auth-modal header > div > .material-symbols-outlined { color: var(--accent-primary); }
+[data-theme='dark'] .auth-modal h2,
+[data-theme='dark'] .auth-modal label,
+[data-theme='dark'] .auth-modal input,
+[data-theme='dark'] .account-type-option strong {
+  color: var(--text-primary);
+}
+[data-theme='dark'] .auth-modal input {
+  background: var(--bg-input);
+  border-color: var(--border-color);
+}
+[data-theme='dark'] .auth-modal header button,
+[data-theme='dark'] .auth-helper,
+[data-theme='dark'] .auth-switch,
+[data-theme='dark'] .account-type-option small {
+  color: var(--text-muted);
+}
+[data-theme='dark'] .role-grid button,
+[data-theme='dark'] .account-type-option {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+[data-theme='dark'] .role-grid button.selected,
+[data-theme='dark'] .account-type-option.selected,
+[data-theme='dark'] .account-type-option:hover {
+  border-color: var(--accent-primary);
+  background: var(--bg-accent);
+  color: var(--accent-primary);
+}
+[data-theme='dark'] .auth-submit {
+  background: var(--accent-primary);
+}
+[data-theme='dark'] .auth-submit:hover:not(:disabled) {
+  background: var(--accent-primary-hover);
+}
+[data-theme='dark'] .auth-switch button {
+  color: var(--accent-primary);
+}
+

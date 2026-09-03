@@ -48,6 +48,7 @@ describe('Admin routes', () => {
       </MemoryRouter>,
     )
 
+    fireEvent.click(await screen.findByRole('button', { name: 'See preview' }))
     expect(await screen.findByRole('heading', { name: heading })).toBeInTheDocument()
   })
 
@@ -59,6 +60,7 @@ describe('Admin routes', () => {
       </MemoryRouter>,
     )
 
+    fireEvent.click(await screen.findByRole('button', { name: 'See preview' }))
     const mercyConversation = await screen.findByRole('button', { name: /Mercy Corps/ })
     fireEvent.click(mercyConversation)
 

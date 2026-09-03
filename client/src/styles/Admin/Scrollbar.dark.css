@@ -1,0 +1,46 @@
+[data-theme='dark'] .admin-chats__body:hover,
+[data-theme='dark'] .admin-chats__body:focus-within,
+[data-theme='dark'] .admin-deliveries__body:hover,
+[data-theme='dark'] .admin-deliveries__body:focus-within,
+[data-theme='dark'] .admin-home__body:hover,
+[data-theme='dark'] .admin-home__body:focus-within,
+[data-theme='dark'] .admin-programs__body:hover,
+[data-theme='dark'] .admin-programs__body:focus-within,
+[data-theme='dark'] .admin-settings__body:hover,
+[data-theme='dark'] .admin-settings__body:focus-within,
+[data-theme='dark'] .admin-users__body:hover,
+[data-theme='dark'] .admin-users__body:focus-within,
+[data-theme='dark'] .chats-list__conversations:hover,
+[data-theme='dark'] .chats-list__conversations:focus-within,
+[data-theme='dark'] .chat-messages__messages:hover,
+[data-theme='dark'] .chat-messages__messages:focus-within,
+[data-theme='dark'] .delivery-list__cards:hover,
+[data-theme='dark'] .delivery-list__cards:focus-within,
+[data-theme='dark'] .admin-topbar__panel:hover,
+[data-theme='dark'] .admin-programs__modal:hover {
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+[data-theme='dark'] .admin-chats__body:hover::-webkit-scrollbar-thumb,
+[data-theme='dark'] .admin-chats__body:focus-within::-webkit-scrollbar-thumb,
+[data-theme='dark'] .admin-deliveries__body:hover::-webkit-scrollbar-thumb,
+[data-theme='dark'] .admin-deliveries__body:focus-within::-webkit-scrollbar-thumb,
+[data-theme='dark'] .admin-home__body:hover::-webkit-scrollbar-thumb,
+[data-theme='dark'] .admin-home__body:focus-within::-webkit-scrollbar-thumb,
+[data-theme='dark'] .admin-programs__body:hover::-webkit-scrollbar-thumb,
+[data-theme='dark'] .admin-programs__body:focus-within::-webkit-scrollbar-thumb,
+[data-theme='dark'] .admin-settings__body:hover::-webkit-scrollbar-thumb,
+[data-theme='dark'] .admin-settings__body:focus-within::-webkit-scrollbar-thumb,
+[data-theme='dark'] .admin-users__body:hover::-webkit-scrollbar-thumb,
+[data-theme='dark'] .admin-users__body:focus-within::-webkit-scrollbar-thumb,
+[data-theme='dark'] .chats-list__conversations:hover::-webkit-scrollbar-thumb,
+[data-theme='dark'] .chats-list__conversations:focus-within::-webkit-scrollbar-thumb,
+[data-theme='dark'] .chat-messages__messages:hover::-webkit-scrollbar-thumb,
+[data-theme='dark'] .chat-messages__messages:focus-within::-webkit-scrollbar-thumb,
+[data-theme='dark'] .delivery-list__cards:hover::-webkit-scrollbar-thumb,
+[data-theme='dark'] .delivery-list__cards:focus-within::-webkit-scrollbar-thumb,
+[data-theme='dark'] .admin-topbar__panel:hover::-webkit-scrollbar-thumb,
+[data-theme='dark'] .admin-programs__modal:hover::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  background-clip: padding-box;
+}

@@ -1,0 +1,75 @@
+[data-theme='dark'] .donors-page { background: var(--bg-primary); color: var(--text-primary); }
+[data-theme='dark'] .public-eyebrow { background: var(--color-brand-warm-bg); color: var(--color-brand-warm); }
+[data-theme='dark'] .public-donors-copy h1,
+[data-theme='dark'] .public-donors-copy h1 em { color: var(--text-primary); }
+[data-theme='dark'] .public-donors-copy > p { color: var(--text-secondary); }
+[data-theme='dark'] .public-primary-button { background: var(--color-brand-warm); }
+[data-theme='dark'] .public-primary-button:hover { background: var(--color-brand-warm-hover); }
+[data-theme='dark'] .public-secondary-button { border-color: var(--color-brand-warm); color: var(--color-brand-warm); }
+[data-theme='dark'] .public-secondary-button:hover { background: var(--color-brand-warm-bg); }
+[data-theme='dark'] .public-stat-row { border-top-color: var(--border-color); }
+[data-theme='dark'] .filter-tab { background: var(--bg-tertiary); color: var(--text-secondary); }
+[data-theme='dark'] .filter-tab:hover { background: var(--bg-hover); }
+[data-theme='dark'] .filter-tab.active { background: var(--color-brand-warm); color: var(--text-on-accent); }
+[data-theme='dark'] .public-program-card,
+[data-theme='dark'] .learn-more-popup,
+[data-theme='dark'] .donor-modal,
+[data-theme='dark'] .donor-welcome-card,
+[data-theme='dark'] .donor-panel,
+[data-theme='dark'] .donor-metrics article {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+[data-theme='dark'] .public-program-image { background: var(--bg-tertiary); }
+[data-theme='dark'] .public-program-copy h3,
+[data-theme='dark'] .public-program-image > span,
+[data-theme='dark'] .learn-more-popup h3,
+[data-theme='dark'] .donor-welcome-card h1,
+[data-theme='dark'] .donor-panel h2,
+[data-theme='dark'] .monthly-giving-card h2,
+[data-theme='dark'] .donor-modal h2,
+[data-theme='dark'] .history-panel td b,
+[data-theme='dark'] .impact-item h3,
+[data-theme='dark'] .receipt-details p b {
+  color: var(--text-primary);
+}
+[data-theme='dark'] .public-program-copy > div > p,
+[data-theme='dark'] .learn-more-popup p,
+[data-theme='dark'] .donor-welcome-card p,
+[data-theme='dark'] .panel-description,
+[data-theme='dark'] .donor-metrics article > span,
+[data-theme='dark'] .donor-metrics small,
+[data-theme='dark'] .history-panel th,
+[data-theme='dark'] .history-panel td,
+[data-theme='dark'] .impact-item > div small,
+[data-theme='dark'] .impact-item p,
+[data-theme='dark'] .receipt-details p,
+[data-theme='dark'] .donor-modal header p,
+[data-theme='dark'] .learn-more-close {
+  color: var(--text-secondary);
+}
+[data-theme='dark'] .public-progress { background: var(--bg-tertiary); border-color: var(--border-color); }
+[data-theme='dark'] .public-progress > i { background: var(--border-color); }
+[data-theme='dark'] .donor-access-gate > .material-symbols-outlined { background: var(--bg-accent); color: var(--accent-primary); }
+[data-theme='dark'] .donor-access-gate h1 { color: var(--text-primary); }
+[data-theme='dark'] .donor-access-gate button { background: var(--accent-primary); }
+[data-theme='dark'] .donor-access-gate button:hover { background: var(--accent-primary-hover); }
+[data-theme='dark'] .receipt-details { background: var(--bg-tertiary); border-color: var(--border-color); }
+[data-theme='dark'] .receipt-details .receipt-total { border-top-color: var(--border-color); }
+[data-theme='dark'] .impact-item { border-bottom-color: var(--border-color); }
+[data-theme='dark'] .impact-item > div span,
+[data-theme='dark'] .status-control button { background: var(--bg-accent); color: var(--accent-primary); }
+[data-theme='dark'] .status-control { background: var(--bg-tertiary); }
+[data-theme='dark'] .close-button,
+[data-theme='dark'] .amount-options button {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+[data-theme='dark'] .amount-options button.selected {
+  border-color: var(--accent-primary);
+  background: var(--bg-accent);
+  color: var(--accent-primary);
+}
+[data-theme='dark'] .history-panel td { border-top-color: var(--border-color); }
+

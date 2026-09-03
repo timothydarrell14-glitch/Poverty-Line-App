@@ -1,21 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../styles/DonationPopup.css";
+import "../styles/DonationPopup.dark.css";
+import mpesaLogo from "../assets/mpesa-logo.png";
+import paypalLogo from "../assets/paypal-logo.svg";
+import FastlaneCheckout from "./FastlaneCheckout";
 
-const DonationPopup = ({ isOpen, onClose, programs, onDonate }) => {
+const isKenyanMobile = (phone) =>
+  /^(?:\+254|0)[17]\d{8}$/.test((phone || "").replace(/[\s-]/g, ""));
+const fastlaneEnabled = import.meta.env.VITE_PAYPAL_FASTLANE_ENABLED === "true";
 
-  const [selectedProgram, setSelectedProgram] = useState("");
+const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId }) => {
+
+  const [selectedProgram, setSelectedProgram] = useState(() => selectedProgramId || "");
   const [amount, setAmount] = useState(0);
   const [customAmount, setCustomAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeForm, setActiveForm] = useState("financial");
+  
+  // General donation form state
+  const [donorName, setDonorName] = useState("");
+  const [donorEmail, setDonorEmail] = useState("");
+  const [donorPhone, setDonorPhone] = useState("+254 ");
+  const [customCountryCode, setCustomCountryCode] = useState("");
+  const [useCustomCountryCode, setUseCustomCountryCode] = useState(false);
+  const [donationType, setDonationType] = useState("");
+  const [donationDescription, setDonationDescription] = useState("");
+  const [countries, setCountries] = useState([]);
+  const [countriesLoading, setCountriesLoading] = useState(true);
+  const [submissionError, setSubmissionError] = useState("");
 
-  // Predefined amounts
-  const predefinedAmounts = [100, 500, 1000, 2500];
-
-  // Get program details
-  const getProgramDetails = (programId) => {
-    return programs?.find(p => p.id === programId) || { title: "General Community Fund" };
-  };
+  const currency = paymentMethod === "paypal" ? "USD" : "KES";
+  const predefinedAmounts = currency === "USD" ? [10, 25, 50, 100] : [100, 500, 1000, 2500];
 
   const handleAmountSelect = (selectedAmount) => {
     setAmount(selectedAmount);
@@ -32,40 +48,144 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (paymentMethod === "mpesa" && !isKenyanMobile(donorPhone)) {
+      setSubmissionError("M-Pesa is only available for a valid Kenyan mobile number.");
+      return;
+    }
     setIsSubmitting(true);
+    setSubmissionError("");
     
     // Prepare donation data
     const donationData = {
-      type: "one-time",
-      programId: selectedProgram,
-      program: getProgramDetails(selectedProgram).title,
-      amount: amount,
-      customAmount: customAmount || null,
-      paymentMethod,
-      currency: "KES",
+      program_id: selectedProgram ? Number(selectedProgram) : null,
+      amount,
+      payment_method: paymentMethod,
+      currency: paymentMethod === "paypal" ? "USD" : "KES",
+      donor_name: selectedProgram ? null : donorName || null,
+      donor_email: selectedProgram ? null : donorEmail || null,
+      donor_phone: donorPhone.trim() || null,
     };
 
-    // Call the onDonate callback
-    if (onDonate) {
-      onDonate(donationData);
-    }
-
-    // Simulate API call delay
-    setTimeout(() => {
+    try {
+      if (onDonate) await onDonate(donationData);
       setIsSubmitting(false);
       onClose();
-    }, 2000);
+    } catch (error) {
+      setSubmissionError(error.message || "Could not record the donation.");
+      setIsSubmitting(false);
+    }
   };
 
   const handlePaymentMethodChange = (method) => {
     setPaymentMethod(method);
+    setCustomAmount("");
+    setAmount(method === "paypal" ? 10 : 100);
+  };
+
+  // Fetch countries from backend
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        // Try to fetch from backend first
+        const response = await fetch('/api/countries');
+        if (response.ok) {
+          const data = await response.json();
+          setCountries(data);
+        } else {
+          // Fallback: if backend not available, use a minimal list
+          console.warn('Could not fetch countries from backend, using fallback data');
+          setCountries([
+            { flag: '🇰🇪', name: 'Kenya', code: '+254' },
+            { flag: '🇺🇸', name: 'United States', code: '+1' },
+            { flag: '🇬🇧', name: 'United Kingdom', code: '+44' },
+            { flag: '🇨🇦', name: 'Canada', code: '+1' },
+            { flag: '🇦🇺', name: 'Australia', code: '+61' },
+            { flag: '🇩🇪', name: 'Germany', code: '+49' },
+            { flag: '🇫🇷', name: 'France', code: '+33' },
+            { flag: '🇮🇳', name: 'India', code: '+91' },
+            { flag: '🇨🇳', name: 'China', code: '+86' },
+            { flag: '🇯🇵', name: 'Japan', code: '+81' }
+          ]);
+        }
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+        // Use fallback data if fetch fails
+        setCountries([
+          { flag: '🇰🇪', name: 'Kenya', code: '+254' },
+          { flag: '🇺🇸', name: 'United States', code: '+1' },
+          { flag: '🇬🇧', name: 'United Kingdom', code: '+44' },
+          { flag: '🇨🇦', name: 'Canada', code: '+1' },
+          { flag: '🇦🇺', name: 'Australia', code: '+61' },
+          { flag: '🇩🇪', name: 'Germany', code: '+49' },
+          { flag: '🇫🇷', name: 'France', code: '+33' },
+          { flag: '🇮🇳', name: 'India', code: '+91' },
+          { flag: '🇨🇳', name: 'China', code: '+86' },
+          { flag: '🇯🇵', name: 'Japan', code: '+81' }
+        ]);
+      } finally {
+        setCountriesLoading(false);
+      }
+    };
+
+    fetchCountries();
+  }, []);
+
+  // Get current country code from phone state
+  const getCurrentCountryCode = () => {
+    const code = donorPhone.split(' ')[0] || '';
+    return code || (useCustomCountryCode ? customCountryCode : '+254');
   };
 
   const getProgramTitle = (programId) => {
     const program = programs?.find(p => p.id === programId);
     return program?.title || "General Community Fund (Where Most Needed)";
+  };
+
+  const handleGeneralSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmissionError("");
+    
+    // Prepare general donation data
+    const generalDonationData = {
+      kind: "non_financial",
+      donorName,
+      donorEmail,
+      donorPhone,
+      donationType,
+      donationDescription,
+      submissionDate: new Date().toISOString()
+    };
+
+    try {
+      if (onDonate) await onDonate(generalDonationData);
+      setIsSubmitting(false);
+      onClose();
+    } catch (error) {
+      setSubmissionError(error.message || "Could not submit the donation.");
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleFormSwitch = (formType) => {
+    setActiveForm(formType);
+    // Reset form states when switching
+    if (formType === "general") {
+      setSelectedProgram("");
+      setAmount(0);
+      setCustomAmount("");
+      setPaymentMethod("");
+    } else {
+      setDonorName("");
+      setDonorEmail("");
+      setDonorPhone("+254 ");
+      setDonationType("");
+      setDonationDescription("");
+      setUseCustomCountryCode(false);
+      setCustomCountryCode("");
+    }
   };
 
   if (!isOpen) return null;
@@ -85,7 +205,26 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate }) => {
           </button>
         </header>
 
-        <form onSubmit={handleSubmit} className="donation-form">
+        {/* Navigation Bar */}
+        <div className="donation-nav-bar">
+          <button 
+            type="button"
+            className={`nav-tab ${activeForm === "financial" ? "active" : ""}`}
+            onClick={() => handleFormSwitch("financial")}
+          >
+            Financial Donations
+          </button>
+          <button 
+            type="button"
+            className={`nav-tab ${activeForm === "general" ? "active" : ""}`}
+            onClick={() => handleFormSwitch("general")}
+          >
+            Non-financial Donation
+          </button>
+        </div>
+
+        {activeForm === "financial" ? (
+          <form onSubmit={handleSubmit} className="donation-form">
           {/* Select Initiative */}
           <div className="form-section">
             <label htmlFor="program-select">Select Initiative</label>
@@ -95,12 +234,9 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate }) => {
               value={selectedProgram}
               onChange={(e) => setSelectedProgram(e.target.value)}
             >
-              <option value="">Select an initiative...</option>
-              {programs?.map((program) => (
+              <option value="">General Community Fund</option>
+              {programs?.filter((program) => program.active !== false && (program.program_kind || "financial") === "financial").map((program) => (
                 <option key={program.id} value={program.id}>
-                  {program.category && (
-                    <span className="material-symbols-outlined">{program.icon}</span>
-                  )}
                   {getProgramTitle(program.id)}
                 </option>
               )) || (
@@ -108,6 +244,29 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate }) => {
               )}
             </select>
           </div>
+
+          {(paymentMethod === "mpesa" || !selectedProgram) && (
+            <div className="form-section">
+              <label htmlFor="financial-donor-phone">Phone number{paymentMethod === "mpesa" ? " for M-Pesa" : ""}</label>
+              <input id="financial-donor-phone" type="tel" className="form-input" value={donorPhone} onChange={(e) => setDonorPhone(e.target.value)} required={paymentMethod === "mpesa" || !selectedProgram} />
+              {paymentMethod === "mpesa" && donorPhone.trim() && !isKenyanMobile(donorPhone) && (
+                <small className="donation-error">Enter a Kenyan mobile number, for example +254 712 345 678.</small>
+              )}
+            </div>
+          )}
+
+          {!selectedProgram && (
+            <>
+              <div className="form-section">
+                <label htmlFor="financial-donor-name">Name</label>
+                <input id="financial-donor-name" className="form-input" value={donorName} onChange={(e) => setDonorName(e.target.value)} required />
+              </div>
+              <div className="form-section">
+                <label htmlFor="financial-donor-email">Email</label>
+                <input id="financial-donor-email" type="email" className="form-input" value={donorEmail} onChange={(e) => setDonorEmail(e.target.value)} required />
+              </div>
+            </>
+          )}
 
           {/* Contribution Amount */}
           <div className="form-section">
@@ -120,20 +279,28 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate }) => {
                   className={`amount-button ${amount === amt ? "selected" : ""}`}
                   onClick={() => handleAmountSelect(amt)}
                 >
-                  KES {amt}
+                  {currency} {amt}
                 </button>
               ))}
             </div>
             <div className="custom-amount">
               <input 
                 type="text"
-                placeholder="Or enter custom amount"
+                placeholder={`Or enter custom amount in ${currency}`}
                 value={customAmount}
                 onChange={handleCustomAmountChange}
                 className="custom-amount-input"
               />
             </div>
           </div>
+
+          {paymentMethod === "paypal" && fastlaneEnabled && (
+            <FastlaneCheckout
+              amount={amount}
+              programId={selectedProgram ? Number(selectedProgram) : null}
+              onCompleted={() => setSubmissionError("Fastlane payment submitted for confirmation.")}
+            />
+          )}
 
 
 
@@ -146,16 +313,14 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate }) => {
                 className={`payment-method ${paymentMethod === "mpesa" ? "selected" : ""}`}
                 onClick={() => handlePaymentMethodChange("mpesa")}
               >
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/M-Pesa_logo.svg/200px-M-Pesa_logo.svg.png" alt="M-Pesa" className="payment-logo" />
-                M-Pesa
+                <img src={mpesaLogo} alt="M-Pesa" className="payment-logo mpesa-logo-large" />
               </button>
               <button 
                 type="button"
                 className={`payment-method ${paymentMethod === "paypal" ? "selected" : ""}`}
                 onClick={() => handlePaymentMethodChange("paypal")}
               >
-                <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-100px.png" alt="PayPal" className="payment-logo" />
-                PayPal
+                <img src={paypalLogo} alt="PayPal" className="payment-logo" />
               </button>
             </div>
           </div>
@@ -164,50 +329,164 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate }) => {
           <button 
             type="submit" 
             className="submit-button"
-            disabled={isSubmitting || amount <= 0 || !selectedProgram || !paymentMethod}
+            disabled={isSubmitting || amount <= 0 || !paymentMethod || (paymentMethod === "mpesa" && !isKenyanMobile(donorPhone)) || (!selectedProgram && (!donorName || !donorEmail || !donorPhone.trim()))}
           >
-            {selectedProgram && amount > 0 && paymentMethod ? null : <span className="material-symbols-outlined">lock</span>}
-            Complete KES {amount} Contribution
+            {amount > 0 && paymentMethod && (paymentMethod !== "mpesa" || isKenyanMobile(donorPhone)) && (selectedProgram || (donorName && donorEmail && donorPhone.trim())) ? null : <span className="material-symbols-outlined">lock</span>}
+            Complete {currency} {amount} Contribution
           </button>
         </form>
+        ) : (
+          /* General Donation Form */
+          <form onSubmit={handleGeneralSubmit} className="donation-form">
+            {/* Donor Information */}
+            <div className="form-section">
+              <label htmlFor="donor-name">Name</label>
+              <input 
+                type="text" 
+                id="donor-name"
+                className="form-input"
+                value={donorName}
+                onChange={(e) => setDonorName(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-section">
+              <label htmlFor="donor-email">Email</label>
+              <input 
+                type="email" 
+                id="donor-email"
+                className="form-input"
+                value={donorEmail}
+                onChange={(e) => setDonorEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-section">
+              <label htmlFor="donor-phone">Phone Number</label>
+              <div className="phone-input-container">
+                {useCustomCountryCode ? (
+                  <div className="custom-country-input-container">
+                    <input 
+                      type="text" 
+                      className="form-input country-code-input"
+                      value={customCountryCode}
+                      onChange={(e) => {
+                        const phoneNumber = donorPhone.split(' ')[1] || '';
+                        setCustomCountryCode(e.target.value);
+                        setDonorPhone(e.target.value + ' ' + phoneNumber);
+                      }}
+                      placeholder="Country code (e.g., +254)"
+                    />
+                    <button 
+                      type="button" 
+                      className="back-to-countries-btn"
+                      onClick={() => {
+                        setUseCustomCountryCode(false);
+                        setCustomCountryCode("");
+                        const phoneNumber = donorPhone.split(' ')[1] || '';
+                        setDonorPhone("+254 " + phoneNumber);
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ) : (
+                  <select
+                    className="form-select country-code-select"
+                    value={getCurrentCountryCode()}
+                    onChange={(e) => {
+                      if (e.target.value === "custom") {
+                        setUseCustomCountryCode(true);
+                        const phoneNumber = donorPhone.split(' ')[1] || '';
+                        setDonorPhone("" + ' ' + phoneNumber);
+                      } else {
+                        const phoneNumber = donorPhone.split(' ')[1] || '';
+                        setDonorPhone(e.target.value + ' ' + phoneNumber);
+                      }
+                    }}
+                    disabled={countriesLoading}
+                  >
+                    {countriesLoading ? (
+                      <option value="+254">Loading countries...</option>
+                    ) : countries.length > 0 ? (
+                      [
+                        countries.map((country) => (
+                          <option key={country.code} value={country.code}>
+                            {country.flag} {country.code}
+                          </option>
+                        )),
+                        <option value="custom">Other country code...</option>
+                      ]
+                    ) : (
+                      <option value="+254">No countries available</option>
+                    )}
+                  </select>
+                )}
+                
+                <input 
+                  type="tel" 
+                  id="donor-phone"
+                  className="form-input phone-number-input"
+                  value={donorPhone.split(' ')[1] || ''}
+                  onChange={(e) => {
+                    const countryCode = useCustomCountryCode ? customCountryCode : getCurrentCountryCode();
+                    setDonorPhone(countryCode + ' ' + e.target.value);
+                  }}
+                  placeholder="Phone number"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-section">
+              <label htmlFor="donation-type">Type of Donation</label>
+              <select 
+                id="donation-type"
+                className="form-select"
+                value={donationType}
+                onChange={(e) => setDonationType(e.target.value)}
+                required
+              >
+                <option value="">Select type...</option>
+                <option value="clothing">Clothing</option>
+                <option value="food">Food</option>
+                <option value="books">Books</option>
+                <option value="furniture">Furniture</option>
+                <option value="electronics">Electronics</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div className="form-section">
+              <label htmlFor="donation-description">Description</label>
+              <textarea 
+                id="donation-description"
+                className="form-textarea"
+                value={donationDescription}
+                onChange={(e) => setDonationDescription(e.target.value)}
+                placeholder="Describe the item(s)/quantity you would like to donate..."
+                rows={4}
+                required
+              />
+            </div>
+
+            {/* Submit Button */}
+            <button 
+              type="submit" 
+              className="submit-button"
+              disabled={isSubmitting || !donorName || !donorEmail || !donorPhone.trim() || donorPhone.trim().split(' ')[1]?.length < 1 || (useCustomCountryCode && !customCountryCode) || !donationType || !donationDescription}
+            >
+              {donorName && donorEmail && donorPhone.trim().split(' ')[1]?.length >= 1 && (!useCustomCountryCode || customCountryCode) && donationType && donationDescription ? null : <span className="material-symbols-outlined">lock</span>}
+              Submit General Donation
+            </button>
+          </form>
+        )}
+        {submissionError && <p role="alert" className="donation-error">{submissionError}</p>}
       </div>
     </div>
   );
-};
-
-DonationPopup.defaultProps = {
-  programs: [
-    { 
-      id: "general", 
-      title: "General Community Fund (Where Most Needed)", 
-      category: "General",
-      icon: "star"
-    },
-    { 
-      id: "wells", 
-      title: "Sustainable Wells Initiative", 
-      category: "Clean Water",
-      icon: "water_drop"
-    },
-    { 
-      id: "nutrition", 
-      title: "Urban Nutrition Centers", 
-      category: "Food Security",
-      icon: "restaurant"
-    },
-    { 
-      id: "literacy", 
-      title: "Digital Literacy Access", 
-      category: "Education",
-      icon: "school"
-    },
-    { 
-      id: "health", 
-      title: "Mobile Health Clinics", 
-      category: "Healthcare Access",
-      icon: "medical_services"
-    }
-  ]
 };
 
 export default DonationPopup;

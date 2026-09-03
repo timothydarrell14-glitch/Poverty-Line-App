@@ -2,12 +2,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiUrl } from "../api/client";
 import { saveAuthSession } from "../utils/auth";
+import { useToast } from "../context/ToastContext";
 import "../styles/Auth.css";
 
 function LoginPage() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   async function submit(event) {
     event.preventDefault();
@@ -67,6 +69,11 @@ function LoginPage() {
         user: data.user,
       });
 
+      showToast(
+        "Welcome back. You are signed in successfully.",
+        "success"
+      );
+
       const role = data.user?.role?.trim().toLowerCase();
 
       // Administrators go to the admin dashboard.
@@ -77,9 +84,12 @@ function LoginPage() {
         navigate("/organisations", { replace: true });
       }
     } catch (requestError) {
-      setError(
-        requestError.message || "Unable to sign in. Please try again."
-      );
+      const message =
+        requestError.message ||
+        "Unable to sign in. Please try again.";
+
+      setError(message);
+      showToast(message, "error");
     } finally {
       setIsSubmitting(false);
     }

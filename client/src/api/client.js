@@ -4,6 +4,12 @@ import { getAccessToken } from "../utils/auth";
 export const apiUrl = (path = "") =>
   `${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 
+/** Resolves a relative media path (e.g. uploaded avatar) against the API host. */
+export const mediaUrl = (path) => {
+  if (!path) return path;
+  return /^(https?:)?\/\//.test(path) ? path : apiUrl(path);
+};
+
 export async function apiRequest(path, { method = "GET", body, token } = {}) {
   const accessToken = token ?? getAccessToken();
   const response = await fetch(apiUrl(path), {

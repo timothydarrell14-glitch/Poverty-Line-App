@@ -5,8 +5,9 @@ from marshmallow import ValidationError
 from app.extensions import db
 from app.models.classification.assessment_responses import AssessmentResponse
 from app.models.classification.assessment_questions import AssessmentQuestion
-from app.models.users.members import User
-from server.app.schemas.classification.assessment_response_schema import (
+from app.models.users.users import User
+from app.models.users.members import Member
+from app.schemas.classification.assessment_response_schema import (
     assessment_response_schema,
     assessment_responses_schema,
     assessment_response_create_schema,
@@ -81,6 +82,9 @@ def calculate_my_poverty_score():
     current_user_id = int(get_jwt_identity())
 
     user = db.get_or_404(User, current_user_id)
+    member = Member.query.filter_by(user_id=current_user_id).first()
+    if member is None:
+        return jsonify({"error": "Member profile not found"}), 404
     responses = AssessmentResponse.query.filter_by(user_id=current_user_id).all()
 
     if not responses:
@@ -89,13 +93,13 @@ def calculate_my_poverty_score():
     questions = AssessmentQuestion.query.all()
     questions_by_id = {question.question_id: question for question in questions}
 
-    calculate_poverty_score(user, responses, questions_by_id)
+    calculate_poverty_score(member, responses, questions_by_id)
     db.session.commit()
 
     return jsonify(
         {
             "user_id": user.user_id,
-            "poverty_score": float(user.poverty_score),
-            "poverty_classification": user.poverty_classification,
+            "poverty_score": float(member.poverty_score),
+            "poverty_classification": member.poverty_classification,
         }
     ), 200
