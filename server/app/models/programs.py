@@ -21,6 +21,7 @@ class Program(db.Model):
     progress_target = db.Column(db.Integer)
     progress_value = db.Column(db.Integer, nullable=False, default=0)
     progress_unit = db.Column(db.String(100))
+    funding_milestones_notified = db.Column(db.String(50), nullable=False, default="", server_default="")
 
     organisation = db.relationship("Organisation", back_populates="programs")
     financial_donations = db.relationship("FinancialDonation", back_populates="program")

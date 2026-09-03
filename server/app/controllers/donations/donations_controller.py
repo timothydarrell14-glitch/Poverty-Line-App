@@ -25,6 +25,7 @@ from app.services.payment_providers import (
     initiate_payment,
 )
 from app.services.notifications import notify
+from app.services.program_milestones import check_funding_milestones
 
 donations_bp = Blueprint("donations", __name__, url_prefix="/api/donations")
 
@@ -38,6 +39,7 @@ def notify_donation_completed(donation):
         related_type="donation",
         related_id=donation.donation_id,
     )
+    check_funding_milestones(donation.program)
 
 
 def fastlane_enabled():

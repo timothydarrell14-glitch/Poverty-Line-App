@@ -55,10 +55,15 @@ def serialize_program(program):
     return {
         "id": program.id,
         "title": program.title,
+        "summary": program.summary,
         "description": program.description or "No description provided.",
+        "long_description": program.long_description,
+        "image_url": program.image_url,
+        "type": program.type,
         "active": program.active,
         "location": program.location,
         "organisation_id": program.organisation_id,
+        "organisation_name": program.organisation.name if program.organisation else None,
         "program_kind": program.program_kind,
         "funding_goal": float(program.funding_goal or 0),
         "funding_raised": float(completed_amount),
@@ -289,11 +294,13 @@ def dashboard_stats():
     total_donations = db.session.query(
         db.func.coalesce(db.func.sum(FinancialDonation.amount), 0)
     ).filter(FinancialDonation.payment_status == "completed").scalar()
+    donations_count = FinancialDonation.query.filter_by(payment_status="completed").count()
     partnerships = Organisation.query.count()
     return jsonify(
         {
             "activePrograms": active_programs,
             "totalDonations": float(total_donations or 0),
+            "donationsCount": donations_count,
             "partnerships": partnerships,
         }
     )
@@ -477,6 +484,32 @@ def list_donations():
     )
 
 
+@auth_bp.get("/donations/non-financial")
+@admin_required
+def list_non_financial_donations():
+    from app.models.donations.nonFInancialDonations import NonFinancialDonation
+
+    donations = NonFinancialDonation.query.order_by(NonFinancialDonation.id.desc()).all()
+    return jsonify(
+        {
+            "donations": [
+                {
+                    "id": donation.id,
+                    "donorName": donation.donor.name if donation.donor else "Anonymous",
+                    "donorEmail": donation.donor.email if donation.donor else None,
+                    "programTitle": donation.program.title if donation.program else "General Community Fund",
+                    "type": donation.type,
+                    "description": donation.description,
+                    "date": donation.donation_date.strftime("%b %d, %Y")
+                    if donation.donation_date
+                    else "Unknown",
+                }
+                for donation in donations
+            ]
+        }
+    )
+
+
 @auth_bp.post("/users")
 @admin_required
 def create_user():
@@ -571,14 +604,23 @@ def create_program():
     if organisation is None:
         return jsonify({"message": "Organisation not found."}), 404
 
+    program_kind = data.get("program_kind") or "financial"
     program = Program(
         organisation_id=organisation.organisation_id,
         title=title,
         description=data.get("description"),
         summary=data.get("summary"),
+        long_description=data.get("long_description"),
+        image_url=data.get("image_url"),
         type=data.get("type") or data.get("category"),
         location=data.get("location"),
+        created_by=admin_user().user_id,
         active=data.get("active", str(data.get("status", "active")).lower() == "active"),
+        program_kind=program_kind,
+        funding_goal=data.get("funding_goal") or None,
+        progress_target=data.get("progress_target") or None,
+        progress_value=data.get("progress_value") or 0,
+        progress_unit=data.get("progress_unit"),
     )
     db.session.add(program)
     db.session.commit()
@@ -597,12 +639,29 @@ def get_program(program_id):
 @auth_bp.patch("/programs/<int:program_id>")
 @admin_required
 def update_program(program_id):
+    from app.services.program_milestones import check_funding_milestones
+
     program = db.session.get(Program, program_id)
     if not program:
         return jsonify({"message": "Program not found."}), 404
     data = request.get_json(silent=True) or {}
     was_active = program.active
-    for key in ("title", "description", "summary", "type", "location", "active"):
+    for key in (
+        "title",
+        "description",
+        "summary",
+        "long_description",
+        "image_url",
+        "type",
+        "location",
+        "active",
+        "program_kind",
+        "organisation_id",
+        "funding_goal",
+        "progress_target",
+        "progress_value",
+        "progress_unit",
+    ):
         if key in data:
             setattr(program, key, data[key])
     if was_active and "active" in data and not program.active:
@@ -613,6 +672,8 @@ def update_program(program_id):
             related_type="program",
             related_id=program.id,
         )
+    if "funding_goal" in data:
+        check_funding_milestones(program)
     db.session.commit()
     return jsonify({"program": serialize_program(program)})
 

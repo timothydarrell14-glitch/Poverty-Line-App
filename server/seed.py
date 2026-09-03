@@ -16,6 +16,7 @@ from app.models.communication.communities import Community
 from app.models.communication.community_posts import CommunityPost
 from app.models.communication.community_membership import CommunityMembership
 from app.models.donations.financialDonations import FinancialDonation
+from app.models.donations.nonFInancialDonations import NonFinancialDonation
 from app.models.users.donors import Donor
 from app.models.communication.chats import Chat
 from app.models.donations.deliveries import Delivery
@@ -463,6 +464,28 @@ def seed_donations(users, programs):
     ]
     db.session.add_all(donations)
     db.session.commit()
+    return donors, donations
+
+
+def seed_non_financial_donations(donors, programs):
+    donations = [
+        NonFinancialDonation(
+            program_id=programs[2].id,
+            donor_id=donors[0].id,
+            type="Business kits",
+            description="20 starter business kits for tailoring and craft groups.",
+            donation_date=date(2026, 2, 18),
+        ),
+        NonFinancialDonation(
+            program_id=programs[2].id,
+            donor_id=donors[1].id,
+            type="Sewing machines",
+            description="5 manual sewing machines donated for the coastal women's cooperative.",
+            donation_date=date(2026, 3, 22),
+        ),
+    ]
+    db.session.add_all(donations)
+    db.session.commit()
     return donations
 
 
@@ -718,7 +741,8 @@ def run_seed():
         seed_job_applications(users, jobs)
 
         programs = seed_programs(organisations)
-        donations = seed_donations(users, programs)
+        donors, donations = seed_donations(users, programs)
+        seed_non_financial_donations(donors, programs)
 
         communities = seed_communities()
         seed_community_posts(users, communities)
