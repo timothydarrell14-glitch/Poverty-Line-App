@@ -36,7 +36,7 @@ def upgrade():
             batch.drop_column("start_date")
             batch.drop_column("end_date")
             batch.drop_column("status")
-        op.execute("UPDATE programs SET active = 1 WHERE active IS NULL")
+        op.execute("UPDATE programs SET active = true WHERE active IS NULL")
         with op.batch_alter_table("programs") as batch:
             batch.alter_column("active", nullable=False, server_default=sa.true())
 

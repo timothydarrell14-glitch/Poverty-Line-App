@@ -1,5 +1,11 @@
 from app.extensions import db
 
+group_chat_members = db.Table(
+    "group_chat_members",
+    db.Column("group_id", db.Integer, db.ForeignKey("group_chats.groupchat_id"), primary_key=True),
+    db.Column("user_id", db.Integer, db.ForeignKey("users.user_id"), primary_key=True),
+)
+
 class GroupChats(db.Model):
     __tablename__ = 'group_chats'
 
