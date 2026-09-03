@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { apiUrl } from "../api/client";
 
 export const defaultPublicSettings = {
-  orgName: "Poverty Line Initiative",
+  orgName: "Poverty Line",
   supportEmail: "support@povertyline.org",
-  publicDescription: "# Dignity Through Efficiency",
+  publicDescription: "Dignity Through Efficiency",
 };
 
 export function usePublicSettings() {

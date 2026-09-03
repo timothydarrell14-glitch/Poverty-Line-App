@@ -76,11 +76,14 @@ function LoginPage() {
 
       const role = data.user?.role?.trim().toLowerCase();
 
-      // Administrators go to the admin dashboard.
+      // Route users to their role-specific landing dashboard
       if (role === "admin") {
         navigate("/admin", { replace: true });
+      } else if (role === "donor") {
+        navigate("/donors", { replace: true });
+      } else if (role === "member") {
+        navigate("/member-portal", { replace: true });
       } else {
-        // Other authenticated users go to the Organisations page.
         navigate("/organisations", { replace: true });
       }
     } catch (requestError) {

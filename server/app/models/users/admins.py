@@ -8,3 +8,4 @@ class Admin(db.Model):
     active = db.Column(db.Boolean, default=True, nullable=False)
 
     user = db.relationship("User", back_populates="admin", uselist=False)
+    messages = db.relationship("AdminMessages", back_populates="admin")

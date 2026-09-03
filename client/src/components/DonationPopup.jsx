@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import { apiUrl } from "../api/client";
 import "../styles/DonationPopup.css";
 import "../styles/DonationPopup.dark.css";
 import mpesaLogo from "../assets/mpesa-logo.png";
 import paypalLogo from "../assets/paypal-logo.svg";
 import FastlaneCheckout from "./FastlaneCheckout";
+import { getCurrentUser } from "../utils/auth";
 
 const isKenyanMobile = (phone) =>
   /^(?:\+254|0)[17]\d{8}$/.test((phone || "").replace(/[\s-]/g, ""));
@@ -18,10 +20,14 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeForm, setActiveForm] = useState("financial");
   
-  // General donation form state
-  const [donorName, setDonorName] = useState("");
-  const [donorEmail, setDonorEmail] = useState("");
-  const [donorPhone, setDonorPhone] = useState("+254 ");
+  // General donation form state. The popup is remounted whenever it opens, so
+  // these defaults always reflect the signed-in donor without an extra render.
+  const [donorName, setDonorName] = useState(() => {
+    const user = getCurrentUser();
+    return `${user?.first_name || ""} ${user?.last_name || ""}`.trim();
+  });
+  const [donorEmail, setDonorEmail] = useState(() => getCurrentUser()?.email || "");
+  const [donorPhone, setDonorPhone] = useState(() => getCurrentUser()?.phone || "+254 ");
   const [customCountryCode, setCustomCountryCode] = useState("");
   const [useCustomCountryCode, setUseCustomCountryCode] = useState(false);
   const [donationType, setDonationType] = useState("");
@@ -89,7 +95,7 @@ const DonationPopup = ({ isOpen, onClose, programs, onDonate, selectedProgramId 
     const fetchCountries = async () => {
       try {
         // Try to fetch from backend first
-        const response = await fetch('/api/countries');
+        const response = await fetch(apiUrl('/api/countries'));
         if (response.ok) {
           const data = await response.json();
           setCountries(data);

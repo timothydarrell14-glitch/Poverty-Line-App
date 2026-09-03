@@ -34,6 +34,7 @@ class User(db.Model):
     donor = db.relationship("Donor", back_populates="user", uselist=False, cascade="all, delete-orphan")
     admin = db.relationship("Admin", back_populates="user", uselist=False, cascade="all, delete-orphan")
     partner = db.relationship("Partner", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    group_chats = db.relationship("GroupChats", secondary="group_chat_members", back_populates="users")
 
     def is_admin(self):
         """Return whether this user currently has administrator access."""

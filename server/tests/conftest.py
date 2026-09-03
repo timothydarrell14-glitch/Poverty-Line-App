@@ -1,6 +1,11 @@
 import os
 
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
+# Payment-provider calls are deliberately simulated in the test suite. This
+# prevents developer Daraja credentials from turning unit tests into network
+# calls and keeps results deterministic.
+os.environ["MPESA_CONSUMER_KEY"] = ""
+os.environ["MPESA_CONSUMER_SECRET"] = ""
 
 import pytest
 
