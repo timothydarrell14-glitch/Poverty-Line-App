@@ -2,14 +2,15 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiUrl } from "../api/client";
 import { useToast } from "../context/ToastContext";
+import { saveAuthSession } from "../utils/auth";
 import "../styles/Auth.css";
 import "../styles/Auth.dark.css";
 
-const Login = ({ isOpen, onClose, onShowSignup, onAuthenticated }) => {
+const Login = ({ isOpen, onClose, onShowSignup, onAuthenticated, initialEmail = "" }) => {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
-  const [email, setEmail] = useState(() => localStorage.getItem("povertyLineSavedEmail") || "");
+  const [email, setEmail] = useState(() => initialEmail || localStorage.getItem("povertyLineSavedEmail") || "");
   const [password, setPassword] = useState(() => localStorage.getItem("povertyLineSavedPassword") || "");
   const [savePassword, setSavePassword] = useState(() => localStorage.getItem("povertyLineRememberMe") === "true");
   const [error, setError] = useState("");
@@ -43,17 +44,13 @@ const Login = ({ isOpen, onClose, onShowSignup, onAuthenticated }) => {
 
       if (savePassword) {
         localStorage.setItem("povertyLineSavedEmail", email);
-        localStorage.setItem("povertyLineSavedPassword", password);
         localStorage.setItem("povertyLineRememberMe", "true");
       } else {
         localStorage.removeItem("povertyLineSavedEmail");
-        localStorage.removeItem("povertyLineSavedPassword");
         localStorage.removeItem("povertyLineRememberMe");
       }
 
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("accessToken", data.access_token);
-      localStorage.setItem("povertyLineToken", data.access_token);
+      saveAuthSession(data);
       if (data.user) {
         localStorage.setItem("user", JSON.stringify(data.user));
         onAuthenticated?.(data.user);

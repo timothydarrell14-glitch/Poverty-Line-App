@@ -62,7 +62,7 @@ def test_current_user_returns_authenticated_account(client):
 
     assert response.status_code == 200
     assert response.get_json()["user_id"] == user_id
-    assert response.get_json()["role"] == "user"
+    assert response.get_json()["role"] == "member"
 
 
 def test_logout_requires_a_valid_token(client):

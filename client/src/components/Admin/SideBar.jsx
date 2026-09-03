@@ -12,7 +12,7 @@ import {
   FiUsers,
 } from "react-icons/fi";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useAdminSession } from "../AdminSession";
+import { useAdminSession } from "./AdminSession";
 import { useHelpTour } from "../../utils/useHelpTour";
 import { mediaUrl } from "../../api/client";
 import { capitalize } from "../../utils/capitalize";
