@@ -257,6 +257,44 @@ button:focus-visible {
   gap: 14px;
 }
 
+.portal-link-btn, .account-summary, .logout-button {
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  color: #005f6a;
+  font-weight: 700;
+}
+
+.portal-link-btn {
+  gap: 6px;
+  padding: 9px 12px;
+  border: 1px solid #b9d9d5;
+  border-radius: 999px;
+  background: #eff9f7;
+  font-size: 13px;
+}
+
+.portal-link-btn:hover { background: #dff2ee; }
+.portal-link-btn .material-symbols-outlined { font-size: 18px; }
+
+.account-summary { gap: 7px; padding: 5px 4px 5px 8px; color: #263536; font-size: 13px; }
+.account-summary:hover { color: #005f6a; }
+.account-avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #005f6a; color: #fff; font-size: 12px; }
+.logout-button { padding: 8px; border-radius: 50%; color: #657174; }
+.logout-button:hover { background: #f1f4f9; color: #953914; }
+.logout-button .material-symbols-outlined { font-size: 19px; }
+.profile-menu { position: relative; }
+.account-summary { border: 1px solid transparent; border-radius: 999px; }
+.account-summary:hover, .account-summary[aria-expanded="true"] { border-color: #d6e7e4; background: #f4f9f8; }
+.account-chevron { font-size: 17px; color: #657174; }
+.profile-dropdown { position: absolute; top: calc(100% + 10px); right: 0; z-index: 30; min-width: 210px; padding: 8px; border: 1px solid #dbe7e5; border-radius: 14px; background: #fff; box-shadow: 0 14px 32px rgba(22, 52, 51, .14); }
+.profile-dropdown p { display: grid; gap: 2px; margin: 4px 8px 8px; padding-bottom: 10px; border-bottom: 1px solid #edf1f1; color: #263536; font-size: 13px; }
+.profile-dropdown p span { color: #6e797b; font-size: 11px; text-transform: capitalize; }
+.profile-dropdown button { display: flex; align-items: center; width: 100%; gap: 9px; border: 0; border-radius: 9px; padding: 10px; background: transparent; color: #334545; font-size: 13px; font-weight: 600; text-align: left; }
+.profile-dropdown button:hover { background: #edf7f5; color: #005f6a; }
+.profile-dropdown button .material-symbols-outlined { font-size: 18px; }
+
 .admin-badge {
   padding: 4px 8px;
   border-radius: 999px;
@@ -418,6 +456,8 @@ button:focus-visible {
   .mobile-menu .login-button {
     border: 2px solid #005f6a;
   }
+  .mobile-menu .portal-link-btn { justify-content: center; margin-top: 12px; }
+  .profile-dropdown { display: none; }
   .footer-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -472,12 +512,12 @@ button:focus-visible {
 @media (max-width: 440px) { .hero-section { padding-right: 16px; padding-left: 16px; }.button-row { align-items: stretch; flex-direction: column; }.button-row .pill-button, .outline-button { width: 100%; }.ecosystem-section, .progress-section { padding: 54px 0; } }
 
 /* Screenshot-matched homepage refinements */
-.nav-inner, .content-wrap { width: min(1728px, calc(100% - 128px)); }
-.site-nav { height: 116px; background: rgba(255,255,255,.97); box-shadow: 0 2px 8px rgba(21, 31, 32, .12); }
-.site-nav.scrolled { height: 116px; }
-.brand { font-size: 34px; letter-spacing: -1.25px; }.brand .material-symbols-outlined { font-size: 38px; }
-.nav-links { gap: 43px; }.nav-link, .login-button { font-size: 23px; }.nav-link.active:after { height: 4px; bottom: -7px; }
-.nav-actions { gap: 39px; }.login-button { font-size: 22px; }.nav-donate { min-height: 67px; padding: 15px 34px; font-size: 21px; }.nav-donate .material-symbols-outlined { font-size: 31px; }
+.nav-inner, .content-wrap { width: min(1440px, calc(100% - 64px)); }
+.site-nav { height: 82px; background: rgba(255,255,255,.97); box-shadow: 0 2px 8px rgba(21, 31, 32, .12); }
+.site-nav.scrolled { height: 76px; }
+.brand { font-size: 26px; letter-spacing: -.8px; }.brand .material-symbols-outlined { font-size: 30px; }
+.nav-links { gap: 22px; }.nav-link, .login-button { font-size: 14px; }.nav-link.active:after { height: 3px; bottom: -4px; }
+.nav-actions { gap: 8px; }.login-button { font-size: 14px; }.nav-donate { min-height: 42px; padding: 10px 17px; font-size: 14px; }.nav-donate .material-symbols-outlined { font-size: 17px; }
 
 .hero-section { position: relative; min-height: 800px; display: block; overflow: hidden; padding: 142px 64px 0; background: #e3cab7; }
 .hero-collage { position: absolute; inset: 0 64px; display: grid; grid-template-columns: 18.5% 63% 18.5%; height: 505px; overflow: hidden; }

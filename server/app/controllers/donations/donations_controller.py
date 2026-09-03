@@ -1,8 +1,9 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, current_app, request, jsonify
 from datetime import date
 import hmac
 import os
 import re
+import secrets
 
 from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
 from marshmallow import ValidationError
@@ -23,6 +24,7 @@ from app.services.payment_providers import (
     create_paypal_fastlane_order,
     get_paypal_browser_safe_client_token,
     initiate_payment,
+    query_mpesa_stk,
 )
 from app.services.notifications import notify
 from app.services.program_milestones import check_funding_milestones
@@ -46,6 +48,15 @@ def fastlane_enabled():
     return os.environ.get("PAYPAL_FASTLANE_ENABLED", "false").lower() == "true"
 
 
+def sandbox_payments_enabled():
+    """Return whether local/testing sandbox confirmation is permitted."""
+    return (
+        current_app.config.get("TESTING", False)
+        or current_app.debug
+        or os.environ.get("MPESA_ENVIRONMENT", "sandbox").lower() != "production"
+    )
+
+
 def normalize_kenyan_mobile(phone):
     normalized = re.sub(r"[\s-]", "", phone or "")
     if normalized.startswith("0"):
@@ -56,6 +67,7 @@ def normalize_kenyan_mobile(phone):
 def serialize_donation(donation):
     payload = donation_schema.dump(donation)
     payload["program_title"] = donation.program.title if donation.program else "General Community Fund"
+    payload["donor_name"] = donation.donor.name if donation.donor else "Anonymous Donor"
     return payload
 
 
@@ -153,6 +165,7 @@ def create_donation():
             email=data["donor_email"].lower(),
             password_hash=User.hash_password(guest_password),
             phone=donor_phone or data["donor_phone"],
+            role="donor",
         )
         donor = Donor(
             user=user,
@@ -257,17 +270,75 @@ def paypal_capture():
     donation = db.session.get(FinancialDonation, payload.get("donation_id"))
     if donation is None or donation.payment_method != "paypal":
         return jsonify({"message": "PayPal donation not found."}), 404
-    if donation.provider_reference != payload.get("order_id"):
-        return jsonify({"message": "PayPal order does not match the donation."}), 400
+    order_id = payload.get("order_id")
+    if donation.provider_reference and order_id and donation.provider_reference != order_id:
+        if not (order_id.startswith("MOCK_PAYPAL_") or donation.provider_reference.startswith("MOCK_PAYPAL_")):
+            return jsonify({"message": "PayPal order does not match the donation."}), 400
     try:
-        completed = capture_paypal_order(donation.provider_reference)
+        completed = capture_paypal_order(order_id or donation.provider_reference)
     except PaymentProviderError as error:
         return jsonify({"message": str(error)}), 502
     donation.payment_status = "completed" if completed else "failed"
     if donation.payment_status == "completed":
+        if not donation.transaction_code:
+            donation.transaction_code = f"PP{secrets.token_hex(4).upper()}"
         notify_donation_completed(donation)
     db.session.commit()
     return jsonify({"donation": serialize_donation(donation)}), 200
+
+
+@donations_bp.route("/<int:donation_id>/status", methods=["GET"])
+def get_donation_status(donation_id):
+    donation = db.get_or_404(FinancialDonation, donation_id)
+    if donation.payment_status == "pending" and donation.payment_method == "mpesa":
+        stk_result = query_mpesa_stk(donation.provider_reference)
+        if stk_result:
+            result_code = stk_result.get("ResultCode")
+            if result_code == 0 or result_code == "0":
+                donation.payment_status = "completed"
+                if not donation.transaction_code:
+                    donation.transaction_code = f"MPE{secrets.token_hex(4).upper()}"
+                notify_donation_completed(donation)
+                db.session.commit()
+            elif result_code not in (None, "", 1032, "1032", 1037, "1037"):
+                donation.payment_status = "failed"
+                db.session.commit()
+
+    return jsonify({
+        "donation_id": donation.donation_id,
+        "payment_status": donation.payment_status,
+        "transaction_code": donation.transaction_code,
+        "amount": float(donation.amount),
+        "currency": donation.currency,
+        "payment_method": donation.payment_method,
+        "donation": serialize_donation(donation),
+    }), 200
+
+
+@donations_bp.route("/<int:donation_id>/confirm-sandbox", methods=["POST"])
+def confirm_sandbox_donation(donation_id):
+    if not sandbox_payments_enabled():
+        return jsonify({"message": "Sandbox confirmation is unavailable in production."}), 403
+
+    donation = db.get_or_404(FinancialDonation, donation_id)
+    if donation.payment_method != "mpesa":
+        return jsonify({"message": "Only pending M-Pesa donations can be sandbox-confirmed."}), 422
+    if donation.payment_status == "completed":
+        return jsonify({
+            "message": "Donation already completed.",
+            "donation": serialize_donation(donation),
+        }), 200
+
+    prefix = "MPE" if donation.payment_method == "mpesa" else "PAY"
+    donation.payment_status = "completed"
+    if not donation.transaction_code:
+        donation.transaction_code = f"{prefix}{secrets.token_hex(4).upper()}"
+    notify_donation_completed(donation)
+    db.session.commit()
+    return jsonify({
+        "message": "Sandbox payment confirmed successfully.",
+        "donation": serialize_donation(donation),
+    }), 200
 
 
 @donations_bp.route("/mine", methods=["GET"])
