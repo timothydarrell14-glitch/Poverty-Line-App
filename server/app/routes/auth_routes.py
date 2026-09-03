@@ -12,6 +12,7 @@ from app.extensions import db
 from app.models.users.organisations import Organisation
 from app.models.programs import Program
 from app.models.users.users import USER_STATUSES, User
+from app.models.users.members import Member
 from app.services.notifications import notify
 
 
@@ -437,7 +438,7 @@ def list_users():
         {
             "users": [
                 serialize_user(user)
-                for user in User.query.filter(User.role != "user")
+                for user in User.query.filter(User.role != "member")
                 .order_by(User.created_at.desc())
                 .all()
             ]
@@ -448,7 +449,7 @@ def list_users():
 @auth_bp.get("/members")
 @admin_required
 def list_members():
-    members = User.query.filter_by(role="user").order_by(User.created_at.desc()).all()
+    members = User.query.filter_by(role="member").order_by(User.created_at.desc()).all()
     return jsonify(
         {
             "members": [
@@ -457,9 +458,9 @@ def list_members():
                     "name": f"{member.first_name} {member.last_name}",
                     "email": member.email,
                     "phone": member.phone,
-                    "location": member.location,
+                    "location": member.member.location if member.member else None,
                     "status": member.status,
-                    "povertyClassification": member.poverty_classification,
+                    "povertyClassification": member.member.poverty_classification if member.member else None,
                     "joined": member.created_at.strftime("%b %d, %Y")
                     if member.created_at
                     else "Unknown",
@@ -577,6 +578,10 @@ def create_user():
         is_active=True,
     )
     db.session.add(user)
+    db.session.flush()
+    profile = user.sync_role_profile()
+    if profile is not None:
+        db.session.add(profile)
     db.session.commit()
     return jsonify({"user": serialize_user(user)}), 201
 
@@ -598,7 +603,10 @@ def update_user(user_id):
         return jsonify({"message": "User not found."}), 404
     data = request.get_json(silent=True) or {}
     if "role" in data:
-        user.role = data["role"]
+        role = str(data["role"]).strip().lower()
+        if role not in ("member", "donor", "admin", "partner"):
+            return jsonify({"message": "Role must be member, donor, admin, or partner."}), 422
+        user.role = role
     if "status" in data:
         status = str(data["status"]).strip()
         if status not in USER_STATUSES:
@@ -610,6 +618,9 @@ def update_user(user_id):
     if "is_active" in data:
         user.is_active = bool(data["is_active"])
         user.status = "Active" if user.is_active else "Inactive"
+    profile = user.sync_role_profile()
+    if profile is not None:
+        db.session.add(profile)
     db.session.commit()
     return jsonify({"user": serialize_user(user)})
 

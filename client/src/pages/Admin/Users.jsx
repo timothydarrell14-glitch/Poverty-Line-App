@@ -27,7 +27,7 @@ const defaultUserDraft = {
   first_name: "",
   last_name: "",
   email: "",
-  role: "Field Agent",
+  role: "member",
   password: "",
 };
 
@@ -58,7 +58,7 @@ function Users() {
   const [userDraft, setUserDraft] = useState(defaultUserDraft);
   const [selectedUser, setSelectedUser] = useState(null);
   const [manageAction, setManageAction] = useState("role");
-  const [newRole, setNewRole] = useState("Field Agent");
+  const [newRole, setNewRole] = useState("member");
   const [newStatus, setNewStatus] = useState("Active");
   const token = getAccessToken();
   const loadUsers = () => fetch(apiUrl("/api/auth/users"), { headers: { Authorization: `Bearer ${token}` } }).then((response) => response.json()).then((data) => setUsers(data.users ?? []));
@@ -187,7 +187,7 @@ function Users() {
                 role="group"
                 aria-label="Role"
               >
-                {["All Roles", "Admin", "Field Agent", "Partner"].map(
+                {["All Roles", "admin", "member", "donor", "partner"].map(
                   (role) => (
                     <button
                       className={
@@ -437,9 +437,10 @@ function Users() {
               <label>Email<input type="email" value={userDraft.email} onChange={(event) => setUserDraft((current) => ({ ...current, email: event.target.value }))} placeholder="Email" required /></label>
               <label>Role
                 <select value={userDraft.role} onChange={(event) => setUserDraft((current) => ({ ...current, role: event.target.value }))}>
-                  <option value="Admin">Admin</option>
-                  <option value="Field Agent">Field Agent</option>
-                  <option value="Partner">Partner</option>
+                  <option value="member">Member</option>
+                  <option value="donor">Donor</option>
+                  <option value="admin">Admin</option>
+                  <option value="partner">Partner</option>
                 </select>
               </label>
               <label>Temporary password<input type="password" value={userDraft.password} onChange={(event) => setUserDraft((current) => ({ ...current, password: event.target.value }))} placeholder="Temporary password" required /></label>
@@ -485,9 +486,10 @@ function Users() {
               {manageAction === "role" && (
                 <label>Assign role
                   <select value={newRole} onChange={(event) => setNewRole(event.target.value)}>
-                    <option value="Admin">Admin</option>
-                    <option value="Field Agent">Field Agent</option>
-                    <option value="Partner">Partner</option>
+                    <option value="member">Member</option>
+                    <option value="donor">Donor</option>
+                    <option value="admin">Admin</option>
+                    <option value="partner">Partner</option>
                   </select>
                 </label>
               )}

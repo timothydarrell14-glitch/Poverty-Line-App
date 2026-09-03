@@ -142,6 +142,8 @@ def create_app():
             is_active=True,
         )
         db.session.add(admin)
+        db.session.flush()
+        db.session.add(admin.sync_role_profile())
         db.session.commit()
         print(f"Created admin {email}.")
 
