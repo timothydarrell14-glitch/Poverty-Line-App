@@ -12,7 +12,6 @@ from app.extensions import db
 from app.models.users.organisations import Organisation
 from app.models.programs import Program
 from app.models.users.users import USER_STATUSES, User
-from app.models.users.members import Member
 from app.services.notifications import notify
 
 
