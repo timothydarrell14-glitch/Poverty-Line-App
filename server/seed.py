@@ -678,7 +678,7 @@ def seed_settings():
         AppSetting(key="supportEmail", value="support@povertyline.org", category="general"),
         AppSetting(
             key="publicDescription",
-            value="Bridging the gap between communities in need and resources.",
+            value="# Dignity Through Efficiency",
             category="general",
         ),
         AppSetting(

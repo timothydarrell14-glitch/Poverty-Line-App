@@ -285,6 +285,22 @@ def mark_all_notifications_read():
     return jsonify({"message": "All notifications marked as read."})
 
 
+@auth_bp.get("/settings/public")
+def public_settings():
+    from app.models.settings import AppSetting
+
+    defaults = {
+        "orgName": "Poverty Line Initiative",
+        "supportEmail": "support@povertyline.org",
+        "publicDescription": "# Dignity Through Efficiency",
+    }
+    settings = AppSetting.query.filter(
+        AppSetting.key.in_(defaults.keys()), AppSetting.category == "general"
+    ).all()
+    values = {setting.key: setting.value for setting in settings if setting.value}
+    return jsonify({"settings": {**defaults, **values}})
+
+
 @auth_bp.get("/dashboard-stats")
 @admin_required
 def dashboard_stats():

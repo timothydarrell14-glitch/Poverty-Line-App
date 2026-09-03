@@ -63,7 +63,7 @@ function Settings() {
   const [orgDetails, setOrgDetails] = useState({
     orgName: "Poverty Line Initiative",
     supportEmail: "support@povertyline.org",
-    publicDescription: "Bridging the gap between communities in need and resources.",
+    publicDescription: "# Dignity Through Efficiency",
   });
   const [preferences, setPreferences] = useState(
     communicationPreferences.reduce((acc, pref) => {

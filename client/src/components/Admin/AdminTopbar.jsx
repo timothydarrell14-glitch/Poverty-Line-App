@@ -8,7 +8,6 @@ import {
   FiMoon,
   FiSearch,
   FiSun,
-  FiUser,
   FiUserPlus,
 } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
@@ -31,7 +30,6 @@ const notificationIcons = {
 const helpSteps = [
   "Search\nUse the search bar to filter the records shown on the current page.",
   "Notifications\nShows recent donations, completed programs, and new partners. Click one to mark it read.",
-  "Account\nOpens Settings, where you can manage your profile and organisation details.",
   "Theme toggle\nSwitches the admin workspace between light and dark mode.",
   "Logout\nSigns you out of the admin workspace.",
 ];
@@ -158,9 +156,8 @@ function AdminTopbar({ pageClass, searchClass = `${pageClass}__global-search`, s
             </button>
           </div>
 
-          <button className={helpClass(2)} type="button" aria-label="Account" data-tooltip="Account" data-help={helpSteps[2]} onClick={() => navigate("/admin/settings")}><FiUser aria-hidden="true" /></button>
-          <button className={helpClass(3)} type="button" aria-label="Theme toggle" data-tooltip={`Use ${theme === "dark" ? "light" : "dark"} theme`} data-help={helpSteps[3]} onClick={toggleTheme}>{theme === "dark" ? <FiSun aria-hidden="true" /> : <FiMoon aria-hidden="true" />}</button>
-          <button className={`${pageClass}__logout ${helpClass(4)}`} type="button" aria-label="Logout" data-tooltip="Logout" data-help={helpSteps[4]} onClick={handleLogout}><FiLogOut aria-hidden="true" /></button>
+          <button className={helpClass(2)} type="button" aria-label="Theme toggle" data-tooltip={`Use ${theme === "dark" ? "light" : "dark"} theme`} data-help={helpSteps[2]} onClick={toggleTheme}>{theme === "dark" ? <FiSun aria-hidden="true" /> : <FiMoon aria-hidden="true" />}</button>
+          <button className={`${pageClass}__logout ${helpClass(3)}`} type="button" aria-label="Logout" data-tooltip="Logout" data-help={helpSteps[3]} onClick={handleLogout}><FiLogOut aria-hidden="true" /></button>
           <span className="sr-only">Signed in as {user?.name}</span>
         </div>
       </div>

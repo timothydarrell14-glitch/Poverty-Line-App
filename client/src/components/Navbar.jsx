@@ -9,6 +9,7 @@ import {
   isAuthenticated,
 } from "../utils/auth";
 import { apiRequest } from "../api/client";
+import { usePublicSettings } from "../hooks/usePublicSettings";
 
 export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -20,6 +21,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   const [programs, setPrograms] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
+  const { orgName } = usePublicSettings();
 
   useEffect(() => {
     const handle = () => setIsScrolled(window.scrollY > 12);
@@ -122,7 +124,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
             <span className="material-symbols-outlined material-symbols-fill">
               volunteer_activism
             </span>
-            Poverty Line
+            {orgName}
           </button>
           <div className="nav-links">
             {items.map(([path, id, label]) => (
