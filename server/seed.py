@@ -1089,11 +1089,11 @@ def seed_deliveries(organisations):
 
 def seed_settings():
     settings = [
-        AppSetting(key="orgName", value="Poverty Line Initiative", category="general"),
+        AppSetting(key="orgName", value="Poverty Line", category="general"),
         AppSetting(key="supportEmail", value="support@povertyline.org", category="general"),
         AppSetting(
             key="publicDescription",
-            value="# Dignity Through Efficiency",
+            value="Dignity Through Efficiency",
             category="general",
         ),
         AppSetting(

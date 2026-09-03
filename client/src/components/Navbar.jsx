@@ -21,6 +21,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [signupEmail, setSignupEmail] = useState("");
   const [isDonationPopupOpen, setIsDonationPopupOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(getCurrentUser());
   const [programs, setPrograms] = useState([]);
   const navigate = useNavigate();
@@ -51,6 +52,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   };
 
   const signOut = () => {
+    setIsProfileOpen(false);
     clearAuthSession();
     navigate("/");
   };
@@ -105,6 +107,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
 
   const handleSelect = (path, id) => {
     setOpen(false);
+    setIsProfileOpen(false);
     if (setActiveTab) {
       setActiveTab(id);
     }
@@ -131,10 +134,13 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
       : { path: "/member-portal", id: "member-portal", label: "Member Portal", icon: "account_circle" };
   const displayName = currentUser?.first_name || currentUser?.name?.split(" ")[0] || "Account";
   const initials = displayName.charAt(0).toUpperCase();
+  const navigationItems = isAuthenticated()
+    ? [items[0], ["/donors", "donors", "Programmes"], ["/community", "community", "Community"]]
+    : items;
 
   return (
     <>
-      <nav className={`site-nav ${isScrolled ? "scrolled" : ""}`}>
+      <nav className={`site-nav ${isScrolled ? "scrolled" : ""} ${isAuthenticated() ? "signed-in" : ""}`}>
         <div className="nav-inner">
           <button
             className="brand font-heading"
@@ -146,7 +152,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
             {orgName}
           </button>
           <div className="nav-links">
-            {items.map(([path, id, label]) => (
+            {navigationItems.map(([path, id, label]) => (
               <button
                 key={id}
                 className={`nav-link ${isTabActive(path, id) ? "active" : ""}`}
@@ -172,17 +178,29 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
                 >
                   <span className="material-symbols-outlined">favorite</span>Donate Now
                 </button>
-                <button className="portal-link-btn" onClick={() => handleSelect(portal.path, portal.id)}>
-                  <span className="material-symbols-outlined">{portal.icon}</span>
-                  {portal.label}
-                </button>
-                <button className="account-summary" onClick={() => handleSelect(portal.path, portal.id)} aria-label={`Open ${portal.label}`}>
-                  <span className="account-avatar" aria-hidden="true">{initials}</span>
-                  <span>Hi, {displayName}</span>
-                </button>
-                <button className="logout-button" onClick={signOut} aria-label="Log out" title="Log out">
-                  <span className="material-symbols-outlined">logout</span>
-                </button>
+                <div className="profile-menu">
+                  <button
+                    className="account-summary"
+                    onClick={() => setIsProfileOpen((value) => !value)}
+                    aria-label="Open account menu"
+                    aria-expanded={isProfileOpen}
+                  >
+                    <span className="account-avatar" aria-hidden="true">{initials}</span>
+                    <span>Hi, {displayName}</span>
+                    <span className="material-symbols-outlined account-chevron">expand_more</span>
+                  </button>
+                  {isProfileOpen && (
+                    <div className="profile-dropdown">
+                      <p><b>{currentUser?.name || displayName}</b><span>{role || "member"}</span></p>
+                      <button onClick={() => handleSelect(portal.path, portal.id)}>
+                        <span className="material-symbols-outlined">{portal.icon}</span>{portal.label}
+                      </button>
+                      <button onClick={signOut}>
+                        <span className="material-symbols-outlined">logout</span>Log out
+                      </button>
+                    </div>
+                  )}
+                </div>
               </>
             ) : (
               <>
@@ -205,7 +223,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
         </div>
       </nav>
       <div className={`mobile-menu ${open ? "open" : ""}`}>
-        {items.map(([path, id, label]) => (
+        {navigationItems.map(([path, id, label]) => (
           <button
             key={id}
             className={`nav-link ${isTabActive(path, id) ? "active" : ""}`}

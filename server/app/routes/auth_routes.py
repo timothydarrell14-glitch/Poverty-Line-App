@@ -293,9 +293,9 @@ def public_settings():
     from app.models.settings import AppSetting
 
     defaults = {
-        "orgName": "Poverty Line Initiative",
+        "orgName": "Poverty Line",
         "supportEmail": "support@povertyline.org",
-        "publicDescription": "# Dignity Through Efficiency",
+        "publicDescription": "Dignity Through Efficiency",
     }
     settings = AppSetting.query.filter(
         AppSetting.key.in_(defaults.keys()), AppSetting.category == "general"

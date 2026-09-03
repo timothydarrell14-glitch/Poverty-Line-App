@@ -139,7 +139,7 @@ def initiate_mpesa(donation, phone_number):
         "status": "pending",
         "next_action": "complete_stk_push",
         "provider_reference": mock_ref,
-        "message": f"Success. STK PIN prompt sent to +{formatted_phone}. Enter PIN to complete donation.",
+        "message": "Daraja sandbox simulation is active. No physical STK prompt was sent; use the sandbox confirmation action to complete this test donation.",
         "sandbox_simulated": True,
         "phone_number": f"+{formatted_phone}",
     }

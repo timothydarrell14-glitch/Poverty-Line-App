@@ -92,7 +92,12 @@ export default function DonorsPage() {
           message: response.payment?.message || "STK PIN prompt sent to your phone.",
           sandboxSimulated: Boolean(response.payment?.sandbox_simulated),
         });
-        showToast("M-Pesa prompt sent. Check your phone to complete donation.", "info");
+        showToast(
+          response.payment?.sandbox_simulated
+            ? "M-Pesa sandbox simulation started. Confirm the test payment below."
+            : "M-Pesa prompt sent. Check your phone to complete donation.",
+          "info"
+        );
         return;
       }
 
@@ -676,13 +681,19 @@ export default function DonorsPage() {
             <div className="mpesa-modal-icon">
               <span className="material-symbols-outlined">phonelink_ring</span>
             </div>
-            <h2 id="mpesa-title">M-Pesa Prompt Sent</h2>
-            <p>Please check your phone to approve the payment:</p>
-            <span className="mpesa-phone-highlight">{mpesaWaiting.phone}</span>
-            <p>Enter your <strong>M-Pesa PIN</strong> to confirm <strong>{formatCurrency(mpesaWaiting.amount)}</strong>.</p>
+            <h2 id="mpesa-title">{mpesaWaiting.sandboxSimulated ? "M-Pesa Sandbox Simulation" : "M-Pesa Prompt Sent"}</h2>
+            {mpesaWaiting.sandboxSimulated ? (
+              <p>{mpesaWaiting.message}</p>
+            ) : (
+              <>
+                <p>Please check your phone to approve the payment:</p>
+                <span className="mpesa-phone-highlight">{mpesaWaiting.phone}</span>
+                <p>Enter your <strong>M-Pesa PIN</strong> to confirm <strong>{formatCurrency(mpesaWaiting.amount)}</strong>.</p>
+              </>
+            )}
             <div className="mpesa-spinner-box">
               <div className="mpesa-spinner" />
-              <span>Awaiting confirmation...</span>
+              <span>{mpesaWaiting.sandboxSimulated ? "Awaiting sandbox confirmation..." : "Awaiting confirmation..."}</span>
             </div>
             <div className="mpesa-actions">
               {mpesaWaiting.sandboxSimulated && (
