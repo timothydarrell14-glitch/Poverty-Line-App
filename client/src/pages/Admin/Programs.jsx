@@ -327,11 +327,11 @@ function Programs() {
               </p>
               <div className="programs-impact__stats">
                 <div className="programs-impact__stat">
-                  <strong>{stats.donationsCount.toLocaleString()}</strong>
+                  <strong>{(stats.donationsCount ?? 0).toLocaleString()}</strong>
                   <span>TOTAL DONATIONS</span>
                 </div>
                 <div className="programs-impact__stat">
-                  <strong>{currencyFormatter.format(stats.totalDonations)}</strong>
+                  <strong>{currencyFormatter.format(stats.totalDonations ?? 0)}</strong>
                   <span>FUNDS DISBURSED</span>
                 </div>
               </div>
