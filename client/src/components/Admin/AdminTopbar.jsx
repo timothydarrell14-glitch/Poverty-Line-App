@@ -11,7 +11,7 @@ import {
   FiUserPlus,
 } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
-import { useAdminSession } from "../AdminSession";
+import { useAdminSession } from "./AdminSession";
 import { useHelpTour } from "../../utils/useHelpTour";
 import { formatRelativeTime } from "../../utils/formatRelativeTime";
 import {

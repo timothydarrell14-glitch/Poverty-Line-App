@@ -12,7 +12,7 @@ class CommunityMembership(db.Model):
     joined_at = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
     role = db.Column(db.String(50))
 
-    user = db.relationship("User", back_populates="community_memberships")
+    user = db.relationship("User")
     community = db.relationship("Community", back_populates="memberships")
 
     __table_args__ = (db.UniqueConstraint("user_id", "community_id"),)

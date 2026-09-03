@@ -17,6 +17,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
   const [open, setOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
+  const [signupEmail, setSignupEmail] = useState("");
   const [isDonationPopupOpen, setIsDonationPopupOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(getCurrentUser());
   const [programs, setPrograms] = useState([]);
@@ -146,8 +147,10 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
           <div className="nav-actions">
             {isAuthenticated() ? (
               <>
-                {currentUser?.role === "admin" && (
-                  <span className="admin-badge">Admin</span>
+                {currentUser?.role && (
+                  <span className="admin-badge" aria-label="Account type">
+                    {currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)}
+                  </span>
                 )}
                 <button className="login-button" onClick={signOut}>
                   Log out
@@ -206,7 +209,9 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
         </div>
       </div>
       <Login
+        key={signupEmail}
         isOpen={isLoginOpen}
+        initialEmail={signupEmail}
         onClose={() => setIsLoginOpen(false)}
         onShowSignup={() => {
           setIsLoginOpen(false);
@@ -217,8 +222,9 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
       <Signup
         isOpen={isSignupOpen}
         onClose={() => setIsSignupOpen(false)}
-        onShowLogin={() => {
+        onShowLogin={(email = "") => {
           setIsSignupOpen(false);
+          setSignupEmail(email);
           setIsLoginOpen(true);
         }}
       />
