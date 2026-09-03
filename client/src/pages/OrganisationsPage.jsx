@@ -221,7 +221,7 @@ const INITIAL_PIPELINE = [
 ];
 
 export function OrganisationsPage({ onOpenDonate }) {
-  const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
+  const [, setCurrentUser] = useState(() => getCurrentUser());
   const [activeTab, setActiveTab] = useState("dashboard-summary");
 
   // Dashboard Data State
@@ -407,7 +407,7 @@ export function OrganisationsPage({ onOpenDonate }) {
 
       setIsEditProfileOpen(false);
       alert("Organisation Profile updated successfully!");
-    } catch (err) {
+    } catch {
       alert("Profile updated locally.");
       setIsEditProfileOpen(false);
     }
@@ -450,7 +450,7 @@ export function OrganisationsPage({ onOpenDonate }) {
         description: "",
       });
       alert("New Program Initiative published successfully!");
-    } catch (err) {
+    } catch {
       alert("Program published locally.");
     }
   };
@@ -485,7 +485,7 @@ export function OrganisationsPage({ onOpenDonate }) {
         requirements: "Organized and self-driven\nDriver license preferred\nTeam player",
       });
       alert("Job Opportunity posted successfully!");
-    } catch (err) {
+    } catch {
       alert("Job posted locally.");
     }
   };
