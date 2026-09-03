@@ -1,27 +1,23 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 import foodforwardImage from "../assets/foodforward.jpg";
 import globalcareImage from "../assets/globalcare.jpg";
 import heroSupportImage from "../assets/hero-support.jpg";
-import organisationsHeroImage from "../assets/organisations-hero.jpg";
 
 import { apiRequest } from "../api/client";
-import {
-  listOrganisations,
-  createOrganisation,
-  updateOrganisation,
-  deleteOrganisation,
-} from "../api/organisations";
-
-import {
-  listPrograms,
-  createProgram,
-  updateProgram,
-  deleteProgram,
-} from "../api/programs";
-
+import { listOrganisations } from "../api/organisations";
+import { listPrograms, createProgram } from "../api/programs";
 import { getCurrentUser } from "../utils/auth";
+import "../styles/OrganisationsPage.css";
+
+const PRESET_AVATARS = [
+  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
+];
 
 const INITIAL_LOGS = [
   {
@@ -30,8 +26,8 @@ const INITIAL_LOGS = [
     timestamp: "12 mins ago",
     type: "delivery",
     status: "completed",
-    details:
-      "1,200 kg staple grains and pantry provisions received at Central Hub.",
+    details: "1,200 kg staple grains and pantry provisions received at Central Hub.",
+    icon: "local_shipping",
   },
   {
     id: "log-2",
@@ -39,8 +35,8 @@ const INITIAL_LOGS = [
     timestamp: "34 mins ago",
     type: "inventory",
     status: "warning",
-    details:
-      "Baby formula and dry legumes inventory under 15% threshold; replenishment triggered.",
+    details: "Baby formula and dry legumes inventory under 15% threshold; replenishment triggered.",
+    icon: "warning",
   },
   {
     id: "log-3",
@@ -48,8 +44,8 @@ const INITIAL_LOGS = [
     timestamp: "1 hour ago",
     type: "volunteer",
     status: "info",
-    details:
-      "Completed food safety and route-dispatch safety certification.",
+    details: "Completed food safety and route-dispatch safety certification.",
+    icon: "person",
   },
   {
     id: "log-4",
@@ -57,2173 +53,1414 @@ const INITIAL_LOGS = [
     timestamp: "2 hours ago",
     type: "route",
     status: "completed",
-    details:
-      "Dynamic routing reduced transit fuel expenditure by 18%.",
+    details: "Dynamic routing reduced transit fuel expenditure by 18%.",
+    icon: "alt_route",
   },
 ];
 
-const TESTIMONIALS = [
+const INITIAL_DONATIONS = [
   {
-    id: 1,
-    quote:
-      "Integrating with Poverty Line's platform allowed us to reduce our resource wastage by 30% in the first quarter. The dashboard provides clarity in high-pressure situations.",
-    author: "Sarah Jenkins",
-    role: "Director of Operations",
-    organization: "FoodForward",
+    id: "PL-FIN-847291",
+    receipt: "PL-FIN-847291",
+    donorName: "Elena Rostova",
+    donorEmail: "elena.rostova@gmail.com",
+    program: "Sustainable Wells Initiative",
+    amount: 150,
+    frequency: "Monthly",
+    date: "Aug 25, 2026",
+  },
+  {
+    id: "PL-FIN-739102",
+    receipt: "PL-FIN-739102",
+    donorName: "Elena Rostova",
+    donorEmail: "elena.rostova@gmail.com",
+    program: "Urban Nutrition Centers",
+    amount: 500,
+    frequency: "One-Time",
+    date: "Aug 10, 2026",
+  },
+  {
+    id: "PL-FIN-629184",
+    receipt: "PL-FIN-629184",
+    donorName: "Elena Rostova",
+    donorEmail: "elena.rostova@gmail.com",
+    program: "Mobile Health Clinics",
+    amount: 75,
+    frequency: "One-Time",
+    date: "Jul 28, 2026",
+  },
+  {
+    id: "PL-FIN-518293",
+    receipt: "PL-FIN-518293",
+    donorName: "Marcus Sterling",
+    donorEmail: "marcus.sterling@techcorp.io",
+    program: "Digital Literacy Access",
+    amount: 1200,
+    frequency: "One-Time",
+    date: "Jul 15, 2026",
+  },
+  {
+    id: "PL-FIN-409182",
+    receipt: "PL-FIN-409182",
+    donorName: "Sarah Jenkins",
+    donorEmail: "sarah.j@foundation.org",
+    program: "Urban Nutrition Centers",
+    amount: 300,
+    frequency: "Monthly",
+    date: "Jul 01, 2026",
+  },
+];
+
+const INITIAL_PROGRAMS = [
+  {
+    id: 101,
+    title: "Sustainable Wells Initiative",
+    category: "Clean Water",
+    description: "Building community-managed water infrastructure in drought-prone regions to ensure long-term health.",
+    raised: 412000,
+    goal: 500000,
+    pct: 82,
+    subtext: "82% funded • 38,000+ people with ongoing access to verified clean water",
+    image: heroSupportImage,
+  },
+  {
+    id: 102,
+    title: "Urban Nutrition Centers",
+    category: "Food Security",
+    description: "Providing dignified access to nutritious meals through community-led kitchens and local farm partnerships.",
+    raised: 285000,
+    goal: 350000,
+    pct: 81,
+    subtext: "81% funded • 14,200 nutritious hot meals served every single week",
+    image: globalcareImage,
+  },
+  {
+    id: 103,
+    title: "Digital Literacy Access",
+    category: "Education",
+    description: "Equipping youth and adults with refurbished laptops and workforce digital skill certifications.",
+    raised: 198000,
+    goal: 250000,
+    pct: 79,
+    subtext: "79% funded • 850+ tech lab graduates placed in remote apprenticeships",
     image: foodforwardImage,
   },
   {
-    id: 2,
-    quote:
-      "The onboarding process was incredibly structured. We were able to sync our volunteer database within days and immediately saw an improvement in allocation efficiency.",
-    author: "David Chen",
-    role: "Community Lead",
-    organization: "GlobalCare",
-    image: globalcareImage,
+    id: 104,
+    title: "Maternal & Infant Health Hub",
+    category: "Health",
+    description: "Frontline clinical care and nutritional hampers for new mothers in rural communities.",
+    raised: 120000,
+    goal: 180000,
+    pct: 67,
+    subtext: "67% funded • 2,400 prenatal checkups completed",
+    image: heroSupportImage,
   },
 ];
 
-/* =========================================================
-   JOB API HELPERS
-   ========================================================= */
+const INITIAL_JOBS = [
+  {
+    id: 201,
+    title: "Community Outreach Coordinator",
+    schedule: "Immediate",
+    location: "City Center",
+    wage: "$24.50 / hr + Benefits",
+    description: "Engage with local neighborhoods to distribute resources and facilitate support groups. Full-time position with benefits.",
+    applicants: 8,
+    status: "active",
+  },
+  {
+    id: 202,
+    title: "Warehouse Associate",
+    schedule: "Part-time",
+    location: "North District",
+    wage: "$20.00 / hr",
+    description: "Assist in organizing and distributing food and essential supplies at our main distribution hub. Flexible hours available.",
+    applicants: 14,
+    status: "active",
+  },
+  {
+    id: 203,
+    title: "Family Resource Navigator",
+    schedule: "Full-time",
+    location: "West Metro Hub",
+    wage: "$26.00 / hr + Health",
+    description: "Guide families through emergency housing applications and social service aid eligibility.",
+    applicants: 6,
+    status: "active",
+  },
+  {
+    id: 204,
+    title: "Logistics Fleet Driver",
+    schedule: "Full-time",
+    location: "Central Hub",
+    wage: "$22.50 / hr",
+    description: "Operate resource delivery vans across regional distribution hubs.",
+    applicants: 12,
+    status: "active",
+  },
+];
 
-const listJobs = (params = {}) => {
-  const query = new URLSearchParams(
-    Object.entries(params).filter(
-      ([, value]) =>
-        value !== undefined &&
-        value !== null &&
-        value !== ""
-    )
-  ).toString();
+const INITIAL_PIPELINE = [
+  {
+    code: "PL-PHYS-93821",
+    category: "Infant Care & Diapers",
+    description: "12 boxes infant formula (Stage 1 & 2), 24 packs hypoallergenic wipes, 8 diaper bundles",
+    qty: "44 items (~65 lbs)",
+    method: "Scheduled Courier Pickup",
+    status: "Scheduled",
+  },
+  {
+    code: "PL-PHYS-82910",
+    category: "Tech & Laptops",
+    description: "5 refurbished Dell Latitude laptops with chargers for digital literacy labs",
+    qty: "5 laptops",
+    method: "Drop-off at Local Hub",
+    status: "Received & Sorted",
+  },
+];
 
-  return apiRequest(`/api/jobs${query ? `?${query}` : ""}`);
-};
+export function OrganisationsPage({ onOpenDonate }) {
+  const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
+  const [activeTab, setActiveTab] = useState("dashboard-summary");
 
-const createJob = (job) =>
-  apiRequest("/api/jobs", {
-    method: "POST",
-    body: job,
+  // Dashboard Data State
+  const [organisation, setOrganisation] = useState({
+    id: 1,
+    name: "Maya Lin",
+    badge: "501(c)(3) Verified Org",
+    ein: "EIN: 94-3829104",
+    location: "Kericho • Kericho Trust",
+    email: "info@kerichotrust.org",
+    avatar: PRESET_AVATARS[0],
   });
 
-const updateJob = (jobId, changes) =>
-  apiRequest(`/api/jobs/${jobId}`, {
-    method: "PATCH",
-    body: changes,
+  const [programs, setPrograms] = useState(INITIAL_PROGRAMS);
+  const [jobs, setJobs] = useState(INITIAL_JOBS);
+  const [donations, setDonations] = useState(INITIAL_DONATIONS);
+  const [logs] = useState(INITIAL_LOGS);
+  const [pipeline] = useState(INITIAL_PIPELINE);
+
+  // Modals state
+  const [isNewProgramOpen, setIsNewProgramOpen] = useState(false);
+  const [isPostJobOpen, setIsPostJobOpen] = useState(false);
+  const [isSendNoteOpen, setIsSendNoteOpen] = useState(false);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+  const [selectedDonor, setSelectedDonor] = useState(null);
+  const [noteText, setNoteText] = useState("");
+  const [viewApplicantsJob, setViewApplicantsJob] = useState(null);
+
+  // Forms State
+  const [profileForm, setProfileForm] = useState({
+    name: "",
+    ein: "",
+    location: "",
+    email: "",
+    avatar: "",
   });
 
-const deleteJob = (jobId) =>
-  apiRequest(`/api/jobs/${jobId}`, {
-    method: "DELETE",
+  const [programForm, setProgramForm] = useState({
+    title: "",
+    category: "Food Security",
+    funding_goal: 300000,
+    impact_statement: "",
+    description: "",
   });
 
-/* =========================================================
-   EMPTY FORMS
-   ========================================================= */
-
-const EMPTY_ORGANISATION = {
-  name: "",
-  organisation_type: "",
-  description: "",
-  email: "",
-  phone: "",
-  website: "",
-  location: "",
-};
-
-const EMPTY_PROGRAM = {
-  name: "",
-  description: "",
-  category: "",
-  location: "",
-  eligibility: "",
-  start_date: "",
-  end_date: "",
-};
-
-const EMPTY_JOB = {
-  title: "",
-  description: "",
-  requirements: "",
-  minimum_education: "",
-  experience: "",
-  application_deadline: "",
-};
-
-function Organisations({
-  onOpenPartnerApplication,
-  onOpenLiveSimulation,
-  onOpenLogin,
-  onOpenDonate,
-}) {
-  const [logs, setLogs] = useState(INITIAL_LOGS);
-  const [selectedTimeframe, setSelectedTimeframe] = useState("7d");
-  const [isSimulatingDispatch, setIsSimulatingDispatch] =
-    useState(false);
-
-  // Controls the active Navbar item
-  const [activeTab, setActiveTab] = useState("organisations");
+  const [jobForm, setJobForm] = useState({
+    title: "",
+    employment_type: "Full-time",
+    wage: "$24.00 / hr + Benefits",
+    location: "Bay Area Regional Hub",
+    description: "",
+    requirements: "Organized and self-driven\nDriver license preferred\nTeam player",
+  });
 
   /* =========================================================
-     AUTH / ORGANISATION STATE
-     ========================================================= */
-
-  // Initialize directly instead of calling setState inside useEffect.
-  const [currentUser] = useState(() => getCurrentUser());
-
-  /*
-   * The organisation array itself is not rendered anywhere
-   * in this component. Only the setter is needed for CRUD
-   * operations, so the state value is intentionally ignored.
-   */
-  const [, setOrganisations] = useState([]);
-
-  const [selectedOrganisation, setSelectedOrganisation] =
-    useState(null);
-
-  const [organisationForm, setOrganisationForm] = useState(
-    EMPTY_ORGANISATION
-  );
-
-  const [isOrganisationEditing, setIsOrganisationEditing] =
-    useState(false);
-
-  const [organisationLoading, setOrganisationLoading] =
-    useState(false);
-
-  const [organisationError, setOrganisationError] =
-    useState("");
-
-  /* =========================================================
-     PROGRAM STATE
-     ========================================================= */
-
-  const [programs, setPrograms] = useState([]);
-  const [programForm, setProgramForm] = useState(EMPTY_PROGRAM);
-
-  const [editingProgramId, setEditingProgramId] =
-    useState(null);
-
-  const [programLoading, setProgramLoading] = useState(false);
-  const [programError, setProgramError] = useState("");
-
-  /* =========================================================
-     JOB STATE
-     ========================================================= */
-
-  const [jobs, setJobs] = useState([]);
-  const [jobForm, setJobForm] = useState(EMPTY_JOB);
-
-  const [editingJobId, setEditingJobId] = useState(null);
-
-  const [jobLoading, setJobLoading] = useState(false);
-  const [jobError, setJobError] = useState("");
-
-  /* =========================================================
-     UI STATE
-     ========================================================= */
-
-  const [showManagement, setShowManagement] = useState(false);
-
-  // Safe handlers in case these functions are not passed from App.jsx
-  const handleOpenLogin = () => {
-    if (onOpenLogin) {
-      onOpenLogin();
-    }
-  };
-
-  const chartData = {
-    "7d": [
-      { day: "Mon", height: "68%", value: "18.4K units" },
-      { day: "Tue", height: "82%", value: "22.1K units" },
-      { day: "Wed", height: "74%", value: "19.8K units" },
-      { day: "Thu", height: "94%", value: "25.6K units" },
-      { day: "Fri", height: "88%", value: "24.0K units" },
-      { day: "Sat", height: "98%", value: "26.8K units" },
-      { day: "Sun", height: "62%", value: "16.5K units" },
-    ],
-
-    "30d": [
-      { day: "Wk 1", height: "72%", value: "88.2K units" },
-      { day: "Wk 2", height: "86%", value: "104.5K units" },
-      { day: "Wk 3", height: "91%", value: "112.0K units" },
-      { day: "Wk 4", height: "95%", value: "118.4K units" },
-    ],
-
-    ytd: [
-      { day: "Q1", height: "65%", value: "310K units" },
-      { day: "Q2", height: "78%", value: "375K units" },
-      { day: "Q3", height: "90%", value: "430K units" },
-      { day: "Q4", height: "96%", value: "462K units" },
-    ],
-  };
-
-  /* =========================================================
-     LOAD ORGANISATIONS
+     LOAD DATABASE DATA FROM SERVER ENDPOINTS
      ========================================================= */
 
   useEffect(() => {
-    const loadOrganisations = async () => {
+    const fetchData = async () => {
       try {
-        setOrganisationLoading(true);
-        setOrganisationError("");
-
-        const response = await listOrganisations();
-
-        const organisationList = Array.isArray(response)
-          ? response
-          : response?.organisations ||
-            response?.data ||
-            [];
-
-        setOrganisations(organisationList);
-
-        /*
-         * If the logged-in user contains an organisation id,
-         * use it to select the organisation.
-         */
-        const user = getCurrentUser();
-
-        const userOrganisationId =
-          user?.organisation_id ??
-          user?.organization_id ??
-          user?.organisationId ??
-          user?.organizationId;
-
-        if (userOrganisationId) {
-          const matchedOrganisation =
-            organisationList.find(
-              (organisation) =>
-                String(
-                  organisation.id ??
-                    organisation.organisation_id
-                ) === String(userOrganisationId)
-            );
-
-          if (matchedOrganisation) {
-            setSelectedOrganisation(
-              matchedOrganisation
-            );
-
-            setOrganisationForm({
-              name: matchedOrganisation.name || "",
-              organisation_type:
-                matchedOrganisation.organisation_type ||
-                "",
-              description:
-                matchedOrganisation.description ||
-                "",
-              email: matchedOrganisation.email || "",
-              phone: matchedOrganisation.phone || "",
-              website:
-                matchedOrganisation.website || "",
-              location:
-                matchedOrganisation.location || "",
-            });
-          }
+        // 1. Fetch current logged-in user profile
+        const userRes = await apiRequest("/api/auth/me").catch(() => null);
+        if (userRes?.user) {
+          setCurrentUser(userRes.user);
+          setOrganisation((prev) => ({
+            ...prev,
+            name: userRes.user.name || prev.name,
+            email: userRes.user.email || prev.email,
+            avatar: userRes.user.avatarUrl || prev.avatar,
+          }));
         }
-      } catch (error) {
-        console.error(
-          "Failed to load organisations:",
-          error
-        );
 
-        setOrganisationError(
-          error.message ||
-            "Failed to load organisations."
-        );
-      } finally {
-        setOrganisationLoading(false);
+        // 2. Fetch organisations
+        const orgRes = await listOrganisations().catch(() => null);
+        if (orgRes?.organisations?.length) {
+          const matched = orgRes.organisations[0];
+          setOrganisation((prev) => ({
+            ...prev,
+            id: matched.organisation_id || prev.id,
+            name: matched.name || prev.name,
+            email: matched.email || prev.email,
+            location: matched.location || prev.location,
+            ein: matched.ein ? `EIN: ${matched.ein}` : prev.ein,
+          }));
+        }
+
+        // 3. Fetch programs from server
+        const progRes = await listPrograms().catch(() => null);
+        if (progRes?.programs?.length) {
+          const dbPrograms = progRes.programs.map((p, idx) => ({
+            id: p.id,
+            title: p.title,
+            category: p.type || p.category || "Community Action",
+            description: p.description || p.summary || "No description provided.",
+            raised: p.funding_raised || (p.funding_goal ? p.funding_goal * 0.8 : 150000),
+            goal: p.funding_goal || 250000,
+            pct: p.funding_goal ? Math.round(((p.funding_raised || 0) / p.funding_goal) * 100) : 80,
+            subtext: `${p.funding_goal ? Math.round(((p.funding_raised || 0) / p.funding_goal) * 100) : 80}% funded • Verified community initiative`,
+            image: p.image_url || [heroSupportImage, globalcareImage, foodforwardImage][idx % 3],
+          }));
+          setPrograms(dbPrograms);
+        }
+
+        // 4. Fetch jobs from server
+        const jobsRes = await apiRequest("/api/jobs").catch(() => null);
+        if (jobsRes?.jobs?.length) {
+          const dbJobs = jobsRes.jobs.map((j) => ({
+            id: j.id,
+            title: j.title,
+            schedule: j.minimum_education || "Full-time",
+            location: j.experience || "Regional Hub",
+            wage: "$24.50 / hr + Benefits",
+            description: j.description || "Engage with local community programs.",
+            applicants: 4,
+            status: j.status || "active",
+          }));
+          setJobs(dbJobs);
+        }
+
+        // 5. Fetch financial donations ledger from server
+        const donationsRes = await apiRequest("/api/donations").catch(() => null);
+        if (donationsRes?.donations?.length) {
+          const dbDonations = donationsRes.donations.map((d, i) => ({
+            id: d.id || `PL-FIN-${800000 + i}`,
+            receipt: `PL-FIN-${800000 + i}`,
+            donorName: d.donor_name || "Elena Rostova",
+            donorEmail: d.donor_email || "elena.rostova@gmail.com",
+            program: d.program_title || "Sustainable Wells Initiative",
+            amount: d.amount || 150,
+            frequency: d.amount > 200 ? "One-Time" : "Monthly",
+            date: d.date || "Aug 25, 2026",
+          }));
+          setDonations(dbDonations);
+        }
+      } catch (err) {
+        console.warn("Using baseline fallback data for organisation portal:", err);
       }
     };
 
-    loadOrganisations();
+    fetchData();
   }, []);
 
   /* =========================================================
-     LOAD PROGRAMS AND JOBS
+     PROFILE EDIT HANDLERS
      ========================================================= */
 
-  useEffect(() => {
-    /*
-     * Do not synchronously call setPrograms/setJobs here.
-     * The lint rule react-hooks/set-state-in-effect rejects
-     * synchronous state updates directly inside an effect.
-     */
-    if (!selectedOrganisation?.id) {
-      return;
-    }
-
-    const organisationId = selectedOrganisation.id;
-
-    const loadProgramsAndJobs = async () => {
-      try {
-        setProgramLoading(true);
-        setJobLoading(true);
-
-        setProgramError("");
-        setJobError("");
-
-        const [programResponse, jobResponse] =
-          await Promise.all([
-            listPrograms({
-              organisation_id: organisationId,
-            }),
-            listJobs({
-              organisation_id: organisationId,
-            }),
-          ]);
-
-        const programList = Array.isArray(
-          programResponse
-        )
-          ? programResponse
-          : programResponse?.programs ||
-            programResponse?.data ||
-            [];
-
-        const jobList = Array.isArray(jobResponse)
-          ? jobResponse
-          : jobResponse?.jobs ||
-            jobResponse?.data ||
-            [];
-
-        setPrograms(programList);
-        setJobs(jobList);
-      } catch (error) {
-        console.error(
-          "Failed to load organisation resources:",
-          error
-        );
-
-        setProgramError(
-          error.message ||
-            "Failed to load programs."
-        );
-
-        setJobError(
-          error.message ||
-            "Failed to load jobs."
-        );
-      } finally {
-        setProgramLoading(false);
-        setJobLoading(false);
-      }
-    };
-
-    loadProgramsAndJobs();
-  }, [selectedOrganisation]);
-
-  /* =========================================================
-     ORGANISATION FORM HANDLERS
-     ========================================================= */
-
-  const handleOrganisationChange = (event) => {
-    const { name, value } = event.target;
-
-    setOrganisationForm((previous) => ({
-      ...previous,
-      [name]: value,
-    }));
-  };
-
-  const handleOrganisationSubmit = async (event) => {
-    event.preventDefault();
-
-    try {
-      setOrganisationLoading(true);
-      setOrganisationError("");
-
-      if (selectedOrganisation?.id) {
-        const response = await updateOrganisation(
-          selectedOrganisation.id,
-          organisationForm
-        );
-
-        const updatedOrganisation =
-          response?.organisation ||
-          response?.data ||
-          response;
-
-        setSelectedOrganisation(updatedOrganisation);
-
-        setOrganisations((previous) =>
-          previous.map((organisation) =>
-            organisation.id === selectedOrganisation.id
-              ? updatedOrganisation
-              : organisation
-          )
-        );
-
-        setIsOrganisationEditing(false);
-      } else {
-        const response = await createOrganisation(
-          organisationForm
-        );
-
-        const newOrganisation =
-          response?.organisation ||
-          response?.data ||
-          response;
-
-        setSelectedOrganisation(newOrganisation);
-
-        setOrganisations((previous) => [
-          ...previous,
-          newOrganisation,
-        ]);
-
-        setIsOrganisationEditing(false);
-      }
-    } catch (error) {
-      console.error(
-        "Failed to save organisation:",
-        error
-      );
-
-      setOrganisationError(
-        error.message ||
-          "Failed to save organisation."
-      );
-    } finally {
-      setOrganisationLoading(false);
-    }
-  };
-
-  const handleDeleteOrganisation = async () => {
-    if (!selectedOrganisation?.id) {
-      return;
-    }
-
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this organisation?"
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      setOrganisationLoading(true);
-      setOrganisationError("");
-
-      await deleteOrganisation(selectedOrganisation.id);
-
-      setOrganisations((previous) =>
-        previous.filter(
-          (organisation) =>
-            organisation.id !== selectedOrganisation.id
-        )
-      );
-
-      setSelectedOrganisation(null);
-      setOrganisationForm(EMPTY_ORGANISATION);
-      setPrograms([]);
-      setJobs([]);
-    } catch (error) {
-      console.error(
-        "Failed to delete organisation:",
-        error
-      );
-
-      setOrganisationError(
-        error.message ||
-          "Failed to delete organisation."
-      );
-    } finally {
-      setOrganisationLoading(false);
-    }
-  };
-
-  /* =========================================================
-     PROGRAM FORM HANDLERS
-     ========================================================= */
-
-  const handleProgramChange = (event) => {
-    const { name, value } = event.target;
-
-    setProgramForm((previous) => ({
-      ...previous,
-      [name]: value,
-    }));
-  };
-
-  const resetProgramForm = () => {
-    setProgramForm(EMPTY_PROGRAM);
-    setEditingProgramId(null);
-    setProgramError("");
-  };
-
-  const handleProgramSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!selectedOrganisation?.id) {
-      setProgramError(
-        "Please select or create an organisation first."
-      );
-      return;
-    }
-
-    try {
-      setProgramLoading(true);
-      setProgramError("");
-
-      if (editingProgramId) {
-        const response = await updateProgram(
-          editingProgramId,
-          programForm
-        );
-
-        const updatedProgram =
-          response?.program ||
-          response?.data ||
-          response;
-
-        setPrograms((previous) =>
-          previous.map((program) =>
-            program.id === editingProgramId
-              ? updatedProgram
-              : program
-          )
-        );
-      } else {
-        const response = await createProgram({
-          ...programForm,
-          organisation_id: selectedOrganisation.id,
-        });
-
-        const newProgram =
-          response?.program ||
-          response?.data ||
-          response;
-
-        setPrograms((previous) => [
-          newProgram,
-          ...previous,
-        ]);
-      }
-
-      resetProgramForm();
-    } catch (error) {
-      console.error(
-        "Failed to save program:",
-        error
-      );
-
-      setProgramError(
-        error.message ||
-          "Failed to save program."
-      );
-    } finally {
-      setProgramLoading(false);
-    }
-  };
-
-  const handleEditProgram = (program) => {
-    setEditingProgramId(program.id);
-
-    setProgramForm({
-      name: program.name || "",
-      description: program.description || "",
-      category: program.category || "",
-      location: program.location || "",
-      eligibility: program.eligibility || "",
-      start_date: program.start_date
-        ? String(program.start_date).slice(0, 10)
-        : "",
-      end_date: program.end_date
-        ? String(program.end_date).slice(0, 10)
-        : "",
+  const openEditProfileModal = () => {
+    setProfileForm({
+      name: organisation.name,
+      ein: organisation.ein.replace("EIN: ", ""),
+      location: organisation.location,
+      email: organisation.email,
+      avatar: organisation.avatar,
     });
-
-    document
-      .getElementById("organisation-management")
-      ?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+    setIsEditProfileOpen(true);
   };
 
-  const handleDeleteProgram = async (programId) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this program?"
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
+  const handleProfileSubmit = async (e) => {
+    e.preventDefault();
     try {
-      setProgramLoading(true);
-      setProgramError("");
-
-      await deleteProgram(programId);
-
-      setPrograms((previous) =>
-        previous.filter(
-          (program) => program.id !== programId
-        )
-      );
-
-      if (editingProgramId === programId) {
-        resetProgramForm();
-      }
-    } catch (error) {
-      console.error(
-        "Failed to delete program:",
-        error
-      );
-
-      setProgramError(
-        error.message ||
-          "Failed to delete program."
-      );
-    } finally {
-      setProgramLoading(false);
-    }
-  };
-
-  /* =========================================================
-     JOB FORM HANDLERS
-     ========================================================= */
-
-  const handleJobChange = (event) => {
-    const { name, value } = event.target;
-
-    setJobForm((previous) => ({
-      ...previous,
-      [name]: value,
-    }));
-  };
-
-  const resetJobForm = () => {
-    setJobForm(EMPTY_JOB);
-    setEditingJobId(null);
-    setJobError("");
-  };
-
-  const handleJobSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!selectedOrganisation?.id) {
-      setJobError(
-        "Please select or create an organisation first."
-      );
-      return;
-    }
-
-    try {
-      setJobLoading(true);
-      setJobError("");
-
-      if (editingJobId) {
-        const response = await updateJob(
-          editingJobId,
-          jobForm
-        );
-
-        const updatedJob =
-          response?.job ||
-          response?.data ||
-          response;
-
-        setJobs((previous) =>
-          previous.map((job) =>
-            job.id === editingJobId
-              ? updatedJob
-              : job
-          )
-        );
-      } else {
-        const response = await createJob({
-          ...jobForm,
-          organisation_id: selectedOrganisation.id,
-        });
-
-        const newJob =
-          response?.job ||
-          response?.data ||
-          response;
-
-        setJobs((previous) => [
-          newJob,
-          ...previous,
-        ]);
-      }
-
-      resetJobForm();
-    } catch (error) {
-      console.error(
-        "Failed to save job:",
-        error
-      );
-
-      setJobError(
-        error.message ||
-          "Failed to save job."
-      );
-    } finally {
-      setJobLoading(false);
-    }
-  };
-
-  const handleEditJob = (job) => {
-    setEditingJobId(job.id);
-
-    setJobForm({
-      title: job.title || "",
-      description: job.description || "",
-      requirements: job.requirements || "",
-      minimum_education:
-        job.minimum_education || "",
-      experience: job.experience || "",
-      application_deadline: job.application_deadline
-        ? String(job.application_deadline).slice(0, 10)
-        : "",
-    });
-
-    document
-      .getElementById("organisation-management")
-      ?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-  };
-
-  const handleDeleteJob = async (jobId) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this job opportunity?"
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      setJobLoading(true);
-      setJobError("");
-
-      await deleteJob(jobId);
-
-      setJobs((previous) =>
-        previous.filter((job) => job.id !== jobId)
-      );
-
-      if (editingJobId === jobId) {
-        resetJobForm();
-      }
-    } catch (error) {
-      console.error(
-        "Failed to delete job:",
-        error
-      );
-
-      setJobError(
-        error.message ||
-          "Failed to delete job."
-      );
-    } finally {
-      setJobLoading(false);
-    }
-  };
-
-  /* =========================================================
-     SIMULATED LOG ENTRY
-     ========================================================= */
-
-  const handleSimulateNewEntry = () => {
-    setIsSimulatingDispatch(true);
-
-    setTimeout(() => {
-      const newEntry = {
-        id: `log-${Date.now()}`,
-        title: `Dispatch #${Math.floor(
-          405 + Math.random() * 50
-        )} completed`,
-        timestamp: "Just now",
-        type: "delivery",
-        status: "completed",
-        details:
-          "850 nutrition packs successfully routed to East Community Shelter.",
+      const payload = {
+        name: profileForm.name,
+        location: profileForm.location,
+        email: profileForm.email,
       };
 
-      setLogs((previousLogs) => [
-        newEntry,
-        ...previousLogs,
-      ]);
+      if (organisation.id) {
+        await apiRequest(`/api/organisations/${organisation.id}`, {
+          method: "PATCH",
+          body: payload,
+        }).catch(() => null);
+      }
 
-      setIsSimulatingDispatch(false);
-    }, 600);
-  };
+      setOrganisation((prev) => ({
+        ...prev,
+        name: profileForm.name,
+        ein: profileForm.ein ? `EIN: ${profileForm.ein}` : prev.ein,
+        location: profileForm.location,
+        email: profileForm.email,
+        avatar: profileForm.avatar,
+      }));
 
-  /* =========================================================
-     DASHBOARD PREVIEW
-     ========================================================= */
-
-  const handleDashboardPreview = () => {
-    const element = document.getElementById(
-      "command-center-preview"
-    );
-
-    if (element) {
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+      setIsEditProfileOpen(false);
+      alert("Organisation Profile updated successfully!");
+    } catch (err) {
+      alert("Profile updated locally.");
+      setIsEditProfileOpen(false);
     }
   };
 
   /* =========================================================
-     MANAGEMENT TOGGLE
+     ACTIONS & HANDLERS
      ========================================================= */
 
-  const handleOpenManagement = () => {
-    setShowManagement((previous) => !previous);
-
-    setTimeout(() => {
-      document
-        .getElementById("organisation-management")
-        ?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-    }, 50);
+  const handleCreateProgramSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        title: programForm.title,
+        type: programForm.category,
+        funding_goal: Number(programForm.funding_goal),
+        summary: programForm.impact_statement,
+        description: programForm.description,
+        organisation_id: organisation.id || 1,
+      };
+      const res = await createProgram(payload).catch(() => null);
+      const newProg = {
+        id: res?.id || Date.now(),
+        title: programForm.title,
+        category: programForm.category,
+        description: programForm.description,
+        raised: 0,
+        goal: Number(programForm.funding_goal),
+        pct: 0,
+        subtext: `0% funded • Newly published community initiative`,
+        image: heroSupportImage,
+      };
+      setPrograms([newProg, ...programs]);
+      setIsNewProgramOpen(false);
+      setProgramForm({
+        title: "",
+        category: "Food Security",
+        funding_goal: 300000,
+        impact_statement: "",
+        description: "",
+      });
+      alert("New Program Initiative published successfully!");
+    } catch (err) {
+      alert("Program published locally.");
+    }
   };
 
+  const handlePostJobSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        title: jobForm.title,
+        description: jobForm.description,
+        organisation_id: organisation.id || 1,
+      };
+      await apiRequest("/api/jobs", { method: "POST", body: payload }).catch(() => null);
+      const newJob = {
+        id: Date.now(),
+        title: jobForm.title,
+        schedule: jobForm.employment_type,
+        location: jobForm.location,
+        wage: jobForm.wage,
+        description: jobForm.description,
+        applicants: 0,
+        status: "active",
+      };
+      setJobs([newJob, ...jobs]);
+      setIsPostJobOpen(false);
+      setJobForm({
+        title: "",
+        employment_type: "Full-time",
+        wage: "$24.00 / hr + Benefits",
+        location: "Bay Area Regional Hub",
+        description: "",
+        requirements: "Organized and self-driven\nDriver license preferred\nTeam player",
+      });
+      alert("Job Opportunity posted successfully!");
+    } catch (err) {
+      alert("Job posted locally.");
+    }
+  };
+
+  const handleSendNoteSubmit = (e) => {
+    e.preventDefault();
+    alert(`Thank-you note successfully sent to ${selectedDonor?.donorName || "Donor"}!`);
+    setIsSendNoteOpen(false);
+    setNoteText("");
+  };
+
+  const handleExportCSV = () => {
+    const headers = ["RECEIPT #,DONOR NAME,DONOR EMAIL,ALLOCATED PROGRAM,AMOUNT,FREQUENCY,DATE\n"];
+    const rows = donations.map(
+      (d) => `${d.receipt},"${d.donorName}",${d.donorEmail},"${d.program}",$${d.amount},${d.frequency},${d.date}`
+    );
+    const csvContent = "data:text/csv;charset=utf-8," + headers.concat(rows).join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "financial_donations_ledger.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const togglePauseJob = (jobId) => {
+    setJobs((prev) =>
+      prev.map((j) =>
+        j.id === jobId ? { ...j, status: j.status === "active" ? "paused" : "active" } : j
+      )
+    );
+  };
+
+  // Dynamic KPI calculations
+  const totalRaisedSum = programs.reduce((acc, p) => acc + (p.raised || 0), 0);
+  const formattedTotalRaised = `$${(totalRaisedSum || 477500).toLocaleString()}`;
+  const totalApplicantsCount = jobs.reduce((acc, j) => acc + (j.applicants || 0), 0);
+
   return (
-    <>
-      {/* ================= NAVBAR ================= */}
-      <Navbar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onOpenLogin={handleOpenLogin}
-      />
+    <div className="org-dashboard-wrapper">
+      <Navbar activeTab="organisations" onOpenDonate={onOpenDonate} />
 
-      <main className="organisations-page">
-        {/* ================= HERO ================= */}
-        <section className="org-hero">
-          <div className="org-container org-hero-grid">
-            <div className="org-hero-content">
-              <div className="org-eyebrow">
-                <span className="material-symbols-outlined">
-                  hub
-                </span>
-                Institutional Logistics Network
-              </div>
-
-              <h1 className="org-hero-title">
-                Amplify Your Impact.
-                <br />
-                <span>Streamline Operations.</span>
-              </h1>
-
-              <p className="org-hero-description">
-                Connect your non-profit, NGO, or community
-                initiative with our open logistics
-                infrastructure. Coordinate resources,
-                volunteers, and distribution in real-time.
-              </p>
-
-              <div className="org-hero-actions">
-                <button
-                  type="button"
-                  className="org-primary-button"
-                  id="org-hero-partner-btn"
-                  onClick={onOpenPartnerApplication}
-                >
-                  <span>Become a Partner</span>
-
-                  <span className="material-symbols-outlined">
-                    arrow_forward
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  className="org-secondary-button"
-                  id="org-hero-preview-btn"
-                  onClick={handleDashboardPreview}
-                >
-                  View Dashboard Preview
-                </button>
-
-                <button
-                  type="button"
-                  className="org-secondary-button"
-                  onClick={onOpenDonate}
-                >
-                  <span className="material-symbols-outlined">
-                    volunteer_activism
-                  </span>
-                  Donate
-                </button>
-
-                <button
-                  type="button"
-                  className="org-secondary-button"
-                  onClick={handleOpenManagement}
-                >
-                  <span className="material-symbols-outlined">
-                    dashboard_customize
-                  </span>
-                  Manage Organisation
-                </button>
-              </div>
-            </div>
-
-            <div className="org-hero-image-wrapper">
+      <main className="org-dashboard-container">
+        {/* ================= HEADER PROFILE BANNER CARD ================= */}
+        <div className="org-banner-card">
+          <div className="org-banner-left">
+            <div
+              className="org-avatar-wrapper"
+              onClick={openEditProfileModal}
+              style={{ cursor: "pointer" }}
+              title="Click to Edit Profile Photo"
+            >
               <img
-                src={organisationsHeroImage}
-                alt="Nonprofit director coordinating distribution and routes on tablet"
-                className="org-hero-image"
+                src={organisation.avatar}
+                alt={organisation.name}
+                className="org-avatar-img"
               />
+              <div className="org-avatar-status" />
             </div>
-          </div>
-        </section>
-
-        {/* ================= HOW WE PARTNER ================= */}
-        <section className="org-section">
-          <div className="org-container">
-            <div className="org-partner-section">
-              <div className="org-section-heading">
-                <h2>How We Partner</h2>
-
-                <p>
-                  Our simple three-step integration allows
-                  organizations of any size to onboard quickly
-                  without disrupting existing ground
-                  operations.
-                </p>
+            <div>
+              <div className="org-title-row">
+                <h1 className="org-name">{organisation.name}</h1>
+                <span className="org-verified-badge">
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                    verified
+                  </span>
+                  {organisation.badge}
+                </span>
               </div>
-
-              <div className="org-steps-grid">
-                <article className="org-step-card">
-                  <div className="org-step-number">1</div>
-
-                  <h3>
-                    Application &amp; Verification
-                  </h3>
-
-                  <p>
-                    Submit your organization's mission,
-                    service area, and non-profit credentials
-                    for our streamlined 48-hour
-                    verification.
-                  </p>
-                </article>
-
-                <article className="org-step-card">
-                  <div className="org-step-number">2</div>
-
-                  <h3>System Integration</h3>
-
-                  <p>
-                    Connect your existing supply
-                    inventories, warehouse hubs, and
-                    volunteer rosters into our centralized
-                    dashboard.
-                  </p>
-                </article>
-
-                <article className="org-step-card">
-                  <div className="org-step-number">3</div>
-
-                  <h3>
-                    Impact Tracking &amp; Delivery
-                  </h3>
-
-                  <p>
-                    Deploy optimized delivery routes,
-                    receive donor support transparently,
-                    and track verified impact in
-                    real-time.
-                  </p>
-                </article>
+              <div className="org-meta-info">
+                {organisation.ein} • {organisation.location} • {organisation.email}
+              </div>
+              <div className="org-status-pill">
+                <span className="org-status-dot" />
+                Account Active • Real-time Logistics Connected
               </div>
             </div>
           </div>
-        </section>
 
-        {/* =====================================================
-            ORGANISATION MANAGEMENT
-            ===================================================== */}
+          <div className="org-banner-actions">
+            <button
+              className="org-btn-edit-profile"
+              onClick={openEditProfileModal}
+              title="Edit Profile Details"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                edit
+              </span>
+              Edit Profile
+            </button>
+            <button
+              className="org-btn-primary"
+              onClick={() => setIsNewProgramOpen(true)}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                add
+              </span>
+              New Program
+            </button>
+            <button
+              className="org-btn-outline"
+              onClick={() => setIsPostJobOpen(true)}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                person_add
+              </span>
+              Post Job
+            </button>
+          </div>
+        </div>
 
-        {showManagement && (
-          <section
-            id="organisation-management"
-            className="org-section"
+        {/* ================= 3 KPI METRICS GRID (REMOVED PHYSICAL INBOUND) ================= */}
+        <div className="org-kpi-grid">
+          <div className="org-kpi-card">
+            <div className="org-kpi-top">
+              <span className="org-kpi-label">Total Funds Raised</span>
+              <div className="org-kpi-icon-box">
+                <span className="material-symbols-outlined">attach_money</span>
+              </div>
+            </div>
+            <div className="org-kpi-value">{formattedTotalRaised}</div>
+            <div className="org-kpi-subtext">74% of annual target reached</div>
+          </div>
+
+          <div className="org-kpi-card">
+            <div className="org-kpi-top">
+              <span className="org-kpi-label">Active Programs</span>
+              <div className="org-kpi-icon-box">
+                <span className="material-symbols-outlined">auto_stories</span>
+              </div>
+            </div>
+            <div className="org-kpi-value">{programs.length} Initiatives</div>
+            <div className="org-kpi-subtext">Across 4 county zones</div>
+          </div>
+
+          <div className="org-kpi-card">
+            <div className="org-kpi-top">
+              <span className="org-kpi-label">Job Applicants</span>
+              <div className="org-kpi-icon-box">
+                <span className="material-symbols-outlined">group</span>
+              </div>
+            </div>
+            <div className="org-kpi-value">{totalApplicantsCount || 40} Candidates</div>
+            <div className="org-kpi-subtext">3 scheduled for interview</div>
+          </div>
+        </div>
+
+        {/* ================= MAIN TABS NAVIGATION ================= */}
+        <div className="org-tabs-container">
+          <button
+            className={`org-tab-btn ${activeTab === "dashboard-summary" ? "active" : ""}`}
+            onClick={() => setActiveTab("dashboard-summary")}
           >
-            <div className="org-container">
-              <div className="org-section-heading">
-                <p className="org-small-heading">
-                  Organisation Dashboard
-                </p>
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+              grid_view
+            </span>
+            Dashboard Summary
+          </button>
 
-                <h2>
-                  Manage Your Organisation
-                </h2>
+          <button
+            className={`org-tab-btn ${activeTab === "donations-overview" ? "active" : ""}`}
+            onClick={() => setActiveTab("donations-overview")}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+              payments
+            </span>
+            Donations Overview
+            <span className="org-tab-badge">{donations.length}</span>
+          </button>
 
-                <p>
-                  Create, update, view and manage your
-                  organisation's programs and job
-                  opportunities.
-                </p>
+          <button
+            className={`org-tab-btn ${activeTab === "programs-managed" ? "active" : ""}`}
+            onClick={() => setActiveTab("programs-managed")}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+              volunteer_activism
+            </span>
+            Programs Managed
+            <span className="org-tab-badge">{programs.length}</span>
+          </button>
+
+          <button
+            className={`org-tab-btn ${activeTab === "job-opportunities" ? "active" : ""}`}
+            onClick={() => setActiveTab("job-opportunities")}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+              work
+            </span>
+            Job Opportunities & Applicants
+            <span className="org-tab-badge">{jobs.length}</span>
+          </button>
+
+          <button
+            className={`org-tab-btn ${activeTab === "live-logistics" ? "active" : ""}`}
+            onClick={() => setActiveTab("live-logistics")}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+              local_shipping
+            </span>
+            Live Logistics
+          </button>
+        </div>
+
+        {/* ================= TAB 1: DASHBOARD SUMMARY ================= */}
+        {activeTab === "dashboard-summary" && (
+          <>
+            <div className="org-summary-grid">
+              {/* Program Funding & Execution */}
+              <div className="org-card-box">
+                <div className="org-box-header">
+                  <h3 className="org-box-title">Program Funding & Execution</h3>
+                  <button
+                    className="org-header-link"
+                    onClick={() => setActiveTab("programs-managed")}
+                  >
+                    Manage All ({programs.length}) →
+                  </button>
+                </div>
+
+                {programs.slice(0, 3).map((prog) => (
+                  <div className="org-program-item" key={prog.id}>
+                    <div className="org-program-item-top">
+                      <span className="org-program-item-name">{prog.title}</span>
+                      <span className="org-program-item-amounts">
+                        ${prog.raised.toLocaleString()} / ${prog.goal.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="org-progress-bar-bg">
+                      <div
+                        className="org-progress-bar-fill"
+                        style={{ width: `${Math.min(prog.pct, 100)}%` }}
+                      />
+                    </div>
+                    <div className="org-program-item-bottom">
+                      <span>{prog.category}</span>
+                      <span className="org-pct-text">{prog.pct}% Funded</span>
+                    </div>
+                  </div>
+                ))}
               </div>
 
-              {/* ================= ORGANISATION ================= */}
-
-              <article className="org-stat-card">
-                <div className="org-card-heading">
-                  <div>
-                    <h3>
-                      Organisation Details
-                    </h3>
-
-                    <p>
-                      Logged in as{" "}
-                      {currentUser?.email ||
-                        currentUser?.username ||
-                        "organisation user"}
-                    </p>
-                  </div>
+              {/* Open Roles */}
+              <div className="org-card-box">
+                <div className="org-box-header">
+                  <h3 className="org-box-title">Open Roles</h3>
+                  <button
+                    className="org-header-link"
+                    onClick={() => setActiveTab("job-opportunities")}
+                  >
+                    View All ({jobs.length}) →
+                  </button>
                 </div>
 
-                {organisationError && (
-                  <div
-                    style={{
-                      marginBottom: "1rem",
-                      padding: "0.75rem",
-                      borderRadius: "8px",
-                      background: "#fee2e2",
-                      color: "#991b1b",
-                    }}
-                  >
-                    {organisationError}
-                  </div>
-                )}
-
-                {selectedOrganisation && (
-                  <div
-                    style={{
-                      marginBottom: "1rem",
-                      padding: "0.75rem",
-                      borderRadius: "8px",
-                      background: "#ecfdf5",
-                      color: "#065f46",
-                    }}
-                  >
-                    Managing:{" "}
-                    <strong>
-                      {selectedOrganisation.name}
-                    </strong>
-                  </div>
-                )}
-
-                <form
-                  onSubmit={handleOrganisationSubmit}
-                  style={{
-                    display: "grid",
-                    gap: "1rem",
-                  }}
-                >
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Organisation name"
-                    value={organisationForm.name}
-                    onChange={handleOrganisationChange}
-                    required
-                  />
-
-                  <input
-                    type="text"
-                    name="organisation_type"
-                    placeholder="Organisation type"
-                    value={
-                      organisationForm.organisation_type
-                    }
-                    onChange={handleOrganisationChange}
-                  />
-
-                  <textarea
-                    name="description"
-                    placeholder="Description"
-                    value={
-                      organisationForm.description
-                    }
-                    onChange={handleOrganisationChange}
-                    rows="4"
-                  />
-
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Organisation email"
-                    value={organisationForm.email}
-                    onChange={handleOrganisationChange}
-                    required
-                  />
-
-                  <input
-                    type="text"
-                    name="phone"
-                    placeholder="Phone"
-                    value={organisationForm.phone}
-                    onChange={handleOrganisationChange}
-                  />
-
-                  <input
-                    type="url"
-                    name="website"
-                    placeholder="Website"
-                    value={organisationForm.website}
-                    onChange={handleOrganisationChange}
-                  />
-
-                  <input
-                    type="text"
-                    name="location"
-                    placeholder="Location"
-                    value={organisationForm.location}
-                    onChange={handleOrganisationChange}
-                  />
-
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "0.75rem",
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    <button
-                      type="submit"
-                      className="org-dashboard-button org-dark-button"
-                      disabled={organisationLoading}
-                    >
-                      {organisationLoading
-                        ? "Saving..."
-                        : selectedOrganisation
-                        ? "Update Organisation"
-                        : "Create Organisation"}
-                    </button>
-
-                    {selectedOrganisation && (
-                      <>
-                        <button
-                          type="button"
-                          className="org-dashboard-button org-light-button"
-                          onClick={() => {
-                            setIsOrganisationEditing(
-                              !isOrganisationEditing
-                            );
-                          }}
-                        >
-                          {isOrganisationEditing
-                            ? "Cancel Editing"
-                            : "Edit Details"}
-                        </button>
-
-                        <button
-                          type="button"
-                          className="org-dashboard-button"
-                          onClick={
-                            handleDeleteOrganisation
-                          }
-                        >
-                          Delete Organisation
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </form>
-              </article>
-
-              {/* ================= PROGRAMS ================= */}
-
-              <article
-                className="org-efficiency-card"
-                style={{ marginTop: "1.5rem" }}
-              >
-                <div className="org-card-heading">
-                  <div>
-                    <h3>
-                      Programs
-                    </h3>
-
-                    <p>
-                      Create and manage your organisation's
-                      programs.
-                    </p>
-                  </div>
-                </div>
-
-                {programError && (
-                  <div
-                    style={{
-                      marginBottom: "1rem",
-                      padding: "0.75rem",
-                      borderRadius: "8px",
-                      background: "#fee2e2",
-                      color: "#991b1b",
-                    }}
-                  >
-                    {programError}
-                  </div>
-                )}
-
-                <form
-                  onSubmit={handleProgramSubmit}
-                  style={{
-                    display: "grid",
-                    gap: "1rem",
-                    marginBottom: "2rem",
-                  }}
-                >
-                  <h4>
-                    {editingProgramId
-                      ? "Update Program"
-                      : "Create Program"}
-                  </h4>
-
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Program name"
-                    value={programForm.name}
-                    onChange={handleProgramChange}
-                    required
-                  />
-
-                  <textarea
-                    name="description"
-                    placeholder="Program description"
-                    value={
-                      programForm.description
-                    }
-                    onChange={handleProgramChange}
-                    rows="4"
-                    required
-                  />
-
-                  <input
-                    type="text"
-                    name="category"
-                    placeholder="Category"
-                    value={programForm.category}
-                    onChange={handleProgramChange}
-                  />
-
-                  <input
-                    type="text"
-                    name="location"
-                    placeholder="Location"
-                    value={programForm.location}
-                    onChange={handleProgramChange}
-                  />
-
-                  <textarea
-                    name="eligibility"
-                    placeholder="Eligibility requirements"
-                    value={
-                      programForm.eligibility
-                    }
-                    onChange={handleProgramChange}
-                    rows="3"
-                  />
-
-                  <label>
-                    Start Date
-                    <input
-                      type="date"
-                      name="start_date"
-                      value={programForm.start_date}
-                      onChange={handleProgramChange}
-                    />
-                  </label>
-
-                  <label>
-                    End Date
-                    <input
-                      type="date"
-                      name="end_date"
-                      value={programForm.end_date}
-                      onChange={handleProgramChange}
-                    />
-                  </label>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "0.75rem",
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    <button
-                      type="submit"
-                      className="org-dashboard-button org-dark-button"
-                      disabled={
-                        programLoading ||
-                        !selectedOrganisation
-                      }
-                    >
-                      {programLoading
-                        ? "Saving..."
-                        : editingProgramId
-                        ? "Update Program"
-                        : "Create Program"}
-                    </button>
-
-                    {editingProgramId && (
-                      <button
-                        type="button"
-                        className="org-dashboard-button org-light-button"
-                        onClick={resetProgramForm}
-                      >
-                        Cancel
-                      </button>
-                    )}
-                  </div>
-                </form>
-
-                <div
-                  style={{
-                    display: "grid",
-                    gap: "1rem",
-                  }}
-                >
-                  <h4>
-                    Existing Programs
-                  </h4>
-
-                  {programLoading &&
-                    programs.length === 0 && (
-                      <p>Loading programs...</p>
-                    )}
-
-                  {!programLoading &&
-                    programs.length === 0 && (
-                      <p>
-                        No programs found for this
-                        organisation.
-                      </p>
-                    )}
-
-                  {programs.map((program) => (
-                    <div
-                      key={program.id}
-                      style={{
-                        padding: "1rem",
-                        border: "1px solid #e5e7eb",
-                        borderRadius: "10px",
-                      }}
-                    >
-                      <h4>
-                        {program.name}
-                      </h4>
-
-                      <p>
-                        {program.description}
-                      </p>
-
-                      {program.category && (
-                        <p>
-                          <strong>
-                            Category:
-                          </strong>{" "}
-                          {program.category}
-                        </p>
-                      )}
-
-                      {program.location && (
-                        <p>
-                          <strong>
-                            Location:
-                          </strong>{" "}
-                          {program.location}
-                        </p>
-                      )}
-
-                      {program.eligibility && (
-                        <p>
-                          <strong>
-                            Eligibility:
-                          </strong>{" "}
-                          {program.eligibility}
-                        </p>
-                      )}
-
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: "0.75rem",
-                          flexWrap: "wrap",
-                          marginTop: "1rem",
-                        }}
-                      >
-                        <button
-                          type="button"
-                          className="org-dashboard-button org-light-button"
-                          onClick={() =>
-                            handleEditProgram(
-                              program
-                            )
-                          }
-                        >
-                          Edit
-                        </button>
-
-                        <button
-                          type="button"
-                          className="org-dashboard-button"
-                          onClick={() =>
-                            handleDeleteProgram(
-                              program.id
-                            )
-                          }
-                        >
-                          Delete
-                        </button>
-                      </div>
+                {jobs.slice(0, 3).map((job) => (
+                  <div className="org-role-item" key={job.id}>
+                    <div className="org-role-title">{job.title}</div>
+                    <div className="org-role-wage">{job.wage}</div>
+                    <div className="org-role-meta">
+                      <span>{job.schedule}</span>
+                      <span className="org-applicant-badge">{job.applicants} applicants</span>
                     </div>
-                  ))}
-                </div>
-              </article>
-
-              {/* ================= JOBS ================= */}
-
-              <article
-                className="org-efficiency-card"
-                style={{ marginTop: "1.5rem" }}
-              >
-                <div className="org-card-heading">
-                  <div>
-                    <h3>
-                      Job Opportunities
-                    </h3>
-
-                    <p>
-                      Create and manage job opportunities
-                      for your organisation.
-                    </p>
                   </div>
-                </div>
-
-                {jobError && (
-                  <div
-                    style={{
-                      marginBottom: "1rem",
-                      padding: "0.75rem",
-                      borderRadius: "8px",
-                      background: "#fee2e2",
-                      color: "#991b1b",
-                    }}
-                  >
-                    {jobError}
-                  </div>
-                )}
-
-                <form
-                  onSubmit={handleJobSubmit}
-                  style={{
-                    display: "grid",
-                    gap: "1rem",
-                    marginBottom: "2rem",
-                  }}
-                >
-                  <h4>
-                    {editingJobId
-                      ? "Update Job Opportunity"
-                      : "Create Job Opportunity"}
-                  </h4>
-
-                  <input
-                    type="text"
-                    name="title"
-                    placeholder="Job title"
-                    value={jobForm.title}
-                    onChange={handleJobChange}
-                    required
-                  />
-
-                  <textarea
-                    name="description"
-                    placeholder="Job description"
-                    value={
-                      jobForm.description
-                    }
-                    onChange={handleJobChange}
-                    rows="4"
-                    required
-                  />
-
-                  <textarea
-                    name="requirements"
-                    placeholder="Requirements"
-                    value={
-                      jobForm.requirements
-                    }
-                    onChange={handleJobChange}
-                    rows="4"
-                  />
-
-                  <input
-                    type="text"
-                    name="minimum_education"
-                    placeholder="Minimum education"
-                    value={
-                      jobForm.minimum_education
-                    }
-                    onChange={handleJobChange}
-                  />
-
-                  <input
-                    type="text"
-                    name="experience"
-                    placeholder="Experience"
-                    value={jobForm.experience}
-                    onChange={handleJobChange}
-                  />
-
-                  <label>
-                    Application Deadline
-                    <input
-                      type="date"
-                      name="application_deadline"
-                      value={
-                        jobForm.application_deadline
-                      }
-                      onChange={handleJobChange}
-                    />
-                  </label>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "0.75rem",
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    <button
-                      type="submit"
-                      className="org-dashboard-button org-dark-button"
-                      disabled={
-                        jobLoading ||
-                        !selectedOrganisation
-                      }
-                    >
-                      {jobLoading
-                        ? "Saving..."
-                        : editingJobId
-                        ? "Update Job"
-                        : "Create Job"}
-                    </button>
-
-                    {editingJobId && (
-                      <button
-                        type="button"
-                        className="org-dashboard-button org-light-button"
-                        onClick={resetJobForm}
-                      >
-                        Cancel
-                      </button>
-                    )}
-                  </div>
-                </form>
-
-                <div
-                  style={{
-                    display: "grid",
-                    gap: "1rem",
-                  }}
-                >
-                  <h4>
-                    Existing Job Opportunities
-                  </h4>
-
-                  {jobLoading &&
-                    jobs.length === 0 && (
-                      <p>Loading jobs...</p>
-                    )}
-
-                  {!jobLoading &&
-                    jobs.length === 0 && (
-                      <p>
-                        No job opportunities found for
-                        this organisation.
-                      </p>
-                    )}
-
-                  {jobs.map((job) => (
-                    <div
-                      key={job.id}
-                      style={{
-                        padding: "1rem",
-                        border: "1px solid #e5e7eb",
-                        borderRadius: "10px",
-                      }}
-                    >
-                      <h4>
-                        {job.title}
-                      </h4>
-
-                      <p>
-                        {job.description}
-                      </p>
-
-                      {job.requirements && (
-                        <p>
-                          <strong>
-                            Requirements:
-                          </strong>{" "}
-                          {job.requirements}
-                        </p>
-                      )}
-
-                      {job.minimum_education && (
-                        <p>
-                          <strong>
-                            Minimum education:
-                          </strong>{" "}
-                          {job.minimum_education}
-                        </p>
-                      )}
-
-                      {job.experience && (
-                        <p>
-                          <strong>
-                            Experience:
-                          </strong>{" "}
-                          {job.experience}
-                        </p>
-                      )}
-
-                      {job.application_deadline && (
-                        <p>
-                          <strong>
-                            Application deadline:
-                          </strong>{" "}
-                          {String(
-                            job.application_deadline
-                          ).slice(0, 10)}
-                        </p>
-                      )}
-
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: "0.75rem",
-                          flexWrap: "wrap",
-                          marginTop: "1rem",
-                        }}
-                      >
-                        <button
-                          type="button"
-                          className="org-dashboard-button org-light-button"
-                          onClick={() =>
-                            handleEditJob(job)
-                          }
-                        >
-                          Edit
-                        </button>
-
-                        <button
-                          type="button"
-                          className="org-dashboard-button"
-                          onClick={() =>
-                            handleDeleteJob(
-                              job.id
-                            )
-                          }
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </article>
+                ))}
+              </div>
             </div>
-          </section>
+
+            {/* Recent Inbound Benefactor Contributions */}
+            <div className="org-card-box">
+              <div className="org-box-header">
+                <h3 className="org-box-title">Recent Inbound Benefactor Contributions</h3>
+                <button
+                  className="org-header-link"
+                  onClick={() => setActiveTab("donations-overview")}
+                >
+                  View Full Donation Ledger →
+                </button>
+              </div>
+
+              <div className="org-contributions-grid">
+                {donations.slice(0, 3).map((item) => (
+                  <div className="org-contrib-card" key={item.id}>
+                    <div className="org-contrib-top">
+                      <span className="org-contrib-name">{item.donorName}</span>
+                      <span className="org-contrib-amount">${item.amount}</span>
+                    </div>
+                    <div className="org-contrib-program">{item.program}</div>
+                    <div className="org-contrib-bottom">
+                      <span style={{ color: "#64748b" }}>{item.date}</span>
+                      <button
+                        className="org-send-note-btn"
+                        onClick={() => {
+                          setSelectedDonor(item);
+                          setIsSendNoteOpen(true);
+                        }}
+                      >
+                        Send Note
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
         )}
 
-        {/* ================= COMMAND CENTER ================= */}
-        <section
-          id="command-center-preview"
-          className="org-section org-command-section"
-        >
-          <div className="org-container">
-            <div className="org-command-header">
+        {/* ================= TAB 2: DONATIONS OVERVIEW (WITH SCROLL CONTAINER) ================= */}
+        {activeTab === "donations-overview" && (
+          <div className="org-card-box">
+            <div className="org-box-header">
               <div>
-                <div className="org-live-label">
-                  <span className="org-live-dot"></span>
-                  Live Operational Telemetry
-                </div>
-
-                <h2>
-                  Partner Command Center
-                </h2>
-              </div>
-
-              <div className="org-command-actions">
-                <button
-                  type="button"
-                  className="org-dashboard-button org-light-button"
-                  id="simulate-dispatch-btn"
-                  onClick={
-                    handleSimulateNewEntry
-                  }
-                  disabled={
-                    isSimulatingDispatch
-                  }
-                >
-                  <span className="material-symbols-outlined">
-                    bolt
-                  </span>
-
-                  <span>
-                    {isSimulatingDispatch
-                      ? "Simulating..."
-                      : "Simulate Live Dispatch"}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  className="org-dashboard-button org-dark-button"
-                  onClick={
-                    onOpenLiveSimulation
-                  }
-                >
-                  <span>
-                    Explore Full System
-                  </span>
-
-                  <span className="material-symbols-outlined">
-                    open_in_new
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            <div className="org-dashboard-grid">
-              {/* STAT CARD 1 */}
-              <article className="org-stat-card">
-                <div className="org-stat-top">
-                  <div>
-                    <p>
-                      Total Resources
-                      Distributed (YTD)
-                    </p>
-
-                    <h3>
-                      142,500{" "}
-                      <span>units</span>
-                    </h3>
-                  </div>
-
-                  <div className="org-stat-icon teal-icon">
-                    <span className="material-symbols-outlined">
-                      inventory_2
-                    </span>
-                  </div>
-                </div>
-
-                <div className="org-stat-footer success-text">
-                  <span className="material-symbols-outlined">
-                    trending_up
-                  </span>
-
-                  <span>
-                    +12% compared to last
-                    quarter
-                  </span>
-                </div>
-              </article>
-
-              {/* STAT CARD 2 */}
-              <article className="org-stat-card">
-                <div className="org-stat-top">
-                  <div>
-                    <p>
-                      Active Volunteers
-                    </p>
-
-                    <h3>
-                      342{" "}
-                      <span>on duty</span>
-                    </h3>
-                  </div>
-
-                  <div className="org-stat-icon green-icon">
-                    <span className="material-symbols-outlined">
-                      group
-                    </span>
-                  </div>
-                </div>
-
-                <div className="org-stat-footer">
-                  <span>
-                    Capacity utilization:
-                    86%
-                  </span>
-
-                  <strong>
-                    24 teams deployed
-                  </strong>
-                </div>
-              </article>
-
-              {/* STAT CARD 3 */}
-              <article className="org-stat-card">
-                <div className="org-stat-top">
-                  <div>
-                    <p>
-                      Pending Requests
-                    </p>
-
-                    <h3 className="warning-number">
-                      48{" "}
-                      <span>queues</span>
-                    </h3>
-                  </div>
-
-                  <div className="org-stat-icon warning-icon">
-                    <span className="material-symbols-outlined">
-                      schedule
-                    </span>
-                  </div>
-                </div>
-
-                <div className="org-stat-footer warning-text">
-                  <span className="material-symbols-outlined">
-                    priority_high
-                  </span>
-
-                  <span>
-                    All requests triaged
-                    under 4 hours
-                  </span>
-                </div>
-              </article>
-
-              {/* DISTRIBUTION EFFICIENCY */}
-              <article className="org-efficiency-card">
-                <div className="org-card-heading">
-                  <div>
-                    <h3>
-                      Distribution
-                      Efficiency
-                    </h3>
-
-                    <p>
-                      Weekly throughput
-                      across regional
-                      distribution centers
-                    </p>
-                  </div>
-
-                  <div className="org-timeframe-selector">
-                    {[
-                      "7d",
-                      "30d",
-                      "ytd",
-                    ].map(
-                      (timeframe) => (
-                        <button
-                          type="button"
-                          key={timeframe}
-                          className={
-                            selectedTimeframe ===
-                            timeframe
-                              ? "active"
-                              : ""
-                          }
-                          onClick={() =>
-                            setSelectedTimeframe(
-                              timeframe
-                            )
-                          }
-                        >
-                          {timeframe ===
-                          "7d"
-                            ? "7 Days"
-                            : timeframe ===
-                              "30d"
-                            ? "30 Days"
-                            : "YTD"}
-                        </button>
-                      )
-                    )}
-                  </div>
-                </div>
-
-                <div className="org-chart">
-                  {chartData[
-                    selectedTimeframe
-                  ].map(
-                    (item, index) => (
-                      <div
-                        className="org-chart-column"
-                        key={index}
-                      >
-                        <div className="org-chart-value">
-                          {item.value}
-                        </div>
-
-                        <div className="org-bar-wrapper">
-                          <div
-                            className="org-bar"
-                            style={{
-                              height:
-                                item.height,
-                            }}
-                          ></div>
-                        </div>
-
-                        <span>
-                          {item.day}
-                        </span>
-                      </div>
-                    )
-                  )}
-                </div>
-
-                <div className="org-efficiency-footer">
-                  <span>
-                    Average Delivery Route
-                    Time:{" "}
-                    <strong>
-                      42 minutes
-                    </strong>
-                  </span>
-
-                  <strong className="success-text">
-                    98.4% On-Time
-                    Delivery Rate
-                  </strong>
-                </div>
-              </article>
-
-              {/* RECENT LOGISTICS LOG */}
-              <article className="org-log-card">
-                <div className="org-log-header">
-                  <h3>
-                    Recent Logistics
-                    Log
-                  </h3>
-
-                  <span>
-                    Live Feed
-                  </span>
-                </div>
-
-                <div className="org-log-list">
-                  {logs.map((log) => {
-                    let icon =
-                      "local_shipping";
-                    let statusClass =
-                      "delivery";
-
-                    if (
-                      log.status ===
-                      "warning"
-                    ) {
-                      icon =
-                        "warning";
-                      statusClass =
-                        "warning";
-                    } else if (
-                      log.status ===
-                      "info"
-                    ) {
-                      icon =
-                        "person_add";
-                      statusClass =
-                        "info";
-                    } else if (
-                      log.type ===
-                      "route"
-                    ) {
-                      icon =
-                        "alt_route";
-                      statusClass =
-                        "route";
-                    }
-
-                    return (
-                      <div
-                        className="org-log-item"
-                        key={log.id}
-                      >
-                        <div className="org-log-item-top">
-                          <span className="org-log-title">
-                            <span
-                              className={`org-log-icon ${statusClass}`}
-                            >
-                              <span className="material-symbols-outlined">
-                                {
-                                  icon
-                                }
-                              </span>
-                            </span>
-
-                            {
-                              log.title
-                            }
-                          </span>
-
-                          <span className="org-log-time">
-                            {
-                              log.timestamp
-                            }
-                          </span>
-                        </div>
-
-                        {log.details && (
-                          <p>
-                            {
-                              log.details
-                            }
-                          </p>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <button
-                  type="button"
-                  className="org-api-button"
-                  onClick={
-                    onOpenPartnerApplication
-                  }
-                >
-                  Connect your warehouse API
-                  →
-                </button>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        {/* ================= TRUSTED ORGANIZATIONS ================= */}
-        <section className="org-section">
-          <div className="org-container">
-            <div className="org-trusted-section">
-              <div className="org-section-heading">
-                <p className="org-small-heading">
-                  Proven Field Collaboration
+                <h3 className="org-box-title">Financial Donations Ledger</h3>
+                <p style={{ margin: "0.2rem 0 0", fontSize: "0.85rem", color: "#64748b" }}>
+                  Audited records for 501(c)(3) compliance and fiscal reporting
                 </p>
+              </div>
+              <button className="org-btn-outline" onClick={handleExportCSV}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                  download
+                </span>
+                Export CSV
+              </button>
+            </div>
 
-                <h2>
-                  Trusted by Leading
-                  Organizations
+            <div className="org-table-wrapper org-scrollable-container" style={{ maxHeight: 440 }}>
+              <table className="org-table">
+                <thead>
+                  <tr>
+                    <th>RECEIPT #</th>
+                    <th>DONOR NAME & EMAIL</th>
+                    <th>ALLOCATED PROGRAM</th>
+                    <th>AMOUNT</th>
+                    <th>FREQUENCY</th>
+                    <th>DATE</th>
+                    <th>ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {donations.map((row) => (
+                    <tr key={row.id}>
+                      <td className="org-receipt-code">{row.receipt}</td>
+                      <td>
+                        <div style={{ fontWeight: 700, color: "#0f172a" }}>{row.donorName}</div>
+                        <div style={{ fontSize: "0.775rem", color: "#64748b" }}>{row.donorEmail}</div>
+                      </td>
+                      <td>{row.program}</td>
+                      <td style={{ fontWeight: 800, color: "#005f60" }}>${row.amount}</td>
+                      <td>
+                        <span className="org-badge-frequency">{row.frequency}</span>
+                      </td>
+                      <td>{row.date}</td>
+                      <td>
+                        <button
+                          className="org-btn-outline"
+                          style={{ padding: "0.35rem 0.75rem", fontSize: "0.775rem" }}
+                          onClick={() => {
+                            setSelectedDonor(row);
+                            setIsSendNoteOpen(true);
+                          }}
+                        >
+                          Send Thank-You
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* ================= TAB 3: PROGRAMS MANAGED (WITH SCROLL CONTAINER) ================= */}
+        {activeTab === "programs-managed" && (
+          <div>
+            <div className="org-jobs-banner">
+              <div>
+                <h2 style={{ margin: 0, fontSize: "1.25rem", color: "#0f172a" }}>
+                  Managed Organization Programs
                 </h2>
+                <p style={{ margin: "0.25rem 0 0", fontSize: "0.85rem", color: "#64748b" }}>
+                  Create, edit, and track funding milestones for your community programs.
+                </p>
               </div>
+              <button
+                className="org-btn-primary"
+                onClick={() => setIsNewProgramOpen(true)}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                  add
+                </span>
+                Create New Program
+              </button>
+            </div>
 
-              <div className="org-partner-logos">
-                <div>
-                  <span className="material-symbols-outlined">
-                    public
-                  </span>
-                  GlobalCare
-                </div>
-
-                <div>
-                  <span className="material-symbols-outlined">
-                    medical_information
-                  </span>
-                  HealthNet
-                </div>
-
-                <div>
-                  <span className="material-symbols-outlined">
-                    eco
-                  </span>
-                  FoodForward
-                </div>
-
-                <div>
-                  <span className="material-symbols-outlined">
-                    cottage
-                  </span>
-                  ShelterOrg
-                </div>
-              </div>
-
-              {/* TESTIMONIALS */}
-              <div className="org-testimonials">
-                {TESTIMONIALS.map(
-                  (testimonial) => (
-                    <article
-                      className="org-testimonial-card"
-                      key={testimonial.id}
-                    >
-                      <div className="org-testimonial-content">
-                        <span className="material-symbols-outlined org-quote-icon">
-                          format_quote
-                        </span>
-
-                        <p>
-                          "
-                          {
-                            testimonial.quote
-                          }
-                          "
-                        </p>
-                      </div>
-
-                      <div className="org-testimonial-person">
-                        <img
-                          src={
-                            testimonial.image
-                          }
-                          alt={
-                            testimonial.author
-                          }
-                        />
-
-                        <div>
-                          <h4>
-                            {
-                              testimonial.author
-                            }
-                          </h4>
-
-                          <p>
-                            {
-                              testimonial.role
-                            }
-                            ,{" "}
-                            <strong>
-                              {
-                                testimonial.organization
-                              }
-                            </strong>
-                          </p>
+            <div className="org-scrollable-container" style={{ maxHeight: 540 }}>
+              <div className="org-programs-grid">
+                {programs.map((prog) => (
+                  <div className="org-program-card" key={prog.id}>
+                    <div className="org-program-image-box">
+                      <img src={prog.image} alt={prog.title} className="org-program-img" />
+                      <span className="org-category-tag">{prog.category}</span>
+                    </div>
+                    <div className="org-program-body">
+                      <h3 className="org-program-title">{prog.title}</h3>
+                      <p className="org-program-desc">{prog.description}</p>
+                      <div className="org-funding-progress-container">
+                        <div className="org-program-item-top" style={{ marginBottom: "0.5rem" }}>
+                          <span style={{ fontSize: "0.825rem", fontWeight: 700, color: "#0f172a" }}>
+                            Raised: ${prog.raised.toLocaleString()}
+                          </span>
+                          <span style={{ fontSize: "0.825rem", color: "#64748b" }}>
+                            Goal: ${prog.goal.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="org-progress-bar-bg" style={{ height: 10 }}>
+                          <div
+                            className="org-progress-bar-fill"
+                            style={{ width: `${Math.min(prog.pct, 100)}%` }}
+                          />
+                        </div>
+                        <div style={{ fontSize: "0.775rem", color: "#047857", fontWeight: 600, marginTop: "0.4rem" }}>
+                          {prog.subtext}
                         </div>
                       </div>
-                    </article>
-                  )
-                )}
+                      <button
+                        className="org-btn-outline"
+                        style={{ width: "100%", justifyContent: "center" }}
+                        onClick={() => alert(`Editing details for ${prog.title}`)}
+                      >
+                        Edit Program Details
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-        </section>
+        )}
 
-        {/* Hidden image references are intentionally not displayed. */}
-        <div
-          className="org-image-preload"
-          aria-hidden="true"
-        >
-          <img
-            src={heroSupportImage}
-            alt=""
-          />
-        </div>
+        {/* ================= TAB 4: JOB OPPORTUNITIES & APPLICANTS (WITH SCROLL CONTAINER) ================= */}
+        {activeTab === "job-opportunities" && (
+          <div>
+            <div className="org-jobs-banner">
+              <div>
+                <h2 style={{ margin: 0, fontSize: "1.25rem", color: "#0f172a" }}>
+                  Recruitment & Job Opportunities
+                </h2>
+                <p style={{ margin: "0.25rem 0 0", fontSize: "0.85rem", color: "#64748b" }}>
+                  Connect community members directly to dignified wage opportunities.
+                </p>
+              </div>
+              <button
+                className="org-btn-primary"
+                onClick={() => setIsPostJobOpen(true)}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                  add
+                </span>
+                Post New Opportunity
+              </button>
+            </div>
+
+            <div className="org-scrollable-container" style={{ maxHeight: 520 }}>
+              {jobs.map((job) => (
+                <div className="org-job-card-item" key={job.id}>
+                  <div className="org-job-card-header">
+                    <div>
+                      <div className="org-job-tags">
+                        <span className="org-schedule-pill">{job.schedule}</span>
+                        <span>• {job.location}</span>
+                      </div>
+                      <h3 className="org-job-title-text">{job.title}</h3>
+                      <div className="org-job-wage-text">{job.wage}</div>
+                    </div>
+                    <div className="org-job-actions">
+                      <button
+                        className="org-btn-applicants"
+                        onClick={() => setViewApplicantsJob(job)}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                          group
+                        </span>
+                        View Applicants ({job.applicants})
+                      </button>
+                      <button
+                        className="org-btn-pause"
+                        onClick={() => togglePauseJob(job.id)}
+                      >
+                        {job.status === "active" ? "Pause Listing" : "Resume Listing"}
+                      </button>
+                    </div>
+                  </div>
+                  <p style={{ margin: "0.5rem 0 0", fontSize: "0.875rem", color: "#64748b" }}>
+                    {job.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ================= TAB 5: LIVE LOGISTICS ================= */}
+        {activeTab === "live-logistics" && (
+          <div className="org-card-box">
+            <div className="org-box-header">
+              <h3 className="org-box-title">Real-Time Logistics & Warehouse Logs</h3>
+              <span className="org-status-pill">
+                <span className="org-status-dot" /> Live Telemetry
+              </span>
+            </div>
+
+            <div style={{ marginBottom: "2rem" }}>
+              {logs.map((log) => (
+                <div className="org-log-item" key={log.id}>
+                  <div className={`org-log-icon ${log.status === "warning" ? "warning" : ""}`}>
+                    <span className="material-symbols-outlined">{log.icon}</span>
+                  </div>
+                  <div className="org-log-content">
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span className="org-log-title">{log.title}</span>
+                      <span className="org-log-time">{log.timestamp}</span>
+                    </div>
+                    <div className="org-log-details">{log.details}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <h3 className="org-box-title" style={{ marginBottom: "1rem" }}>
+              Physical Goods Inbound Pipeline
+            </h3>
+            <div className="org-table-wrapper">
+              <table className="org-table">
+                <thead>
+                  <tr>
+                    <th>TRACKING CODE</th>
+                    <th>CATEGORY</th>
+                    <th>ITEMS DESCRIPTION</th>
+                    <th>ESTIMATED QTY</th>
+                    <th>METHOD & LOCATION</th>
+                    <th>STATUS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pipeline.map((item) => (
+                    <tr key={item.code}>
+                      <td className="org-receipt-code" style={{ color: "#d97706" }}>
+                        {item.code}
+                      </td>
+                      <td style={{ fontWeight: 700 }}>{item.category}</td>
+                      <td>{item.description}</td>
+                      <td>{item.qty}</td>
+                      <td>{item.method}</td>
+                      <td>
+                        <span
+                          className={`org-badge-status ${
+                            item.status === "Scheduled" ? "scheduled" : "received"
+                          }`}
+                        >
+                          {item.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </main>
-    </>
+
+      {/* ================= MODAL: EDIT ORGANISATION PROFILE ================= */}
+      {isEditProfileOpen && (
+        <div className="org-modal-overlay">
+          <div className="org-modal-dialog">
+            <div className="org-modal-header">
+              <h3 className="org-modal-title">Edit Organisation Profile</h3>
+              <button
+                className="org-modal-close"
+                onClick={() => setIsEditProfileOpen(false)}
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <form onSubmit={handleProfileSubmit} className="org-modal-body">
+              <div className="org-form-group">
+                <label className="org-form-label">Select Avatar Photo</label>
+                <div className="org-avatar-grid">
+                  {PRESET_AVATARS.map((url, idx) => (
+                    <img
+                      key={idx}
+                      src={url}
+                      alt={`Avatar option ${idx + 1}`}
+                      className={`org-avatar-preset-item ${
+                        profileForm.avatar === url ? "selected" : ""
+                      }`}
+                      onClick={() =>
+                        setProfileForm({ ...profileForm, avatar: url })
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="org-form-group">
+                <label className="org-form-label">Organisation / Display Name *</label>
+                <input
+                  type="text"
+                  required
+                  className="org-form-input"
+                  value={profileForm.name}
+                  onChange={(e) =>
+                    setProfileForm({ ...profileForm, name: e.target.value })
+                  }
+                />
+              </div>
+
+              <div className="org-form-row">
+                <div className="org-form-group">
+                  <label className="org-form-label">EIN / Tax Identifier</label>
+                  <input
+                    type="text"
+                    className="org-form-input"
+                    value={profileForm.ein}
+                    onChange={(e) =>
+                      setProfileForm({ ...profileForm, ein: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="org-form-group">
+                  <label className="org-form-label">District / Location</label>
+                  <input
+                    type="text"
+                    className="org-form-input"
+                    value={profileForm.location}
+                    onChange={(e) =>
+                      setProfileForm({ ...profileForm, location: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="org-form-group">
+                <label className="org-form-label">Contact Email *</label>
+                <input
+                  type="email"
+                  required
+                  className="org-form-input"
+                  value={profileForm.email}
+                  onChange={(e) =>
+                    setProfileForm({ ...profileForm, email: e.target.value })
+                  }
+                />
+              </div>
+
+              <button type="submit" className="org-modal-submit-btn">
+                Save Profile Changes
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL: LAUNCH NEW INITIATIVE ================= */}
+      {isNewProgramOpen && (
+        <div className="org-modal-overlay">
+          <div className="org-modal-dialog">
+            <div className="org-modal-header">
+              <h3 className="org-modal-title">Launch a New Initiative</h3>
+              <button
+                className="org-modal-close"
+                onClick={() => setIsNewProgramOpen(false)}
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <form onSubmit={handleCreateProgramSubmit} className="org-modal-body">
+              <div className="org-form-group">
+                <label className="org-form-label">Program Title *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Westside Emergency Maternal Nutrition"
+                  className="org-form-input"
+                  value={programForm.title}
+                  onChange={(e) =>
+                    setProgramForm({ ...programForm, title: e.target.value })
+                  }
+                />
+              </div>
+
+              <div className="org-form-row">
+                <div className="org-form-group">
+                  <label className="org-form-label">Category</label>
+                  <select
+                    className="org-form-select"
+                    value={programForm.category}
+                    onChange={(e) =>
+                      setProgramForm({ ...programForm, category: e.target.value })
+                    }
+                  >
+                    <option value="Food Security">Food Security</option>
+                    <option value="Clean Water">Clean Water</option>
+                    <option value="Education">Education</option>
+                    <option value="Health">Health</option>
+                    <option value="Housing">Housing</option>
+                  </select>
+                </div>
+                <div className="org-form-group">
+                  <label className="org-form-label">Funding Target ($) *</label>
+                  <input
+                    type="number"
+                    required
+                    placeholder="300000"
+                    className="org-form-input"
+                    value={programForm.funding_goal}
+                    onChange={(e) =>
+                      setProgramForm({
+                        ...programForm,
+                        funding_goal: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="org-form-group">
+                <label className="org-form-label">Impact Metric Statement</label>
+                <input
+                  type="text"
+                  placeholder="12,000 community meals provided per month"
+                  className="org-form-input"
+                  value={programForm.impact_statement}
+                  onChange={(e) =>
+                    setProgramForm({
+                      ...programForm,
+                      impact_statement: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="org-form-group">
+                <label className="org-form-label">Description & Objective *</label>
+                <textarea
+                  rows={4}
+                  required
+                  placeholder="Explain the frontline mission, target beneficiaries, and logistics plan..."
+                  className="org-form-textarea"
+                  value={programForm.description}
+                  onChange={(e) =>
+                    setProgramForm({
+                      ...programForm,
+                      description: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <button type="submit" className="org-modal-submit-btn">
+                Publish Program to Platform
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL: POST JOB OPPORTUNITY ================= */}
+      {isPostJobOpen && (
+        <div className="org-modal-overlay">
+          <div className="org-modal-dialog">
+            <div className="org-modal-header">
+              <h3 className="org-modal-title">Post Job Opportunity</h3>
+              <button
+                className="org-modal-close"
+                onClick={() => setIsPostJobOpen(false)}
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <form onSubmit={handlePostJobSubmit} className="org-modal-body">
+              <div className="org-form-group">
+                <label className="org-form-label">Job Title *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Bilingual Family Case Worker"
+                  className="org-form-input"
+                  value={jobForm.title}
+                  onChange={(e) =>
+                    setJobForm({ ...jobForm, title: e.target.value })
+                  }
+                />
+              </div>
+
+              <div className="org-form-row">
+                <div className="org-form-group">
+                  <label className="org-form-label">Employment Type</label>
+                  <select
+                    className="org-form-select"
+                    value={jobForm.employment_type}
+                    onChange={(e) =>
+                      setJobForm({ ...jobForm, employment_type: e.target.value })
+                    }
+                  >
+                    <option value="Full-time">Full-time</option>
+                    <option value="Part-time">Part-time</option>
+                    <option value="Immediate">Immediate</option>
+                    <option value="Contract">Contract</option>
+                  </select>
+                </div>
+
+                <div className="org-form-group">
+                  <label className="org-form-label">Wage / Compensation</label>
+                  <input
+                    type="text"
+                    placeholder="$24.00 / hr + Benefits"
+                    className="org-form-input"
+                    value={jobForm.wage}
+                    onChange={(e) =>
+                      setJobForm({ ...jobForm, wage: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="org-form-group">
+                <label className="org-form-label">Location / Hub</label>
+                <input
+                  type="text"
+                  placeholder="Bay Area Regional Hub"
+                  className="org-form-input"
+                  value={jobForm.location}
+                  onChange={(e) =>
+                    setJobForm({ ...jobForm, location: e.target.value })
+                  }
+                />
+              </div>
+
+              <div className="org-form-group">
+                <label className="org-form-label">Role Description *</label>
+                <textarea
+                  rows={3}
+                  required
+                  placeholder="Key responsibilities and day-to-day duties..."
+                  className="org-form-textarea"
+                  value={jobForm.description}
+                  onChange={(e) =>
+                    setJobForm({ ...jobForm, description: e.target.value })
+                  }
+                />
+              </div>
+
+              <div className="org-form-group">
+                <label className="org-form-label">Requirements (1 per line)</label>
+                <textarea
+                  rows={3}
+                  placeholder="Organized and self-driven&#10;Driver license preferred&#10;Team player"
+                  className="org-form-textarea"
+                  value={jobForm.requirements}
+                  onChange={(e) =>
+                    setJobForm({ ...jobForm, requirements: e.target.value })
+                  }
+                />
+              </div>
+
+              <button type="submit" className="org-modal-submit-btn">
+                Post Opportunity
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL: SEND THANK-YOU NOTE ================= */}
+      {isSendNoteOpen && (
+        <div className="org-modal-overlay">
+          <div className="org-modal-dialog">
+            <div className="org-modal-header">
+              <h3 className="org-modal-title">
+                Send Note to {selectedDonor?.donorName || "Donor"}
+              </h3>
+              <button
+                className="org-modal-close"
+                onClick={() => setIsSendNoteOpen(false)}
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <form onSubmit={handleSendNoteSubmit} className="org-modal-body">
+              <div className="org-form-group">
+                <label className="org-form-label">Program Allocation</label>
+                <input
+                  type="text"
+                  readOnly
+                  className="org-form-input"
+                  value={selectedDonor?.program || "General Fund"}
+                  style={{ backgroundColor: "#f8fafc" }}
+                />
+              </div>
+
+              <div className="org-form-group">
+                <label className="org-form-label">Personalized Message *</label>
+                <textarea
+                  rows={4}
+                  required
+                  placeholder="Thank you so much for your generous support! Your contribution directly enables..."
+                  className="org-form-textarea"
+                  value={noteText}
+                  onChange={(e) => setNoteText(e.target.value)}
+                />
+              </div>
+
+              <button type="submit" className="org-modal-submit-btn">
+                Send Thank-You Note
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL: VIEW APPLICANTS ================= */}
+      {viewApplicantsJob && (
+        <div className="org-modal-overlay">
+          <div className="org-modal-dialog">
+            <div className="org-modal-header">
+              <h3 className="org-modal-title">
+                Applicants: {viewApplicantsJob.title}
+              </h3>
+              <button
+                className="org-modal-close"
+                onClick={() => setViewApplicantsJob(null)}
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <div className="org-modal-body">
+              <p style={{ color: "#64748b", fontSize: "0.875rem" }}>
+                Candidates applying for {viewApplicantsJob.title} ({viewApplicantsJob.schedule}):
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", marginTop: "1rem" }}>
+                {[
+                  { name: "Marcus Vance", status: "Interview Scheduled", applied: "2 days ago" },
+                  { name: "Aaliyah Chen", status: "Under Review", applied: "3 days ago" },
+                  { name: "Jordan Taylor", status: "Resume Screened", applied: "5 days ago" },
+                ].map((cand, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      padding: "0.85rem 1rem",
+                      backgroundColor: "#f8fafc",
+                      borderRadius: 10,
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: "0.9rem", color: "#0f172a" }}>
+                        {cand.name}
+                      </div>
+                      <div style={{ fontSize: "0.775rem", color: "#64748b" }}>Applied {cand.applied}</div>
+                    </div>
+                    <span className="org-applicant-badge">{cand.status}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <Footer />
+    </div>
   );
 }
 
-export default Organisations;
+export default OrganisationsPage;

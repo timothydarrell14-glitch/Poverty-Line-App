@@ -131,7 +131,9 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
     ? { path: "/admin", id: "admin", label: "Admin Portal", icon: "admin_panel_settings" }
     : role === "donor"
       ? { path: "/donors", id: "donors", label: "Donor Dashboard", icon: "volunteer_activism" }
-      : { path: "/member-portal", id: "member-portal", label: "Member Portal", icon: "account_circle" };
+      : (role === "partner" || role === "organisation" || role === "organization")
+        ? { path: "/organisations", id: "organisations", label: "Organisation Portal", icon: "corporate_fare" }
+        : { path: "/member-portal", id: "member-portal", label: "Member Portal", icon: "account_circle" };
   const displayName = currentUser?.first_name || currentUser?.name?.split(" ")[0] || "Account";
   const initials = displayName.charAt(0).toUpperCase();
   const navigationItems = isAuthenticated()
