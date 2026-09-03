@@ -18,6 +18,7 @@ import DonorsPage from './pages/DonorsPage'
 import LogisticsPage from './pages/LogisticsPage'
 import JobsPage from './pages/JobsPage'
 import ContactPage from './pages/ContactPage'
+import MemberPortalPage from './pages/MemberPortalPage'
 import './styles/Admin/Scrollbar.css'
 import ComingSoon from './components/Admin/ComingSoon'
 import { ToastProvider } from './context/ToastContext'
@@ -51,6 +52,7 @@ function App() {
         <Route path="/logistics" element={<LogisticsPage />} />
         <Route path="/jobs" element={<JobsPage />} />
         <Route path="/community" element={<CommunityPage />} />
+        <Route path="/member-portal" element={<MemberPortalPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/access-denied" element={<AccessDeniedPage />} />
         <Route element={<AdminRoute />}>

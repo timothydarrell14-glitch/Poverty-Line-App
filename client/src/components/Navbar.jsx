@@ -146,6 +146,25 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
           <div className="nav-actions">
             {isAuthenticated() ? (
               <>
+                <button
+                  className="nav-link portal-link-btn"
+                  onClick={() => handleSelect("/member-portal", "member-portal")}
+                  style={{
+                    backgroundColor: "#d1f2ed",
+                    color: "#0a574e",
+                    fontWeight: "600",
+                    borderRadius: "20px",
+                    padding: "0.4rem 0.9rem",
+                    border: "none",
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.3rem"
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: "1.1rem" }}>account_circle</span>
+                  Member Portal
+                </button>
                 {currentUser?.role === "admin" && (
                   <span className="admin-badge">Admin</span>
                 )}
@@ -195,9 +214,18 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
             Donate Now
           </button>
           {isAuthenticated() ? (
-            <button className="login-button" onClick={signOut}>
-              Log out
-            </button>
+            <>
+              <button
+                className="login-button"
+                onClick={() => handleSelect("/member-portal", "member-portal")}
+                style={{ backgroundColor: "#0f6258", color: "#ffffff" }}
+              >
+                Member Portal
+              </button>
+              <button className="login-button" onClick={signOut}>
+                Log out
+              </button>
+            </>
           ) : (
             <button className="login-button" onClick={openLogin}>
               Login
