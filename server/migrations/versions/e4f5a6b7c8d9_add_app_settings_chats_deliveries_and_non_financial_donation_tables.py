@@ -1,8 +1,8 @@
-"""add missing donation, delivery, settings, and chat tables
+"""add app settings, chats, deliveries, and non-financial donation tables
 
-Revision ID: f849f5465974
-Revises: aa12bb34cc56
-Create Date: 2026-09-03 16:59:51.105869
+Revision ID: e4f5a6b7c8d9
+Revises: f849f5465974
+Create Date: 2026-09-03 22:25:00.000000
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'f849f5465974'
-down_revision = 'aa12bb34cc56'
+revision = 'e4f5a6b7c8d9'
+down_revision = 'f849f5465974'
 branch_labels = None
 depends_on = None
 
