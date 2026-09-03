@@ -158,7 +158,8 @@ function Organisations({
 }) {
   const [logs, setLogs] = useState(INITIAL_LOGS);
   const [selectedTimeframe, setSelectedTimeframe] = useState("7d");
-  const [isSimulatingDispatch, setIsSimulatingDispatch] = useState(false);
+  const [isSimulatingDispatch, setIsSimulatingDispatch] =
+    useState(false);
 
   // Controls the active Navbar item
   const [activeTab, setActiveTab] = useState("organisations");
@@ -167,9 +168,16 @@ function Organisations({
      AUTH / ORGANISATION STATE
      ========================================================= */
 
-  const [currentUser, setCurrentUser] = useState(null);
+  // Initialize directly instead of calling setState inside useEffect.
+  const [currentUser] = useState(() => getCurrentUser());
 
-  const [organisations, setOrganisations] = useState([]);
+  /*
+   * The organisation array itself is not rendered anywhere
+   * in this component. Only the setter is needed for CRUD
+   * operations, so the state value is intentionally ignored.
+   */
+  const [, setOrganisations] = useState([]);
+
   const [selectedOrganisation, setSelectedOrganisation] =
     useState(null);
 
@@ -251,15 +259,6 @@ function Organisations({
   };
 
   /* =========================================================
-     LOAD CURRENT USER
-     ========================================================= */
-
-  useEffect(() => {
-    const user = getCurrentUser();
-    setCurrentUser(user);
-  }, []);
-
-  /* =========================================================
      LOAD ORGANISATIONS
      ========================================================= */
 
@@ -273,7 +272,9 @@ function Organisations({
 
         const organisationList = Array.isArray(response)
           ? response
-          : response?.organisations || response?.data || [];
+          : response?.organisations ||
+            response?.data ||
+            [];
 
         setOrganisations(organisationList);
 
@@ -290,26 +291,34 @@ function Organisations({
           user?.organizationId;
 
         if (userOrganisationId) {
-          const matchedOrganisation = organisationList.find(
-            (organisation) =>
-              String(
-                organisation.id ??
-                  organisation.organisation_id
-              ) === String(userOrganisationId)
-          );
+          const matchedOrganisation =
+            organisationList.find(
+              (organisation) =>
+                String(
+                  organisation.id ??
+                    organisation.organisation_id
+                ) === String(userOrganisationId)
+            );
 
           if (matchedOrganisation) {
-            setSelectedOrganisation(matchedOrganisation);
+            setSelectedOrganisation(
+              matchedOrganisation
+            );
+
             setOrganisationForm({
               name: matchedOrganisation.name || "",
               organisation_type:
-                matchedOrganisation.organisation_type || "",
+                matchedOrganisation.organisation_type ||
+                "",
               description:
-                matchedOrganisation.description || "",
+                matchedOrganisation.description ||
+                "",
               email: matchedOrganisation.email || "",
               phone: matchedOrganisation.phone || "",
-              website: matchedOrganisation.website || "",
-              location: matchedOrganisation.location || "",
+              website:
+                matchedOrganisation.website || "",
+              location:
+                matchedOrganisation.location || "",
             });
           }
         }
@@ -320,7 +329,8 @@ function Organisations({
         );
 
         setOrganisationError(
-          error.message || "Failed to load organisations."
+          error.message ||
+            "Failed to load organisations."
         );
       } finally {
         setOrganisationLoading(false);
@@ -335,9 +345,12 @@ function Organisations({
      ========================================================= */
 
   useEffect(() => {
+    /*
+     * Do not synchronously call setPrograms/setJobs here.
+     * The lint rule react-hooks/set-state-in-effect rejects
+     * synchronous state updates directly inside an effect.
+     */
     if (!selectedOrganisation?.id) {
-      setPrograms([]);
-      setJobs([]);
       return;
     }
 
@@ -361,7 +374,9 @@ function Organisations({
             }),
           ]);
 
-        const programList = Array.isArray(programResponse)
+        const programList = Array.isArray(
+          programResponse
+        )
           ? programResponse
           : programResponse?.programs ||
             programResponse?.data ||
@@ -382,11 +397,13 @@ function Organisations({
         );
 
         setProgramError(
-          error.message || "Failed to load programs."
+          error.message ||
+            "Failed to load programs."
         );
 
         setJobError(
-          error.message || "Failed to load jobs."
+          error.message ||
+            "Failed to load jobs."
         );
       } finally {
         setProgramLoading(false);
@@ -465,7 +482,8 @@ function Organisations({
       );
 
       setOrganisationError(
-        error.message || "Failed to save organisation."
+        error.message ||
+          "Failed to save organisation."
       );
     } finally {
       setOrganisationLoading(false);
@@ -509,7 +527,8 @@ function Organisations({
       );
 
       setOrganisationError(
-        error.message || "Failed to delete organisation."
+        error.message ||
+          "Failed to delete organisation."
       );
     } finally {
       setOrganisationLoading(false);
@@ -592,7 +611,8 @@ function Organisations({
       );
 
       setProgramError(
-        error.message || "Failed to save program."
+        error.message ||
+          "Failed to save program."
       );
     } finally {
       setProgramLoading(false);
@@ -655,7 +675,8 @@ function Organisations({
       );
 
       setProgramError(
-        error.message || "Failed to delete program."
+        error.message ||
+          "Failed to delete program."
       );
     } finally {
       setProgramLoading(false);
@@ -738,7 +759,8 @@ function Organisations({
       );
 
       setJobError(
-        error.message || "Failed to save job."
+        error.message ||
+          "Failed to save job."
       );
     } finally {
       setJobLoading(false);
@@ -797,7 +819,8 @@ function Organisations({
       );
 
       setJobError(
-        error.message || "Failed to delete job."
+        error.message ||
+          "Failed to delete job."
       );
     } finally {
       setJobLoading(false);
