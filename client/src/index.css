@@ -257,6 +257,34 @@ button:focus-visible {
   gap: 14px;
 }
 
+.portal-link-btn, .account-summary, .logout-button {
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  color: #005f6a;
+  font-weight: 700;
+}
+
+.portal-link-btn {
+  gap: 6px;
+  padding: 9px 12px;
+  border: 1px solid #b9d9d5;
+  border-radius: 999px;
+  background: #eff9f7;
+  font-size: 13px;
+}
+
+.portal-link-btn:hover { background: #dff2ee; }
+.portal-link-btn .material-symbols-outlined { font-size: 18px; }
+
+.account-summary { gap: 7px; padding: 5px 4px 5px 8px; color: #263536; font-size: 13px; }
+.account-summary:hover { color: #005f6a; }
+.account-avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #005f6a; color: #fff; font-size: 12px; }
+.logout-button { padding: 8px; border-radius: 50%; color: #657174; }
+.logout-button:hover { background: #f1f4f9; color: #953914; }
+.logout-button .material-symbols-outlined { font-size: 19px; }
+
 .admin-badge {
   padding: 4px 8px;
   border-radius: 999px;
@@ -418,6 +446,7 @@ button:focus-visible {
   .mobile-menu .login-button {
     border: 2px solid #005f6a;
   }
+  .mobile-menu .portal-link-btn { justify-content: center; margin-top: 12px; }
   .footer-grid {
     grid-template-columns: repeat(2, 1fr);
   }

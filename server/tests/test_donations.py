@@ -116,6 +116,7 @@ def test_general_guest_donation_creates_account_and_donor(client, app):
         donor = Donor.query.one()
         donation = FinancialDonation.query.one()
         assert user is not None
+        assert user.role == "donor"
         assert donor.user_id == user.user_id
         assert donation.donor_id == donor.id
         assert donation.program_id is None
@@ -158,3 +159,57 @@ def test_mpesa_callback_is_idempotent(client, app, monkeypatch):
 
     assert first.status_code == 200
     assert second.get_json()["duplicate"] is True
+
+
+def test_donation_status_and_sandbox_confirmation(client, app):
+    with app.app_context():
+        donation = FinancialDonation(
+            amount=500,
+            currency="KES",
+            payment_method="mpesa",
+            payment_status="pending",
+            provider_reference="checkout-test-status",
+        )
+        db.session.add(donation)
+        db.session.commit()
+        donation_id = donation.donation_id
+
+    # Check status
+    res = client.get(f"/api/donations/{donation_id}/status")
+    assert res.status_code == 200
+    assert res.get_json()["payment_status"] == "pending"
+
+    # Confirm sandbox
+    res_confirm = client.post(f"/api/donations/{donation_id}/confirm-sandbox")
+    assert res_confirm.status_code == 200
+    data = res_confirm.get_json()
+    assert data["donation"]["payment_status"] == "completed"
+    assert data["donation"]["transaction_code"].startswith("MPE")
+
+    # Re-check status
+    res_after = client.get(f"/api/donations/{donation_id}/status")
+    assert res_after.status_code == 200
+    assert res_after.get_json()["payment_status"] == "completed"
+
+
+def test_paypal_capture_sandbox(client, app):
+    with app.app_context():
+        donation = FinancialDonation(
+            amount=25,
+            currency="USD",
+            payment_method="paypal",
+            payment_status="pending",
+            provider_reference="MOCK_PAYPAL_TEST123",
+        )
+        db.session.add(donation)
+        db.session.commit()
+        donation_id = donation.donation_id
+
+    res = client.post(
+        "/api/donations/payments/paypal/capture",
+        json={"donation_id": donation_id, "order_id": "MOCK_PAYPAL_TEST123"},
+    )
+    assert res.status_code == 200
+    data = res.get_json()
+    assert data["donation"]["payment_status"] == "completed"
+    assert data["donation"]["transaction_code"].startswith("PP")

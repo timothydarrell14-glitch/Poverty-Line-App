@@ -58,7 +58,16 @@ const Login = ({ isOpen, onClose, onShowSignup, onAuthenticated, initialEmail = 
 
       onClose?.();
       showToast("Welcome back. You are signed in successfully.", "success");
-      navigate(data.user?.role?.trim().toLowerCase() === "admin" ? "/admin" : "/get-help");
+      const role = data.user?.role?.trim().toLowerCase();
+      if (role === "admin") {
+        navigate("/admin");
+      } else if (role === "donor") {
+        navigate("/donors");
+      } else if (role === "member") {
+        navigate("/member-portal");
+      } else {
+        navigate("/get-help");
+      }
     } catch (err) {
       setError(err.message || "Unable to log in.");
       showToast(err.message || "Unable to sign in.", "error");

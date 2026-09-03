@@ -90,6 +90,21 @@ def seed_users():
                 phone=f"+2547123451{index:02d}",
             )
         )
+    # Dedicated donor account for exercising the Donor Dashboard and payments.
+    # These are development-only defaults and may be overridden in the shell.
+    users.append(
+        User(
+            first_name=os.environ.get("SEED_DONOR_FIRST_NAME", "Sarah"),
+            last_name=os.environ.get("SEED_DONOR_LAST_NAME", "Mwangi"),
+            email=os.environ.get("SEED_DONOR_EMAIL", "donorcheck@example.com"),
+            password_hash=generate_password_hash(
+                os.environ.get("SEED_DONOR_PASSWORD", "DonorPass123!")
+            ),
+            phone=os.environ.get("SEED_DONOR_PHONE", "+254712345099"),
+            role="donor",
+            is_active=True,
+        )
+    )
     db.session.add_all(users)
     db.session.commit()
     member_profiles = [
@@ -652,6 +667,7 @@ def seed_programs(organisations):
 
 
 def seed_donations(users, programs):
+    dashboard_donor = users[-1]
     donors = [
         Donor(
             user_id=users[0].user_id,
@@ -664,6 +680,12 @@ def seed_donations(users, programs):
             name=f"{users[1].first_name} {users[1].last_name}",
             email=users[1].email,
             phone_number=users[1].phone,
+        ),
+        Donor(
+            user_id=dashboard_donor.user_id,
+            name=f"{dashboard_donor.first_name} {dashboard_donor.last_name}",
+            email=dashboard_donor.email,
+            phone_number=dashboard_donor.phone,
         ),
     ]
     db.session.add_all(donors)
@@ -708,6 +730,28 @@ def seed_donations(users, programs):
             payment_status="completed",
             provider_reference="TXN-NRC-004",
         ),
+        FinancialDonation(
+            program_id=programs[0].id,
+            donor_id=donors[2].id,
+            amount=2500.00,
+            currency="KES",
+            donation_date=date(2026, 5, 15),
+            payment_method="mpesa",
+            payment_status="completed",
+            transaction_code="MPESEED2500",
+            provider_reference="TXN-DONOR-CHECK-001",
+        ),
+        FinancialDonation(
+            program_id=programs[1].id,
+            donor_id=donors[2].id,
+            amount=50.00,
+            currency="USD",
+            donation_date=date(2026, 6, 1),
+            payment_method="paypal",
+            payment_status="completed",
+            transaction_code="PPSEED0050",
+            provider_reference="TXN-DONOR-CHECK-002",
+        ),
     ]
     donors.extend(
         Donor(
@@ -723,7 +767,7 @@ def seed_donations(users, programs):
     donations.extend(
         FinancialDonation(
             program_id=programs[(index + 4) % len(programs)].id,
-            donor_id=donors[index + 2].id,
+            donor_id=donors[index + 3].id,
             amount=10000.00 + index * 2500,
             currency="KES",
             donation_date=date(2026, 4, 10 + index),
@@ -1156,6 +1200,11 @@ def run_seed():
         seed_notifications(organisations, programs, donations)
 
         print("Database seeded successfully.")
+        print(
+            "Donor Dashboard test credentials: "
+            f"{os.environ.get('SEED_DONOR_EMAIL', 'donorcheck@example.com')} / "
+            f"{os.environ.get('SEED_DONOR_PASSWORD', 'DonorPass123!')}"
+        )
 
 
 if __name__ == "__main__":

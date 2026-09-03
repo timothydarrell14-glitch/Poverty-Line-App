@@ -123,6 +123,15 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
     return false;
   };
 
+  const role = currentUser?.role?.trim().toLowerCase();
+  const portal = role === "admin"
+    ? { path: "/admin", id: "admin", label: "Admin Portal", icon: "admin_panel_settings" }
+    : role === "donor"
+      ? { path: "/donors", id: "donors", label: "Donor Dashboard", icon: "volunteer_activism" }
+      : { path: "/member-portal", id: "member-portal", label: "Member Portal", icon: "account_circle" };
+  const displayName = currentUser?.first_name || currentUser?.name?.split(" ")[0] || "Account";
+  const initials = displayName.charAt(0).toUpperCase();
+
   return (
     <>
       <nav className={`site-nav ${isScrolled ? "scrolled" : ""}`}>
@@ -158,44 +167,31 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
             {isAuthenticated() ? (
               <>
                 <button
-                  className="nav-link portal-link-btn"
-                  onClick={() => handleSelect("/member-portal", "member-portal")}
-                  style={{
-                    backgroundColor: "#d1f2ed",
-                    color: "#0a574e",
-                    fontWeight: "600",
-                    borderRadius: "20px",
-                    padding: "0.4rem 0.9rem",
-                    border: "none",
-                    cursor: "pointer",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "0.3rem",
-                  }}
+                  className="pill-button nav-donate"
+                  onClick={handleDonateClick}
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: "1.1rem" }}>
-                    account_circle
-                  </span>
-                  Member Portal
+                  <span className="material-symbols-outlined">favorite</span>Donate Now
                 </button>
-                {currentUser?.role && (
-                  <span className="admin-badge" aria-label="Account type">
-                    {currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)}
-                  </span>
-                )}
-                <button className="login-button" onClick={signOut}>
-                  Log out
+                <button className="portal-link-btn" onClick={() => handleSelect(portal.path, portal.id)}>
+                  <span className="material-symbols-outlined">{portal.icon}</span>
+                  {portal.label}
+                </button>
+                <button className="account-summary" onClick={() => handleSelect(portal.path, portal.id)} aria-label={`Open ${portal.label}`}>
+                  <span className="account-avatar" aria-hidden="true">{initials}</span>
+                  <span>Hi, {displayName}</span>
+                </button>
+                <button className="logout-button" onClick={signOut} aria-label="Log out" title="Log out">
+                  <span className="material-symbols-outlined">logout</span>
                 </button>
               </>
             ) : (
-              <button className="login-button" onClick={openLogin}>
-                Login
-              </button>
+              <>
+                <button className="login-button" onClick={openLogin}>Login</button>
+                <button className="pill-button nav-donate" onClick={handleDonateClick}>
+                  <span className="material-symbols-outlined">favorite</span>Donate Now
+                </button>
+              </>
             )}
-            <button className="pill-button nav-donate" onClick={handleDonateClick}>
-              <span className="material-symbols-outlined">favorite</span>Donate
-              Now
-            </button>
           </div>
           <button
             className="menu-button"
@@ -238,11 +234,11 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
           {isAuthenticated() ? (
             <>
               <button
-                className="login-button"
-                onClick={() => handleSelect("/member-portal", "member-portal")}
-                style={{ backgroundColor: "#0f6258", color: "#ffffff" }}
+                className="portal-link-btn"
+                onClick={() => handleSelect(portal.path, portal.id)}
               >
-                Member Portal
+                <span className="material-symbols-outlined">{portal.icon}</span>
+                {portal.label}
               </button>
               <button className="login-button" onClick={signOut}>
                 Log out
