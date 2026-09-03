@@ -104,7 +104,7 @@ const MemberJobsTab = () => {
                     style={{
                       background: "none",
                       border: "none",
-                      color: "#ef4444",
+                      color: "#1e293b",
                       fontSize: "0.82rem",
                       fontWeight: "600",
                       cursor: "pointer",
@@ -209,7 +209,6 @@ const MemberJobsTab = () => {
                   {hasApplied ? (
                     <button
                       className="btn-apply-oneclick"
-                      style={{ backgroundColor: "#0284c7" }}
                       disabled={isProcessing}
                       onClick={() => handleWithdraw(applicationId, job.job_id)}
                       title="Click to un-apply / withdraw application"
