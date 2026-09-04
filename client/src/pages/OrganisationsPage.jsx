@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Navbar from "../components/Navbar";
 
 import foodforwardImage from "../assets/foodforward.jpg";
 import globalcareImage from "../assets/globalcare.jpg";
@@ -134,6 +135,7 @@ function Organisations({
 
   return (
     <main className="organisations-page">
+      <Navbar />
       {/* ================= HERO ================= */}
       <section className="org-hero">
         <div className="org-container org-hero-grid">
