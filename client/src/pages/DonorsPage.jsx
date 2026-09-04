@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import DonationPopup from "../components/DonationPopup";
+import DonorPortal from "../components/DonorPortal";
 import { apiRequest } from "../api/client";
 import { useToast } from "../context/ToastContext";
 import { getCurrentUser, isAuthenticated } from "../utils/auth";
@@ -452,7 +453,7 @@ export default function DonorsPage() {
         {/* Giving History */}
         <section className="donor-dashboard-grid">
           <div className="donor-portal-wrap">
-            <DonorPortal donations={donations} programs={publicPrograms} pledges={[{ id: 'pledge-1', title: 'Education Fund (Kiambu Youth Scholarships)', amount: 2500, nextCharge: 'Nov 1, 2024' }]} onNavigate={(path) => navigate(path)} />
+            <DonorPortal donations={donations} programs={programs} pledges={[{ id: 'pledge-1', title: 'Education Fund (Kiambu Youth Scholarships)', amount: 2500, nextCharge: 'Nov 1, 2024' }]} onNavigate={(path) => navigate(path)} />
           </div>
           <article className="donor-panel history-panel">
             <h2>Your Giving History</h2>
