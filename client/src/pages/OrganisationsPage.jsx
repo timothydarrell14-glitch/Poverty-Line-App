@@ -1,5 +1,5 @@
-import { useState } from "react";
-import Navbar from "../components/Navbar";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import foodforwardImage from "../assets/foodforward.jpg";
 import globalcareImage from "../assets/globalcare.jpg";
@@ -69,21 +69,12 @@ const TESTIMONIALS = [
 function Organisations({
   onOpenPartnerApplication,
   onOpenLiveSimulation,
-  onOpenLogin,
+  onOpenDonate,
 }) {
+  const navigate = useNavigate();
   const [logs, setLogs] = useState(INITIAL_LOGS);
   const [selectedTimeframe, setSelectedTimeframe] = useState("7d");
   const [isSimulatingDispatch, setIsSimulatingDispatch] = useState(false);
-
-  // Controls the active Navbar item
-  const [activeTab, setActiveTab] = useState("organisations");
-
-  // Safe handlers in case these functions are not passed from App.jsx
-  const handleOpenLogin = () => {
-    if (onOpenLogin) {
-      onOpenLogin();
-    }
-  };
 
   const chartData = {
     "7d": [
@@ -142,457 +133,472 @@ function Organisations({
   };
 
   return (
-    <>
-      {/* ================= NAVBAR ================= */}
-      <Navbar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onOpenLogin={handleOpenLogin}
-      />
-
-      <main className="organisations-page">
-        {/* ================= HERO ================= */}
-        <section className="org-hero">
-          <div className="org-container org-hero-grid">
-            <div className="org-hero-content">
-              <div className="org-eyebrow">
-                <span className="material-symbols-outlined">hub</span>
-                Institutional Logistics Network
-              </div>
-
-              <h1 className="org-hero-title">
-                Amplify Your Impact.
-                <br />
-                <span>Streamline Operations.</span>
-              </h1>
-
-              <p className="org-hero-description">
-                Connect your non-profit, NGO, or community initiative with our
-                open logistics infrastructure. Coordinate resources,
-                volunteers, and distribution in real-time.
-              </p>
-
-              <div className="org-hero-actions">
-                <button
-                  type="button"
-                  className="org-primary-button"
-                  id="org-hero-partner-btn"
-                  onClick={onOpenPartnerApplication}
-                >
-                  <span>Become a Partner</span>
-
-                  <span className="material-symbols-outlined">
-                    arrow_forward
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  className="org-secondary-button"
-                  id="org-hero-preview-btn"
-                  onClick={handleDashboardPreview}
-                >
-                  View Dashboard Preview
-                </button>
-              </div>
+    <main className="organisations-page">
+      {/* ================= HERO ================= */}
+      <section className="org-hero">
+        <div className="org-container org-hero-grid">
+          <div className="org-hero-content">
+            <div className="org-eyebrow">
+              <span className="material-symbols-outlined">hub</span>
+              Institutional Logistics Network
             </div>
 
-            <div className="org-hero-image-wrapper">
-              <img
-                src={organisationsHeroImage}
-                alt="Nonprofit director coordinating distribution and routes on tablet"
-                className="org-hero-image"
-              />
+            <h1 className="org-hero-title">
+              Amplify Your Impact.
+              <br />
+              <span>Streamline Operations.</span>
+            </h1>
+
+            <p className="org-hero-description">
+              Connect your non-profit, NGO, or community initiative with our
+              open logistics infrastructure. Coordinate resources, volunteers,
+              and distribution in real-time.
+            </p>
+
+            <div className="org-hero-actions">
+              <button
+                type="button"
+                className="org-primary-button"
+                id="org-hero-partner-btn"
+                onClick={onOpenPartnerApplication}
+              >
+                <span>Become a Partner</span>
+                <span className="material-symbols-outlined">
+                  arrow_forward
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className="org-secondary-button"
+                id="org-hero-preview-btn"
+                onClick={handleDashboardPreview}
+              >
+                View Dashboard Preview
+              </button>
+
+              <button
+                type="button"
+                className="org-secondary-button"
+                id="org-hero-donate-btn"
+                onClick={onOpenDonate}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: '18px', marginRight: '4px' }}>favorite</span>
+                Donate
+              </button>
+
+              <button
+                type="button"
+                className="org-secondary-button"
+                id="org-hero-manage-btn"
+                onClick={() => navigate("/organisations/portal")}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: '18px', marginRight: '4px' }}>corporate_fare</span>
+                Manage Organisation
+              </button>
             </div>
           </div>
-        </section>
 
-        {/* ================= HOW WE PARTNER ================= */}
-        <section className="org-section">
-          <div className="org-container">
-            <div className="org-partner-section">
-              <div className="org-section-heading">
-                <h2>How We Partner</h2>
+          <div className="org-hero-image-wrapper">
+            <img
+              src={organisationsHeroImage}
+              alt="Nonprofit director coordinating distribution and routes on tablet"
+              className="org-hero-image"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ================= HOW WE PARTNER ================= */}
+      <section className="org-section">
+        <div className="org-container">
+          <div className="org-partner-section">
+            <div className="org-section-heading">
+              <h2>How We Partner</h2>
+
+              <p>
+                Our simple three-step integration allows organizations of any
+                size to onboard quickly without disrupting existing ground
+                operations.
+              </p>
+            </div>
+
+            <div className="org-steps-grid">
+              <article className="org-step-card">
+                <div className="org-step-number">1</div>
+
+                <h3>Application &amp; Verification</h3>
 
                 <p>
-                  Our simple three-step integration allows organizations of any
-                  size to onboard quickly without disrupting existing ground
-                  operations.
+                  Submit your organization's mission, service area, and
+                  non-profit credentials for our streamlined 48-hour
+                  verification.
                 </p>
-              </div>
+              </article>
 
-              <div className="org-steps-grid">
-                <article className="org-step-card">
-                  <div className="org-step-number">1</div>
+              <article className="org-step-card">
+                <div className="org-step-number">2</div>
 
-                  <h3>Application &amp; Verification</h3>
+                <h3>System Integration</h3>
 
-                  <p>
-                    Submit your organization's mission, service area, and
-                    non-profit credentials for our streamlined 48-hour
-                    verification.
-                  </p>
-                </article>
+                <p>
+                  Connect your existing supply inventories, warehouse hubs,
+                  and volunteer rosters into our centralized dashboard.
+                </p>
+              </article>
 
-                <article className="org-step-card">
-                  <div className="org-step-number">2</div>
+              <article className="org-step-card">
+                <div className="org-step-number">3</div>
 
-                  <h3>System Integration</h3>
+                <h3>Impact Tracking &amp; Delivery</h3>
 
-                  <p>
-                    Connect your existing supply inventories, warehouse hubs,
-                    and volunteer rosters into our centralized dashboard.
-                  </p>
-                </article>
-
-                <article className="org-step-card">
-                  <div className="org-step-number">3</div>
-
-                  <h3>Impact Tracking &amp; Delivery</h3>
-
-                  <p>
-                    Deploy optimized delivery routes, receive donor support
-                    transparently, and track verified impact in real-time.
-                  </p>
-                </article>
-              </div>
+                <p>
+                  Deploy optimized delivery routes, receive donor support
+                  transparently, and track verified impact in real-time.
+                </p>
+              </article>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ================= COMMAND CENTER ================= */}
-        <section
-          id="command-center-preview"
-          className="org-section org-command-section"
-        >
-          <div className="org-container">
-            <div className="org-command-header">
-              <div>
-                <div className="org-live-label">
-                  <span className="org-live-dot"></span>
-                  Live Operational Telemetry
-                </div>
-
-                <h2>Partner Command Center</h2>
+      {/* ================= COMMAND CENTER ================= */}
+      <section
+        id="command-center-preview"
+        className="org-section org-command-section"
+      >
+        <div className="org-container">
+          <div className="org-command-header">
+            <div>
+              <div className="org-live-label">
+                <span className="org-live-dot"></span>
+                Live Operational Telemetry
               </div>
 
-              <div className="org-command-actions">
-                <button
-                  type="button"
-                  className="org-dashboard-button org-light-button"
-                  id="simulate-dispatch-btn"
-                  onClick={handleSimulateNewEntry}
-                  disabled={isSimulatingDispatch}
-                >
-                  <span className="material-symbols-outlined">bolt</span>
+              <h2>Partner Command Center</h2>
+            </div>
 
-                  <span>
-                    {isSimulatingDispatch
-                      ? "Simulating..."
-                      : "Simulate Live Dispatch"}
-                  </span>
-                </button>
+            <div className="org-command-actions">
+              <button
+                type="button"
+                className="org-dashboard-button org-light-button"
+                id="simulate-dispatch-btn"
+                onClick={handleSimulateNewEntry}
+                disabled={isSimulatingDispatch}
+              >
+                <span className="material-symbols-outlined">bolt</span>
 
-                <button
-                  type="button"
-                  className="org-dashboard-button org-dark-button"
-                  onClick={onOpenLiveSimulation}
-                >
-                  <span>Explore Full System</span>
+                <span>
+                  {isSimulatingDispatch
+                    ? "Simulating..."
+                    : "Simulate Live Dispatch"}
+                </span>
+              </button>
 
+              <button
+                type="button"
+                className="org-dashboard-button org-dark-button"
+                onClick={onOpenLiveSimulation}
+              >
+                <span>Explore Full System</span>
+
+                <span className="material-symbols-outlined">
+                  open_in_new
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <div className="org-dashboard-grid">
+            {/* STAT CARD 1 */}
+            <article className="org-stat-card">
+              <div className="org-stat-top">
+                <div>
+                  <p>Total Resources Distributed (YTD)</p>
+
+                  <h3>
+                    142,500 <span>units</span>
+                  </h3>
+                </div>
+
+                <div className="org-stat-icon teal-icon">
                   <span className="material-symbols-outlined">
-                    open_in_new
+                    inventory_2
                   </span>
-                </button>
+                </div>
+              </div>
+
+              <div className="org-stat-footer success-text">
+                <span className="material-symbols-outlined">
+                  trending_up
+                </span>
+
+                <span>+12% compared to last quarter</span>
+              </div>
+            </article>
+
+            {/* STAT CARD 2 */}
+            <article className="org-stat-card">
+              <div className="org-stat-top">
+                <div>
+                  <p>Active Volunteers</p>
+
+                  <h3>
+                    342 <span>on duty</span>
+                  </h3>
+                </div>
+
+                <div className="org-stat-icon green-icon">
+                  <span className="material-symbols-outlined">group</span>
+                </div>
+              </div>
+
+              <div className="org-stat-footer">
+                <span>Capacity utilization: 86%</span>
+
+                <strong>24 teams deployed</strong>
+              </div>
+            </article>
+
+            {/* STAT CARD 3 */}
+            <article className="org-stat-card">
+              <div className="org-stat-top">
+                <div>
+                  <p>Pending Requests</p>
+
+                  <h3 className="warning-number">
+                    48 <span>queues</span>
+                  </h3>
+                </div>
+
+                <div className="org-stat-icon warning-icon">
+                  <span className="material-symbols-outlined">schedule</span>
+                </div>
+              </div>
+
+              <div className="org-stat-footer warning-text">
+                <span className="material-symbols-outlined">
+                  priority_high
+                </span>
+
+                <span>All requests triaged under 4 hours</span>
+              </div>
+            </article>
+
+            {/* DISTRIBUTION EFFICIENCY */}
+            <article className="org-efficiency-card">
+              <div className="org-card-heading">
+                <div>
+                  <h3>Distribution Efficiency</h3>
+
+                  <p>
+                    Weekly throughput across regional distribution centers
+                  </p>
+                </div>
+
+                <div className="org-timeframe-selector">
+                  {["7d", "30d", "ytd"].map((timeframe) => (
+                    <button
+                      type="button"
+                      key={timeframe}
+                      className={
+                        selectedTimeframe === timeframe
+                          ? "active"
+                          : ""
+                      }
+                      onClick={() => setSelectedTimeframe(timeframe)}
+                    >
+                      {timeframe === "7d"
+                        ? "7 Days"
+                        : timeframe === "30d"
+                        ? "30 Days"
+                        : "YTD"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="org-chart">
+                {chartData[selectedTimeframe].map((item, index) => (
+                  <div className="org-chart-column" key={index}>
+                    <div className="org-chart-value">
+                      {item.value}
+                    </div>
+
+                    <div className="org-bar-wrapper">
+                      <div
+                        className="org-bar"
+                        style={{ height: item.height }}
+                      ></div>
+                    </div>
+
+                    <span>{item.day}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="org-efficiency-footer">
+                <span>
+                  Average Delivery Route Time: <strong>42 minutes</strong>
+                </span>
+
+                <strong className="success-text">
+                  98.4% On-Time Delivery Rate
+                </strong>
+              </div>
+            </article>
+
+            {/* RECENT LOGISTICS LOG */}
+            <article className="org-log-card">
+              <div className="org-log-header">
+                <h3>Recent Logistics Log</h3>
+
+                <span>Live Feed</span>
+              </div>
+
+              <div className="org-log-list">
+                {logs.map((log) => {
+                  let icon = "local_shipping";
+                  let statusClass = "delivery";
+
+                  if (log.status === "warning") {
+                    icon = "warning";
+                    statusClass = "warning";
+                  } else if (log.status === "info") {
+                    icon = "person_add";
+                    statusClass = "info";
+                  } else if (log.type === "route") {
+                    icon = "alt_route";
+                    statusClass = "route";
+                  }
+
+                  return (
+                    <div className="org-log-item" key={log.id}>
+                      <div className="org-log-item-top">
+                        <span className="org-log-title">
+                          <span
+                            className={`org-log-icon ${statusClass}`}
+                          >
+                            <span className="material-symbols-outlined">
+                              {icon}
+                            </span>
+                          </span>
+
+                          {log.title}
+                        </span>
+
+                        <span className="org-log-time">
+                          {log.timestamp}
+                        </span>
+                      </div>
+
+                      {log.details && (
+                        <p>{log.details}</p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <button
+                type="button"
+                className="org-api-button"
+                onClick={onOpenPartnerApplication}
+              >
+                Connect your warehouse API →
+              </button>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= TRUSTED ORGANIZATIONS ================= */}
+      <section className="org-section">
+        <div className="org-container">
+          <div className="org-trusted-section">
+            <div className="org-section-heading">
+              <p className="org-small-heading">
+                Proven Field Collaboration
+              </p>
+
+              <h2>Trusted by Leading Organizations</h2>
+            </div>
+
+            <div className="org-partner-logos">
+              <div>
+                <span className="material-symbols-outlined">
+                  public
+                </span>
+                GlobalCare
+              </div>
+
+              <div>
+                <span className="material-symbols-outlined">
+                  medical_information
+                </span>
+                HealthNet
+              </div>
+
+              <div>
+                <span className="material-symbols-outlined">
+                  eco
+                </span>
+                FoodForward
+              </div>
+
+              <div>
+                <span className="material-symbols-outlined">
+                  cottage
+                </span>
+                ShelterOrg
               </div>
             </div>
 
-            <div className="org-dashboard-grid">
-              {/* STAT CARD 1 */}
-              <article className="org-stat-card">
-                <div className="org-stat-top">
-                  <div>
-                    <p>Total Resources Distributed (YTD)</p>
-
-                    <h3>
-                      142,500 <span>units</span>
-                    </h3>
-                  </div>
-
-                  <div className="org-stat-icon teal-icon">
-                    <span className="material-symbols-outlined">
-                      inventory_2
+            {/* TESTIMONIALS */}
+            <div className="org-testimonials">
+              {TESTIMONIALS.map((testimonial) => (
+                <article
+                  className="org-testimonial-card"
+                  key={testimonial.id}
+                >
+                  <div className="org-testimonial-content">
+                    <span className="material-symbols-outlined org-quote-icon">
+                      format_quote
                     </span>
-                  </div>
-                </div>
-
-                <div className="org-stat-footer success-text">
-                  <span className="material-symbols-outlined">
-                    trending_up
-                  </span>
-
-                  <span>+12% compared to last quarter</span>
-                </div>
-              </article>
-
-              {/* STAT CARD 2 */}
-              <article className="org-stat-card">
-                <div className="org-stat-top">
-                  <div>
-                    <p>Active Volunteers</p>
-
-                    <h3>
-                      342 <span>on duty</span>
-                    </h3>
-                  </div>
-
-                  <div className="org-stat-icon green-icon">
-                    <span className="material-symbols-outlined">
-                      group
-                    </span>
-                  </div>
-                </div>
-
-                <div className="org-stat-footer">
-                  <span>Capacity utilization: 86%</span>
-
-                  <strong>24 teams deployed</strong>
-                </div>
-              </article>
-
-              {/* STAT CARD 3 */}
-              <article className="org-stat-card">
-                <div className="org-stat-top">
-                  <div>
-                    <p>Pending Requests</p>
-
-                    <h3 className="warning-number">
-                      48 <span>queues</span>
-                    </h3>
-                  </div>
-
-                  <div className="org-stat-icon warning-icon">
-                    <span className="material-symbols-outlined">
-                      schedule
-                    </span>
-                  </div>
-                </div>
-
-                <div className="org-stat-footer warning-text">
-                  <span className="material-symbols-outlined">
-                    priority_high
-                  </span>
-
-                  <span>All requests triaged under 4 hours</span>
-                </div>
-              </article>
-
-              {/* DISTRIBUTION EFFICIENCY */}
-              <article className="org-efficiency-card">
-                <div className="org-card-heading">
-                  <div>
-                    <h3>Distribution Efficiency</h3>
 
                     <p>
-                      Weekly throughput across regional distribution centers
+                      "{testimonial.quote}"
                     </p>
                   </div>
 
-                  <div className="org-timeframe-selector">
-                    {["7d", "30d", "ytd"].map((timeframe) => (
-                      <button
-                        type="button"
-                        key={timeframe}
-                        className={
-                          selectedTimeframe === timeframe ? "active" : ""
-                        }
-                        onClick={() => setSelectedTimeframe(timeframe)}
-                      >
-                        {timeframe === "7d"
-                          ? "7 Days"
-                          : timeframe === "30d"
-                          ? "30 Days"
-                          : "YTD"}
-                      </button>
-                    ))}
+                  <div className="org-testimonial-person">
+                    <img
+                      src={testimonial.image}
+                      alt={testimonial.author}
+                    />
+
+                    <div>
+                      <h4>{testimonial.author}</h4>
+
+                      <p>
+                        {testimonial.role},{" "}
+                        <strong>{testimonial.organization}</strong>
+                      </p>
+                    </div>
                   </div>
-                </div>
-
-                <div className="org-chart">
-                  {chartData[selectedTimeframe].map((item, index) => (
-                    <div className="org-chart-column" key={index}>
-                      <div className="org-chart-value">{item.value}</div>
-
-                      <div className="org-bar-wrapper">
-                        <div
-                          className="org-bar"
-                          style={{ height: item.height }}
-                        ></div>
-                      </div>
-
-                      <span>{item.day}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="org-efficiency-footer">
-                  <span>
-                    Average Delivery Route Time: <strong>42 minutes</strong>
-                  </span>
-
-                  <strong className="success-text">
-                    98.4% On-Time Delivery Rate
-                  </strong>
-                </div>
-              </article>
-
-              {/* RECENT LOGISTICS LOG */}
-              <article className="org-log-card">
-                <div className="org-log-header">
-                  <h3>Recent Logistics Log</h3>
-
-                  <span>Live Feed</span>
-                </div>
-
-                <div className="org-log-list">
-                  {logs.map((log) => {
-                    let icon = "local_shipping";
-                    let statusClass = "delivery";
-
-                    if (log.status === "warning") {
-                      icon = "warning";
-                      statusClass = "warning";
-                    } else if (log.status === "info") {
-                      icon = "person_add";
-                      statusClass = "info";
-                    } else if (log.type === "route") {
-                      icon = "alt_route";
-                      statusClass = "route";
-                    }
-
-                    return (
-                      <div className="org-log-item" key={log.id}>
-                        <div className="org-log-item-top">
-                          <span className="org-log-title">
-                            <span
-                              className={`org-log-icon ${statusClass}`}
-                            >
-                              <span className="material-symbols-outlined">
-                                {icon}
-                              </span>
-                            </span>
-
-                            {log.title}
-                          </span>
-
-                          <span className="org-log-time">
-                            {log.timestamp}
-                          </span>
-                        </div>
-
-                        {log.details && <p>{log.details}</p>}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <button
-                  type="button"
-                  className="org-api-button"
-                  onClick={onOpenPartnerApplication}
-                >
-                  Connect your warehouse API →
-                </button>
-              </article>
+                </article>
+              ))}
             </div>
           </div>
-        </section>
-
-        {/* ================= TRUSTED ORGANIZATIONS ================= */}
-        <section className="org-section">
-          <div className="org-container">
-            <div className="org-trusted-section">
-              <div className="org-section-heading">
-                <p className="org-small-heading">
-                  Proven Field Collaboration
-                </p>
-
-                <h2>Trusted by Leading Organizations</h2>
-              </div>
-
-              <div className="org-partner-logos">
-                <div>
-                  <span className="material-symbols-outlined">
-                    public
-                  </span>
-                  GlobalCare
-                </div>
-
-                <div>
-                  <span className="material-symbols-outlined">
-                    medical_information
-                  </span>
-                  HealthNet
-                </div>
-
-                <div>
-                  <span className="material-symbols-outlined">
-                    eco
-                  </span>
-                  FoodForward
-                </div>
-
-                <div>
-                  <span className="material-symbols-outlined">
-                    cottage
-                  </span>
-                  ShelterOrg
-                </div>
-              </div>
-
-              {/* TESTIMONIALS */}
-              <div className="org-testimonials">
-                {TESTIMONIALS.map((testimonial) => (
-                  <article
-                    className="org-testimonial-card"
-                    key={testimonial.id}
-                  >
-                    <div className="org-testimonial-content">
-                      <span className="material-symbols-outlined org-quote-icon">
-                        format_quote
-                      </span>
-
-                      <p>"{testimonial.quote}"</p>
-                    </div>
-
-                    <div className="org-testimonial-person">
-                      <img
-                        src={testimonial.image}
-                        alt={testimonial.author}
-                      />
-
-                      <div>
-                        <h4>{testimonial.author}</h4>
-
-                        <p>
-                          {testimonial.role},{" "}
-                          <strong>{testimonial.organization}</strong>
-                        </p>
-                      </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Hidden image references are intentionally not displayed. */}
-        <div className="org-image-preload" aria-hidden="true">
-          <img src={heroSupportImage} alt="" />
         </div>
-      </main>
-    </>
+      </section>
+
+      {/* Hidden image references are intentionally not displayed.
+          The page uses only the four provided image assets. */}
+      <div className="org-image-preload" aria-hidden="true">
+        <img src={heroSupportImage} alt="" />
+      </div>
+    </main>
   );
 }
 

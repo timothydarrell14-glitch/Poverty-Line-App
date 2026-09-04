@@ -38,7 +38,10 @@ def serialize_user(user):
     return {
         "id": user.user_id,
         "name": f"{user.first_name} {user.last_name}",
+        "first_name": user.first_name,
+        "last_name": user.last_name,
         "email": user.email,
+        "phone": user.phone,
         "role": user.role,
         "status": user.status,
         "avatarUrl": user.avatar_url,
@@ -290,9 +293,9 @@ def public_settings():
     from app.models.settings import AppSetting
 
     defaults = {
-        "orgName": "Poverty Line Initiative",
+        "orgName": "Poverty Line",
         "supportEmail": "support@povertyline.org",
-        "publicDescription": "# Dignity Through Efficiency",
+        "publicDescription": "Dignity Through Efficiency",
     }
     settings = AppSetting.query.filter(
         AppSetting.key.in_(defaults.keys()), AppSetting.category == "general"

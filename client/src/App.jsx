@@ -15,10 +15,12 @@ import HomePage from './pages/Homepage'
 import GetHelpPage from './pages/GetHelpPage'
 import CommunityPage from './pages/CommunityPage'
 import OrganisationsPage from './pages/OrganisationsPage'
+import OrganisationPortalPage from './pages/OrganisationPortalPage'
 import DonorsPage from './pages/DonorsPage'
 import LogisticsPage from './pages/LogisticsPage'
 import JobsPage from './pages/JobsPage'
 import ContactPage from './pages/ContactPage'
+import MemberPortalPage from './pages/MemberPortalPage'
 import './styles/Admin/Scrollbar.css'
 import './styles/Admin/Scrollbar.dark.css'
 import ComingSoon from './components/Admin/ComingSoon'
@@ -50,11 +52,13 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/get-help" element={<GetHelpPage />} />
           <Route path="/organisations" element={<OrganisationsPage />} />
+          <Route path="/organisations/portal" element={<OrganisationPortalPage />} />
           <Route path="/donors" element={<DonorsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/logistics" element={<LogisticsPage />} />
           <Route path="/jobs" element={<JobsPage />} />
           <Route path="/community" element={<CommunityPage />} />
+          <Route path="/member-portal" element={<MemberPortalPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/access-denied" element={<AccessDeniedPage />} />
           <Route element={<AdminRoute />}>

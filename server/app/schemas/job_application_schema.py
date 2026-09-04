@@ -2,9 +2,12 @@ from marshmallow import fields
 
 from app.extensions import ma
 from app.models.classification.job_applications import JobApplication
+from app.schemas.job_schema import JobSchema
 
 
 class JobApplicationSchema(ma.SQLAlchemyAutoSchema):
+    job = fields.Nested(JobSchema, dump_only=True)
+
     class Meta:
         model = JobApplication
         load_instance = False

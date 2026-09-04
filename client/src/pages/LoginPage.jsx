@@ -1,27 +1,144 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiUrl } from "../api/client";
+import { saveAuthSession } from "../utils/auth";
 import { useToast } from "../context/ToastContext";
+import "../styles/Auth.css";
 
 function LoginPage() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const { showToast } = useToast();
+
   async function submit(event) {
-    event.preventDefault(); setError(""); setIsSubmitting(true);
+    event.preventDefault();
+    setError("");
+    setIsSubmitting(true);
+
     const form = new FormData(event.currentTarget);
+
+    const email = form.get("email")?.toString().trim();
+    const password = form.get("password")?.toString();
+
+    if (!email || !password) {
+      setError("Please enter your email and password.");
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
-      const response = await fetch(apiUrl("/api/auth/login"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: form.get("email"), password: form.get("password") }) });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message);
-      localStorage.setItem("accessToken", data.access_token);
-      localStorage.setItem("currentUser", JSON.stringify(data.user));
-      showToast("Welcome back. You are signed in successfully.", "success");
-      navigate(data.user.role.toLowerCase() === "admin" ? "/admin" : "/access-denied", { replace: true });
-    } catch (requestError) { setError(requestError.message || "Unable to sign in."); showToast(requestError.message || "Unable to sign in.", "error"); }
-    finally { setIsSubmitting(false); }
+      const response = await fetch(apiUrl("/api/auth/login"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(
+          data?.message ||
+            data?.error ||
+            "Invalid email or password."
+        );
+      }
+
+      if (!data?.access_token) {
+        throw new Error(
+          "Login succeeded, but no access token was returned."
+        );
+      }
+
+      if (!data?.user) {
+        throw new Error(
+          "Login succeeded, but no user information was returned."
+        );
+      }
+
+      // Save authentication using the shared auth utility.
+      // This keeps LoginPage, apiRequest(), and AdminRoute
+      // using the same session storage keys.
+      saveAuthSession({
+        access_token: data.access_token,
+        user: data.user,
+      });
+
+      showToast(
+        "Welcome back. You are signed in successfully.",
+        "success"
+      );
+
+      const role = data.user?.role?.trim().toLowerCase();
+
+      // Route users to their role-specific landing dashboard
+      if (role === "admin") {
+        navigate("/admin", { replace: true });
+      } else if (role === "donor") {
+        navigate("/donors", { replace: true });
+      } else if (role === "member") {
+        navigate("/member-portal", { replace: true });
+      } else {
+        navigate("/organisations", { replace: true });
+      }
+    } catch (requestError) {
+      const message =
+        requestError.message ||
+        "Unable to sign in. Please try again.";
+
+      setError(message);
+      showToast(message, "error");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
-  return <main className="login-page"><form onSubmit={submit}><h1>Sign in</h1><label>Email<input name="email" type="email" required /></label><label>Password<input name="password" type="password" required /></label>{error && <p role="alert">{error}</p>}<button disabled={isSubmitting}>{isSubmitting ? "Signing in…" : "Sign in"}</button></form></main>;
+
+  return (
+    <main className="login-page">
+      <form onSubmit={submit} className="login-form">
+        <h1>Sign in</h1>
+
+        <label htmlFor="login-email">
+          Email
+          <input
+            id="login-email"
+            name="email"
+            type="email"
+            placeholder="Enter your email"
+            autoComplete="email"
+            required
+          />
+        </label>
+
+        <label htmlFor="login-password">
+          Password
+          <input
+            id="login-password"
+            name="password"
+            type="password"
+            placeholder="Enter your password"
+            autoComplete="current-password"
+            required
+          />
+        </label>
+
+        {error && (
+          <p className="auth-error" role="alert">
+            {error}
+          </p>
+        )}
+
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Signing in…" : "Sign in"}
+        </button>
+      </form>
+    </main>
+  );
 }
+
 export default LoginPage;
