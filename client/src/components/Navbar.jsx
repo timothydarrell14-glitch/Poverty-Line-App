@@ -132,7 +132,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenDonate }) => {
     : role === "donor"
       ? { path: "/donors", id: "donors", label: "Donor Dashboard", icon: "volunteer_activism" }
       : (role === "partner" || role === "organisation" || role === "organization")
-        ? { path: "/organisations", id: "organisations", label: "Organisation Portal", icon: "corporate_fare" }
+        ? { path: "/organisations/portal", id: "organisation-portal", label: "Organisation Portal", icon: "corporate_fare" }
         : { path: "/member-portal", id: "member-portal", label: "Member Portal", icon: "account_circle" };
   const displayName = currentUser?.first_name || currentUser?.name?.split(" ")[0] || "Account";
   const initials = displayName.charAt(0).toUpperCase();
