@@ -135,7 +135,7 @@ function Organisations({
 
   return (
     <main className="organisations-page">
-      <Navbar />
+      <Navbar activeTab="organisations" onOpenDonate={onOpenDonate} />
       {/* ================= HERO ================= */}
       <section className="org-hero">
         <div className="org-container org-hero-grid">
